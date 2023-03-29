@@ -135,11 +135,11 @@ namespace DAA_setup
         {
             RedBlackTree tree = new RedBlackTree();
 
-            tree.root = new Node(10);
-            tree.root.left = new Node(20);
-            tree.root.right = new Node(30);
-            tree.root.right.right = new Node(40);
-            tree.root.right.left = new Node(50);
+            tree.Insert(7);
+            tree.Insert(15);
+            tree.Insert(23);
+            tree.Insert(31);
+            tree.Insert(47);
 
             Console.WriteLine("Inorder Traversal of " +
                             "Constructed Tree");
@@ -149,6 +149,46 @@ namespace DAA_setup
         public void InorderTraversal()
         {
             InorderTraversal(root);
+        }
+        public void Insert(int value)
+        {
+            Node newNode = new Node(value);
+            Node parent = null;
+            Node current = root;
+        
+            // Traverse the tree to find the appropriate position for the new node
+            while (current != null)
+            {
+                parent = current;
+                if (value < current.data)
+                {
+                    current = current.left;
+                }
+                else
+                {
+                    current = current.right;
+                }
+            }
+        
+            // Set the parent of the new node
+            newNode.parent = parent;
+        
+            // Insert the new node as a child of the parent
+            if (parent == null)
+            {
+                root = newNode;
+            }
+            else if (value < parent.data)
+            {
+                parent.left = newNode;
+            }
+            else
+            {
+                parent.right = newNode;
+            }
+        
+            // Fix any violations of the Red Black Tree properties
+            fixViolation(newNode);
         }
 
         private void InorderTraversal(Node node)
@@ -161,8 +201,4 @@ namespace DAA_setup
             }
         }
     }
-
-
-
-    
 }
