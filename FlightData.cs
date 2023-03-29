@@ -23,8 +23,8 @@ namespace StrategicFMSDemo
     {
         private static readonly FlightData instance = new FlightData();
         private Point ownshipPoint;
-        private Aircraft _ownship =new ("VoloCity");
-        private Aircraft _ownship1 = new("VoloCity");
+        private Aircraft firstAircraft =new ("VoloCity");
+        private Aircraft secondAircraft = new("VoloCity");
         // Timer for update flight data.
         private Timer _timer;
         public List<Aircraft> aircrafts = new List<Aircraft>
