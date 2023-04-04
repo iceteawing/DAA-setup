@@ -30,10 +30,11 @@ namespace DAA_setup
         public double Y { get => y; set => y = value; }
         public double Z { get => z; set => z = value; }
 
-        // Function to move an aircraft a certain distance and bearing
-        // Parameters:
-        // distance: distance to move in km
-        // bearing: bearing to move in degrees
+        /// <summary>
+        /// Function to move an aircraft a certain distance and bearing
+        /// </summary>
+        /// <param name="distance">Distance to move in km</param>
+        /// <param name="bearing">Bearing to move in degrees</param>
         public void MoveAircraft(double distance, double bearing)
         {
             const double radiusEarth = 6371.01; // in km
