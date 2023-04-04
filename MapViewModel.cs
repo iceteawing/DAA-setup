@@ -181,7 +181,7 @@ namespace StrategicFMSDemo
             {
                 _flightData.aircrafts[i].Update();
                 Point3D aircraftPoint= _flightData.aircrafts[i].GetPoint3D();
-                MapPoint p = new MapPoint(aircraftPoint.x, aircraftPoint.y, SpatialReferences.Wgs84);
+                MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
                 
                 aircraftPointGraphics[i].Geometry = p;
             }

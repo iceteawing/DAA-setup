@@ -12,6 +12,8 @@ namespace DAA_setup
         {
             Latitude = -118.8066;
             Longitude = 34.0006;
+            Altitude = 1000.0;
+            Position = new(Latitude, Longitude,Altitude);
         }
 
         public string AircraftID { get; set; } //780254
@@ -29,7 +31,9 @@ namespace DAA_setup
         public double Distance { get; set; }//12.8 nmi
         public DateTime DateTime { get; set; }//'2013-01-20T00:00:00Z'
         public string Region { get; set; } //China
+        public Point3D Position { get => position; set => position = value; }
 
+        private Point3D position;
         public bool update()
         {
             Latitude = Latitude;
@@ -48,8 +52,8 @@ namespace DAA_setup
 
         public bool Update(Point3D targetPoint)
         {
-            Latitude += (targetPoint.x-Latitude) *0.00001;
-            Longitude += (targetPoint.y - Longitude) * 0.00001;
+            Latitude += (targetPoint.X-Latitude) *0.00001;
+            Longitude += (targetPoint.Y - Longitude) * 0.00001;
             Altitude = Altitude;
             RollAngel = RollAngel;
             PitchAngel = PitchAngel;
@@ -59,6 +63,12 @@ namespace DAA_setup
             Track = Track;
             Distance = Distance;
             DateTime = DateTime.Now;
+            return true;
+        }
+
+        public bool Move( double distance ,double bearing)
+        {
+            Position.MoveAircraft(distance, bearing);
             return true;
         }
     }

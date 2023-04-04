@@ -44,16 +44,33 @@ namespace DAA_setup
             return true;
         }
 
-        public bool GenerateTrajectory(Point3D startPoint, Point3D endPoint)
-        {
-            TrajectoryPoints.Add(startPoint);
-            TrajectoryPoints.Add(endPoint);
-            return false;
-        }
         public Point3D GetCurrentTargetPoint()
         {
             return TrajectoryPoints[currentPointIndex];
         }
 
+// Function to generate a list of points representing a flight trajectory with its start point and destination
+public bool GenerateTrajectory(Point3D startPoint, Point3D endPoint)
+{
+    // Clear any existing trajectory points
+    TrajectoryPoints.Clear();
+    
+    // Add the start and end points to the trajectory
+    TrajectoryPoints.Add(startPoint);
+    
+    // Insert a series of points to create a more realistic flight trajectory
+    for (int i = 1; i < 10; i++)
+    {
+        double x = startPoint.X + (endPoint.X - startPoint.X) / 10 * i;
+        double y = startPoint.Y + (endPoint.Y - startPoint.Y) / 10 * i;
+        double z = startPoint.Z + (endPoint.Z - startPoint.Z) / 10 * i;
+        TrajectoryPoints.Add(new Point3D(x, y, z));
+    }
+    
+    TrajectoryPoints.Add(endPoint);
+    
+    // Return true to indicate successful generation of trajectory
+    return true;
+}
     }
 }
