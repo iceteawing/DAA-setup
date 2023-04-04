@@ -26,6 +26,7 @@ using System.Windows;
 using System.Threading;
 using System.Diagnostics.Metrics;
 using System.Drawing;
+using DAA_setup;
 
 namespace StrategicFMSDemo
 {
@@ -43,9 +44,7 @@ namespace StrategicFMSDemo
 
             CreateGraphics();
 
-
             //MessageBox.Show(string.Format("{0},{1},{2} from MapViewModel", flightData.OwnshipPoint.x, flightData.OwnshipPoint.y, flightData.OwnshipPoint.z));
-            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -122,13 +121,13 @@ namespace StrategicFMSDemo
                 Width = 2.0
             };
 
-            for( int i=0; i<100;i++)// the max number here is for testing
-            {
-                var p = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);// the geometry here is for testing
-                // Create a point graphic with the geometry and symbol.
-                var graphic = new Graphic(p, pointSymbol);
-                aircraftPointGraphics.Add(graphic);
-            }
+            //for( int i=0; i<100;i++)// the max number here is for testing
+            //{
+            //    var p = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);// the geometry here is for testing
+            //    // Create a point graphic with the geometry and symbol.
+            //    var graphic = new Graphic(p, pointSymbol);
+            //    aircraftPointGraphics.Add(graphic);
+            //}
             //Initializes a new instance of the Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol class from an image URI.
             //temp use the abs path here for testing
             var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri("D:\\repos\\MapDemo\\images\\7.png"));
@@ -142,14 +141,6 @@ namespace StrategicFMSDemo
             }
             //var p2 = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
             // Create a graphic with the geometry and PictureMarkerSymbol.
-
-
-
-
-
-
-
-
 
             //add graphis into graphic overlay which represent the position of aircrafts
             foreach (Graphic g in aircraftPointGraphics)
@@ -186,15 +177,13 @@ namespace StrategicFMSDemo
         {
             // Calculate new coordinates which have the effect of moving each object by the same amount each time.
             // The Y coordinate is shifted by a smaller amount to ensure the objects move generally across the map.
-
-            double y_offset = 0.0;
-
-            foreach (Graphic g in aircraftPointGraphics)
+            for(int i=0;i<aircraftPointGraphics.Count;i++)
             {
-                MapPoint p = new MapPoint(x, y+y_offset, SpatialReferences.Wgs84);
-                g.Geometry = p;
-                y_offset += 0.01;
-
+                _flightData.aircrafts[i].Update();
+                Point3D aircraftPoint= _flightData.aircrafts[i].GetPoint3D();
+                MapPoint p = new MapPoint(aircraftPoint.x, aircraftPoint.y, SpatialReferences.Wgs84);
+                
+                aircraftPointGraphics[i].Geometry = p;
             }
             // Create a new graphics overlay to contain a variety of graphics.
 
