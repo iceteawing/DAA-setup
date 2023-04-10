@@ -48,9 +48,12 @@ namespace DAA_setup
         {
             return TrajectoryPoints[currentPointIndex];
         }
-
-// Function to generate a list of points representing a flight trajectory with its start point and destination
-public bool GenerateTrajectory(Point3D startPoint, Point3D endPoint)
+        public void SetWaypoints(List<Point3D> waypoints)
+        {
+            //TODO:
+        }
+        // Function to generate a list of points representing a flight trajectory with its start point and destination
+        public bool GenerateTrajectory(Point3D startPoint, Point3D endPoint)
 {
     // Clear any existing trajectory points
     TrajectoryPoints.Clear();

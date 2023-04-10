@@ -22,11 +22,13 @@ namespace StrategicFMSDemo
     public class FlightData
     {
         private static readonly FlightData instance = new FlightData();
+        private ScenarioData scenarioData =new ScenarioData(0);
         private Point ownshipPoint;
         private Aircraft firstAircraft =new ("VoloCity");
         private Aircraft secondAircraft = new ("VoloCity");
         private Aircraft thirdAircraft = new ("Airplane");
         private Aircraft fourthAircraft = new ("Helicopter");
+        private Ownship ownship = new("Cessna208");
         // Timer for update flight data.
         private Timer _timer;
         public List<Aircraft> aircrafts = new List<Aircraft>
@@ -37,8 +39,9 @@ namespace StrategicFMSDemo
 
         private FlightData()
         {
+            //TODO: Initialize the ownship 
             OwnshipPoint = new Point();
-            //initialize the aircraft list here
+            //Initialize the AI aircrafts
             Point3D startPoint = new Point3D(-119.805, 34.027, 1000.0);
             Point3D endPoint = new Point3D(-119.805, 39.027, 1000.0); 
             firstAircraft.Intent.GenerateTrajectory(startPoint,endPoint);
@@ -54,7 +57,12 @@ namespace StrategicFMSDemo
             thirdAircraft.Intent.CurrentPointIndex = 1;
             thirdAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
             aircrafts.Add(thirdAircraft);
-            _timer = new Timer(UpdateFlightData); // create a timer to update the flight data
+
+
+
+            
+            // create a timer to update the flight data
+            _timer = new Timer(UpdateFlightData); 
             _timer.Change(0, 1000 / 15); //the update freq is 15 hz
 
             //https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.udpclient.receive?view=net-6.0
@@ -84,9 +92,9 @@ namespace StrategicFMSDemo
             //    Console.WriteLine(e.ToString());
             //}
         }
-        static  FlightData()
+        static  FlightData() //used for singleton
         {
-            //ownshipPoint = new();
+            
         }
 
         public void StartScenario()
@@ -184,53 +192,17 @@ namespace StrategicFMSDemo
     public class ScenarioData
     {
         public bool Start { get; set; }
-        public string ScenarioID { get; set; } //001
+        public int ScenarioID { get; set; } //001
         public double Density { get; set; } //50.0
-        public IList<string> Vertiport { get; set; }
-    }
 
-    public class Vertiport
-    {
-        public string Type { get; set; } // Heliport/Airport/Vertiport
-        public double Latitude { get; set; }//40.028 degree
-        public double Longitude { get; set; }//116.580 degree
-        public double Altitude { get; set; }//50ft
-    }
-}
-public class Aircraft
-{
-    private string _type;
-    private TrajectoryIntentData _intent;
-    private double _lateralPerformance;
-    private double _verticalPerformance;
-    private double _alongPathPerformance;
-    private double _separationRiskTolerance;
-    private AircraftState state;
+        public double Throughput { get; set; } //unit is ?
 
-    public Aircraft(string type)
-    {
-        Type = type;
-        State = new AircraftState();
-        Intent = new TrajectoryIntentData();
-    }
+        public double HoldingTime { get; set; } //unit is second
+        public IList<Airdrome> Airdromes { get; set; }
 
-    public string Type { get => _type; set => _type = value; }
-    public AircraftState State { get => state; set => state = value; }
-    public TrajectoryIntentData Intent { get => _intent; set => _intent = value; }
-    public double LateralPerformance { get => _lateralPerformance; set => _lateralPerformance = value; }
-    public double VerticalPerformance { get => _verticalPerformance; set => _verticalPerformance = value; }
-    public double AlongPathPerformance { get => _alongPathPerformance; set => _alongPathPerformance = value; }
-    public double SeparationRiskTolerance { get => _separationRiskTolerance; set => _separationRiskTolerance = value; }
-
-    public bool Update()
-    {
-        bool resultOfState = State.Update(Intent.GetCurrentTargetPoint());
-        bool resultOfIntent = Intent.Update();
-        return resultOfState & resultOfIntent;
-    }
-
-    public Point3D GetPoint3D()
-    {
-        return new Point3D(State.Latitude,State.Longitude,State.Altitude);
+        public ScenarioData(int scenarioID)
+        {
+            ScenarioID = scenarioID;
+        }
     }
 }
