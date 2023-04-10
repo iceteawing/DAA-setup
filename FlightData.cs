@@ -23,6 +23,7 @@ namespace StrategicFMSDemo
     {
         private static readonly FlightData instance = new FlightData();
         private ScenarioData scenarioData =new ScenarioData(0);
+        private Airspace airspace=new Airspace();
         private Point ownshipPoint;
         private Aircraft firstAircraft =new ("VoloCity");
         private Aircraft secondAircraft = new ("VoloCity");

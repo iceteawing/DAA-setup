@@ -84,5 +84,18 @@ namespace DAA_setup
         {
             return new Point3D(State.Latitude, State.Longitude, State.Altitude);
         }
+
+        public void Move(string fligtRules)
+        {
+            //TODO: move the aircraft one step according to the flight rules
+            double distance = 0.0;
+            double bearing = 0.0;
+            Move(distance, bearing);
+        }
+        public void Move(double distance, double bearing)
+        {
+            State.Move(distance, bearing);
+        }
+
     }
 }
