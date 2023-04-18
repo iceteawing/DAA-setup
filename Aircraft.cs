@@ -91,6 +91,9 @@ namespace DAA_setup
 
         public bool Update()
         {
+            //TODO: add the AFAS logic here to impact the aircraft's behavior
+            //TODO: move the aircraft one step by invoke the move function here, which update the aircraft state and intent
+            
             bool resultOfState = State.Update(Intent.GetCurrentTargetPoint());
             bool resultOfIntent = Intent.Update();
             return resultOfState & resultOfIntent;
@@ -108,9 +111,20 @@ namespace DAA_setup
             double bearing = 0.0;
             Move(distance, bearing);
         }
-        public void Move(double distance, double bearing)
+        public void Move(double distance, double bearing)//2D movement
         {
             State.Move(distance, bearing);
+        }
+
+        public void Move(double distance, double bearing, double vertical) //3D movement
+        {
+            State.Move(distance, bearing);
+            State.Altitude += vertical;
+        }
+
+        public void Move(double vertical) //vertical climb
+        {
+            State.Altitude += vertical;
         }
         // Add a function to determine flight level based on aircraft type
         /// <summary>
