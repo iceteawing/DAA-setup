@@ -8,7 +8,22 @@ namespace DAA_setup
 {
     public class Aircraft
     {
+        public enum AircraftCategory
+        {
+            SmallUAV,
+            MiddleUAV,
+            BigUAV,
+            GA,
+            helicopter,
+            Airplane,
+            eVTOL,
+            Others
+        }
+
+        // The enum is added above the private string _type; line.
         private string _type;
+
+        private AircraftCategory _aircraftCategory;
         private TrajectoryIntentData _intent;
         private double _lateralPerformance;
         private double _verticalPerformance;
@@ -72,6 +87,7 @@ namespace DAA_setup
         public double VerticalPerformance { get => _verticalPerformance; set => _verticalPerformance = value; }
         public double AlongPathPerformance { get => _alongPathPerformance; set => _alongPathPerformance = value; }
         public double SeparationRiskTolerance { get => _separationRiskTolerance; set => _separationRiskTolerance = value; }
+        public AircraftCategory AircraftCategory1 { get => _aircraftCategory; set => _aircraftCategory = value; }
 
         public bool Update()
         {
@@ -96,6 +112,25 @@ namespace DAA_setup
         {
             State.Move(distance, bearing);
         }
-
+        // Add a function to determine flight level based on aircraft type
+        /// <summary>
+        /// Determines the flight level based on the input aircraft type.
+        /// </summary>
+        /// <param name="aircraftType">The type of aircraft.</param>
+        /// <returns>An integer representing the flight level.</returns>
+        public int DetermineFlightLevel(AircraftCategory aircraftCategory)
+        {
+            //TODO: define the flight level
+            if (aircraftCategory == AircraftCategory.GA)
+                return MyConstants.HIGH_ALTITUDE;
+            else if (aircraftCategory == AircraftCategory.eVTOL || aircraftCategory == AircraftCategory.helicopter || aircraftCategory == AircraftCategory.BigUAV)
+                return MyConstants.MEDIUM_ALTITUDE;
+            else if (aircraftCategory == AircraftCategory.MiddleUAV)
+                return MyConstants.LOW_ALTITUDE;
+            else
+                return 0;
+        }
+    
     }
 }
+

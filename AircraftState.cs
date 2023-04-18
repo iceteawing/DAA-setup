@@ -71,5 +71,6 @@ namespace DAA_setup
             Position.MoveAircraft(distance, bearing);
             return true;
         }
+
     }
 }

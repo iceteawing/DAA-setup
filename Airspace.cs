@@ -11,6 +11,14 @@ namespace DAA_setup
         public Airspace()
         {
         }
+        public enum LayerType
+        {
+            VeryLow = 0,
+            Low = 1,
+            Medium = 2,
+            High = 3
+        }
+        // The above code defines an enum type called LayerType that represents different layers based on flight altitude.
         public enum AirspaceType
         {
             ClassA,
@@ -49,6 +57,24 @@ namespace DAA_setup
                 return AirspaceType.ClassE;
             else
                 return AirspaceType.ClassG;
+        }
+        // Add a function to determine layer type based on flight altitude
+        /// <summary>
+        /// Determines the layer type based on the input altitude.
+        /// </summary>
+        /// <param name="altitude">The altitude in meter.</param>
+        /// <returns>A LayerType representing the layer type.</returns>
+        public LayerType DetermineLayerType(double altitude)
+        {
+            //TODO: define the layer type
+            if (altitude > MyConstants.HIGH_ALTITUDE)
+                return LayerType.High;
+            else if (altitude > MyConstants.MEDIUM_ALTITUDE)
+                return LayerType.Medium;
+            else if (altitude > MyConstants.LOW_ALTITUDE)
+                return LayerType.Low;
+            else
+                return LayerType.VeryLow;
         }
     }
 }
