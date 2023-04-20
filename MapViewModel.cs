@@ -76,10 +76,19 @@ namespace StrategicFMSDemo
             }
         }
 
-        public bool StartScenario = false;
+        private bool _startScenario = false;
         public Graphic PolylineGraphic { get => polylineGraphic; set => polylineGraphic = value; }
         public Graphic AirPolylineRoute { get => airPolylineRouteGraphic; set => airPolylineRouteGraphic = value; }
         public List<Graphic> AircraftPointGraphics { get => aircraftPointGraphics; set => aircraftPointGraphics = value; }
+        public bool StartScenario 
+        {
+            get { return _startScenario; }
+            set
+            {
+                _startScenario = value;
+                OnPropertyChanged();
+            }
+        }
 
         private List<Graphic> aircraftPointGraphics =new List<Graphic> { };
 
@@ -193,6 +202,12 @@ namespace StrategicFMSDemo
             var westwardBeachPolyline = new Polyline(linePoints);
             //PolylineGraphic.Geometry = westwardBeachPolyline;
             x += 0.001;
+
+
+            if(StartScenario)
+            {
+                StartScenario = StartScenario;
+            }
         }
 
         private GraphicsOverlay _aircraftGraphicsOverlay;

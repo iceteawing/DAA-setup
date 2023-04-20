@@ -104,6 +104,7 @@ namespace StrategicFMSDemo
             {
                 MainMapView.Visibility = Visibility.Hidden;
             }
+            MainMapView.IsEnabled =!MainMapView.IsEnabled;
         }
     }
 }

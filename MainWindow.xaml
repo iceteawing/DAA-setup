@@ -31,7 +31,7 @@
                     </Grid.ColumnDefinitions>
                     <Button Content="Button" HorizontalAlignment="Left" Margin="525,1,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.361,0.169" Click="Button_Click" Grid.Column="4"/>
                     <esri:MapView x:Name="MainMapView"
-                      Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="5" Visibility="{Binding StartScenario, Source={StaticResource MapViewModel}}" />
+                      Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="5" IsEnabled="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}" />
                     <TextBox x:Name="lat" HorizontalAlignment="Left" Margin="2,4,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="270" Grid.ColumnSpan="5"/>
                     <TextBox x:Name="Lon" HorizontalAlignment="Left" Margin="161,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176" Grid.Column="4"/>
                     <TextBox x:Name="alt" HorizontalAlignment="Left" Margin="341,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158" Grid.Column="4"/>
