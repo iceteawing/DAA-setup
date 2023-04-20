@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using StrategicFMSDemo;
 using Esri.ArcGISRuntime.Geometry;
-using DAA_setup;
+using StrategicFMS;
 
 namespace StrategicFMSDemo
 {
@@ -25,10 +25,10 @@ namespace StrategicFMSDemo
         private ScenarioData scenarioData =new ScenarioData(0);
         private Airspace airspace=new Airspace();
         private Point ownshipPoint;
-        private Aircraft firstAircraft =new ("VoloCity");
-        private Aircraft secondAircraft = new ("VoloCity");
-        private Aircraft thirdAircraft = new ("Airplane");
-        private Aircraft fourthAircraft = new ("Helicopter");
+        private Aircraft firstAircraft =new ("VoloCity"); //AI agent
+        private Aircraft secondAircraft = new ("VoloCity");//AI agent
+        private Aircraft thirdAircraft = new ("Airplane");//AI agent
+        private Aircraft fourthAircraft = new ("Helicopter");//AI agent
         private Ownship ownship = new("Cessna208");
         // Timer for update flight data.
         private Timer _timer;

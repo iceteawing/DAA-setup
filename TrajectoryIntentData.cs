@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
-namespace DAA_setup
+namespace StrategicFMS
 {
     public class TrajectoryIntentData // ARINC 702 page 97
     {

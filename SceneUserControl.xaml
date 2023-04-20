@@ -6,16 +6,16 @@
              xmlns:local="clr-namespace:StrategicFMSDemo"
              xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" x:Class="StrategicFMSDemo.SceneUserControl"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="1200">
     <UserControl.Resources>
         <local:SceneViewModel x:Key="SceneViewModel" />
     </UserControl.Resources>
     <Grid Margin="0,0,10,10">
-        <Button Content="Button" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Button_Click_1"/>
+        <Button Content="Reset" HorizontalAlignment="Right" VerticalAlignment="Top" Click="Button_Click_1" Margin="0,107,10,0" Height="34" Width="97"/>
 
         <esri:SceneView x:Name="MainSceneView"
-                        Scene="{Binding Scene, Source={StaticResource SceneViewModel}}" HorizontalAlignment="Left" Width="1000" />
-        <Button Content="Button" HorizontalAlignment="Left" Margin="748,58,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.192,-0.399" Click="Button_Click"/>
+                        Scene="{Binding Scene, Source={StaticResource SceneViewModel}}" HorizontalAlignment="Left" Width="1066" />
+        <Button Content="Start Animation" HorizontalAlignment="Left"  VerticalAlignment="Top" RenderTransformOrigin="-0.192,-0.399" Click="Button_Click" Margin="1083,44,0,0" Height="38" Width="97"/>
 
     </Grid>
 </UserControl>

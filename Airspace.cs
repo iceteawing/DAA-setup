@@ -1,13 +1,24 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
-namespace DAA_setup
+namespace StrategicFMS
 {
     public class Airspace
     {
+        // Define necessary information for airspace, such as range and altitude
+
+        public double Range { get; set; } // The range of the airspace
+        public double MaxAltitude { get; set; } // The maximum altitude of the airspace
+        public double MinAltitude { get; set; } // The minimum altitude of the airspace
+        public double centerLatitude { get; set; } //The latitude of the center point of the airspace entity
+        public double centerLontitude { get; set; }//The lontitude of the center point of the airspace entity
+
         public Airspace()
         {
         }
@@ -75,6 +86,71 @@ namespace DAA_setup
                 return LayerType.Low;
             else
                 return LayerType.VeryLow;
+        }
+        // Add a function to read from an XML file and populate the Airspace object
+        /// <summary>
+        /// Reads from an XML file and populates the Airspace object.
+        /// </summary>
+        /// <param name="filePath">The path of the XML file.</param>
+        public void ReadFromXml(string filePath)
+        {
+            //TODO: read from XML file and populate the Airspace object
+            XmlSerializer serializer = new XmlSerializer(typeof(Airspace));
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
+            {
+                Airspace airspace = (Airspace)serializer.Deserialize(fileStream);
+                this.Range = airspace.Range;
+                this.MaxAltitude = airspace.MaxAltitude;
+                this.MinAltitude = airspace.MinAltitude;
+                this.centerLatitude = airspace.centerLatitude;
+                this.centerLontitude = airspace.centerLontitude;
+                this.airspaceType = airspace.airspaceType;
+            }
+        }
+
+        // Add a function to write the Airspace object to an XML file
+        /// <summary>
+        /// Writes the Airspace object to an XML file.
+        /// </summary>
+        /// <param name="filePath">The path of the XML file.</param>
+        public void WriteToXml(string filePath)
+        {
+            //TODO: write the Airspace object to an XML file
+            XmlSerializer serializer = new XmlSerializer(typeof(Airspace));
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                serializer.Serialize(fileStream, this);
+            }
+        }
+
+        // Add a function to read from a JSON file and populate the Airspace object
+        /// <summary>
+        /// Reads from a JSON file and populates the Airspace object.
+        /// </summary>
+        /// <param name="filePath">The path of the JSON file.</param>
+        public void ReadFromJson(string filePath)
+        {
+            //TODO: read from JSON file and populate the Airspace object
+            string json = File.ReadAllText(filePath);
+            Airspace airspace = JsonConvert.DeserializeObject<Airspace>(json);
+            this.Range = airspace.Range;
+            this.MaxAltitude = airspace.MaxAltitude;
+            this.MinAltitude = airspace.MinAltitude;
+            this.centerLatitude = airspace.centerLatitude;
+            this.centerLontitude = airspace.centerLontitude;
+            this.airspaceType = airspace.airspaceType;
+        }
+
+        // Add a function to write the Airspace object to a JSON file
+        /// <summary>
+        /// Writes the Airspace object to a JSON file.
+        /// </summary>
+        /// <param name="filePath">The path of the JSON file.</param>
+        public void WriteToJson(string filePath)
+        {
+            //TODO: write the Airspace object to a JSON file
+            string json = JsonConvert.SerializeObject(this);
+            File.WriteAllText(filePath, json);
         }
     }
 }

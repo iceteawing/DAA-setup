@@ -19,8 +19,8 @@
             <ColumnDefinition Width="159*"/>
             <ColumnDefinition Width="591*"/>
         </Grid.ColumnDefinitions>
-        <TabControl Margin="42,0,0,0" Grid.ColumnSpan="3">
-            <TabItem x:Name="FlightTrackerTabItem" Header="Flight" AutomationProperties.Name="Flight">
+        <TabControl Margin="42,0,0,0" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="True">
+            <TabItem x:Name="FlightTrackerTabItem" Header="Scenario" AutomationProperties.Name="Flight">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="56*"/>
@@ -35,10 +35,31 @@
                     <TextBox x:Name="lat" HorizontalAlignment="Left" Margin="2,4,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="270" Grid.ColumnSpan="5"/>
                     <TextBox x:Name="Lon" HorizontalAlignment="Left" Margin="161,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176" Grid.Column="4"/>
                     <TextBox x:Name="alt" HorizontalAlignment="Left" Margin="341,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158" Grid.Column="4"/>
-                    <Button x:Name="Start" Content="Button" Grid.Column="4" Margin="1197,688,10,10" Click="Start_Click" />
+                    <Button x:Name="Start" Content="Start Sim" Grid.Column="4" Margin="1145,688,10,10" Click="Start_Click" />
                 </Grid>
             </TabItem>
-            <TabItem x:Name="IntrudersTabItem" Header="Intruders" HorizontalAlignment="Right" Width="64" RenderTransformOrigin="2.628,0.195" >
+            <TabItem x:Name="other" Header="Primary Display" >
+                <StrategicFMSDemo:SceneUserControl Height="708" Margin="4,0,24,0"/>
+            </TabItem>
+            <TabItem Header="AI Agents"/>
+            <TabItem Header="Digital Traffic Manager">
+                <TabItem.Background>
+                    <LinearGradientBrush EndPoint="0,1">
+                        <GradientStop Color="#FFF0F0F0"/>
+                        <GradientStop Color="#FFEC6464" Offset="1"/>
+                    </LinearGradientBrush>
+                </TabItem.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="8*"/>
+                        <ColumnDefinition Width="9*"/>
+                        <ColumnDefinition Width="1375*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Content="Confirm" Height="137" Margin="0,592,29,29" HorizontalAlignment="Right" Width="412" Grid.Column="2"  />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Airspace Structure"/>
+            <TabItem x:Name="IntrudersTabItem" Header="Intruders" HorizontalAlignment="Right" Width="64" RenderTransformOrigin="2.628,0.195" Margin="0,-2,-3,0" >
                 <Grid Background="#FFE5E5E5" VerticalAlignment="Top" Height="751" >
                     <RadioButton x:Name="radioButton" Content="RadioButton" HorizontalAlignment="Left" Margin="54,28,0,0" VerticalAlignment="Top" GroupName="Position"/>
                     <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="179,31,0,0" VerticalAlignment="Top" GroupName="Position"/>
@@ -94,7 +115,7 @@
                                                 </Border>
                                             </Viewbox>
                                             <ControlTemplate.Triggers>
-                                                <EventTrigger RoutedEvent="Checked">
+                                                <EventTrigger RoutedEvent="ToggleButton.Checked">
                                                     <BeginStoryboard>
                                                         <Storyboard>
                                                             <ColorAnimation Storyboard.TargetName="Border"
@@ -108,7 +129,7 @@
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
-                                                <EventTrigger RoutedEvent="Unchecked">
+                                                <EventTrigger RoutedEvent="ToggleButton.Unchecked">
                                                     <BeginStoryboard>
                                                         <Storyboard>
                                                             <ColorAnimation Storyboard.TargetName="Border"
@@ -130,9 +151,6 @@
                         </ToggleButton.Style>
                     </ToggleButton>
                 </Grid>
-            </TabItem>
-            <TabItem x:Name="other" Header="other" >
-                <StrategicFMSDemo:SceneUserControl Height="708" Margin="4,0,24,0"/>
             </TabItem>
         </TabControl>
     </Grid>

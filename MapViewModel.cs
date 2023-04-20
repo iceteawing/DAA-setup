@@ -26,7 +26,7 @@ using System.Windows;
 using System.Threading;
 using System.Diagnostics.Metrics;
 using System.Drawing;
-using DAA_setup;
+using StrategicFMS;
 
 namespace StrategicFMSDemo
 {
