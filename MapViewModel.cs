@@ -191,7 +191,7 @@ namespace StrategicFMSDemo
             MapPoint mapPoint = new MapPoint(x, y, SpatialReferences.Wgs84);
             linePoints.Add(mapPoint);
             var westwardBeachPolyline = new Polyline(linePoints);
-            PolylineGraphic.Geometry = westwardBeachPolyline;
+            //PolylineGraphic.Geometry = westwardBeachPolyline;
             x += 0.001;
         }
 
@@ -261,7 +261,7 @@ namespace StrategicFMSDemo
             //create a symbol to define how the circle is displayed.
 
             // Create polyline geometry from the points.
-            var circle = DrawCircle(new MapPoint(-118.8215, 34.0240, SpatialReferences.Wgs84),0.01,360);
+            var circle = DrawCircle(new MapPoint(117.354909531352, 39.125833959383186, SpatialReferences.Wgs84),0.01,360);
 
             // Create a fill symbol to display the polygon.
             var circleSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
