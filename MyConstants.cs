@@ -16,5 +16,11 @@ namespace StrategicFMS
         //for big UAV, helicopter and eVTOL
         public const int HIGH_ALTITUDE = 1000; 
         //for GA fixed wing aircraft
+
+        //separation standards
+        public const double SeparationEnroute =5; //nautical miles
+        public const double SeparationTerminal = 3;//nautical miles
+        public const double SeparationTimeBased = 1.5;//minutes
+
     }
 }

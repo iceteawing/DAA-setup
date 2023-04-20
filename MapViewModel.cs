@@ -27,6 +27,7 @@ using System.Threading;
 using System.Diagnostics.Metrics;
 using System.Drawing;
 using StrategicFMS;
+using System.Windows.Media.Animation;
 
 namespace StrategicFMSDemo
 {
@@ -196,6 +197,24 @@ namespace StrategicFMSDemo
 
         private GraphicsOverlay _aircraftGraphicsOverlay;
         private GraphicsOverlay _airRouteGraphicsOverlay;
+
+        private Polygon DrawCircle(MapPoint center, double radius, int pointsCount = 360)
+        {
+            //TODO: need to computer the position in wgs84
+            List<MapPoint> plist = new List<MapPoint>();
+            //PointCollection pcol = new PointCollection();
+            double slice = 2 * Math.PI / pointsCount;
+            for (int i = 0; i <= pointsCount; i++)
+            {
+                double rad = slice * i;
+                double px = center.X + radius * Math.Cos(rad);
+                double py = center.Y + radius * Math.Sin(rad);
+                plist.Add(new MapPoint(px, py, SpatialReferences.Wgs84));
+            }
+            Polygon p = new Polygon(plist);
+            return p;
+        }
+
         private void CreateGraphics()
         {
             // Create a new graphics overlay to contain a variety of graphics.
@@ -238,6 +257,23 @@ namespace StrategicFMSDemo
             // Add the point graphic to graphics overlay.
             malibuGraphicsOverlay.Graphics.Add(pointGraphic);
 
+
+            //create a symbol to define how the circle is displayed.
+
+            // Create polyline geometry from the points.
+            var circle = DrawCircle(new MapPoint(-118.8215, 34.0240, SpatialReferences.Wgs84),0.01,360);
+
+            // Create a fill symbol to display the polygon.
+            var circleSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
+
+
+            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100,0, 255, 100), circleSymbolOutline); //color from argb
+            // Create a polygon graphic with the geometry and fill symbol.
+            var circleGraphic = new Graphic(circle, circleFillSymbol);
+
+            // Add the polygon graphic to the graphics overlay.
+            malibuGraphicsOverlay.Graphics.Add(circleGraphic);
+
             // Create a list of points that define a polyline.
             List<MapPoint> linePoints = new List<MapPoint>
             {
@@ -267,14 +303,15 @@ namespace StrategicFMSDemo
                 new MapPoint(-118.7960, 34.0086, SpatialReferences.Wgs84),
                 new MapPoint(-118.8086, 34.0035, SpatialReferences.Wgs84)
             };
-
+            //TODO: encapsulate the graphics represent the aircraft region on the map, the parameter shall at last include area and color
             // Create polygon geometry.
             var mahouRivieraPolygon = new Polygon(polygonPoints);
-
+    
             // Create a fill symbol to display the polygon.
             var polygonSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
-            var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.Orange, polygonSymbolOutline);
-
+            
+            //var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.Orange, polygonSymbolOutline);
+            var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 255, 100, 100), polygonSymbolOutline); //color from argb
             // Create a polygon graphic with the geometry and fill symbol.
             var polygonGraphic = new Graphic(mahouRivieraPolygon, polygonFillSymbol);
 
