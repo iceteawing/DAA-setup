@@ -26,7 +26,7 @@ namespace StrategicFMSDemo
         private Airspace airspace=new Airspace();
         private Point ownshipPoint;
         private Aircraft firstAircraft =new ("VoloCity"); //AI agent
-        private Aircraft secondAircraft = new ("VoloCity");//AI agent
+        private Aircraft secondAircraft = new ("Helicopter");//AI agent
         private Aircraft thirdAircraft = new ("Airplane");//AI agent
         private Aircraft fourthAircraft = new ("Helicopter");//AI agent
         private Ownship ownship = new("Cessna208");

@@ -26,6 +26,7 @@ namespace StrategicFMSDemo
         public SceneUserControl()
         {
             InitializeComponent();
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -42,7 +43,6 @@ namespace StrategicFMSDemo
             var snowdonCamera = new Camera(lat, 4.84361, 270, 304, 82, 0);
             lat += 0.000001;
             MainSceneView.SetViewpointCamera(snowdonCamera);
-            
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

@@ -7,7 +7,7 @@
         xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" xmlns:StrategicFMSDemo="clr-namespace:StrategicFMSDemo" x:Class="StrategicFMSDemo.MainWindow"
         d:DataContext="{d:DesignInstance Type={x:Type local:MapViewModel}}"
         mc:Ignorable="d"
-        Title="StrategicFMSDemo" Height="800" Width="1440" >
+        Title="StrategicFMSDemo" Height="900" Width="1440" >
 
     <Window.Resources>
         <local:MapViewModel x:Key="MapViewModel" />
@@ -19,7 +19,7 @@
             <ColumnDefinition Width="159*"/>
             <ColumnDefinition Width="591*"/>
         </Grid.ColumnDefinitions>
-        <TabControl Margin="42,0,0,0" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="True">
+        <TabControl Margin="0,0,0,0" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="True">
             <TabItem x:Name="FlightTrackerTabItem" Header="Scenario" AutomationProperties.Name="Flight">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
@@ -27,15 +27,77 @@
                         <ColumnDefinition Width="22*"/>
                         <ColumnDefinition Width="16*"/>
                         <ColumnDefinition Width="35*"/>
-                        <ColumnDefinition Width="1263*"/>
+                        <ColumnDefinition Width="398*"/>
+                        <ColumnDefinition Width="23*"/>
+                        <ColumnDefinition Width="842*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Button" HorizontalAlignment="Left" Margin="525,1,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.361,0.169" Click="Button_Click" Grid.Column="4"/>
+                    <Button Content="Button" HorizontalAlignment="Left" Margin="104,1,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.361,0.169" Click="Button_Click" Grid.Column="6"/>
                     <esri:MapView x:Name="MainMapView"
-                      Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="5" IsEnabled="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}" />
+                      Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="7" />
                     <TextBox x:Name="lat" HorizontalAlignment="Left" Margin="2,4,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="270" Grid.ColumnSpan="5"/>
                     <TextBox x:Name="Lon" HorizontalAlignment="Left" Margin="161,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176" Grid.Column="4"/>
-                    <TextBox x:Name="alt" HorizontalAlignment="Left" Margin="341,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158" Grid.Column="4"/>
-                    <Button x:Name="Start" Content="Start Sim" Grid.Column="4" Margin="1145,688,10,10" Click="Start_Click" />
+                    <TextBox x:Name="alt" HorizontalAlignment="Left" Margin="341,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158" Grid.Column="4" Grid.ColumnSpan="3"/>
+                    <Button x:Name="VisibilityButton" Content="Visibility" Grid.Column="6" Margin="536,792,198,10" Click="Start_Click" />
+                    <ToggleButton x:Name="ToggleButtonScenarioControl" Margin="712,792,10,10" Grid.Column="6" IsChecked="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}" >
+                        <ToggleButton.Style>
+                            <Style TargetType="{x:Type ToggleButton}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                            <Viewbox>
+                                                <Border x:Name="Border" CornerRadius="10"
+                            Background="#FFFFFFFF"
+                            Width="40" Height="20">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect ShadowDepth="0.5" Direction="0" Opacity="0.3" />
+                                                    </Border.Effect>
+                                                    <Ellipse x:Name="Ellipse" Fill="#FFFFFFFF" Stretch="Uniform"
+                                 Margin="2 1 2 1"
+                                 Stroke="Gray" StrokeThickness="0.2"
+                                 HorizontalAlignment="Stretch">
+                                                        <Ellipse.Effect>
+                                                            <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.3" Direction="260" />
+                                                        </Ellipse.Effect>
+                                                    </Ellipse>
+                                                </Border>
+                                            </Viewbox>
+                                            <ControlTemplate.Triggers>
+                                                <EventTrigger RoutedEvent="ToggleButton.Checked">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetName="Border"
+                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                    To="#FF4CD661"
+                                                    Duration="0:0:0.1" />
+                                                            <ThicknessAnimation Storyboard.TargetName="Ellipse"
+                                                        Storyboard.TargetProperty="Margin"
+                                                        To="20 1 2 1"
+                                                        Duration="0:0:0.1" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                                <EventTrigger RoutedEvent="ToggleButton.Unchecked">
+                                                    <BeginStoryboard>
+                                                        <Storyboard>
+                                                            <ColorAnimation Storyboard.TargetName="Border"
+                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                    To="White"
+                                                    Duration="0:0:0.1" />
+                                                            <ThicknessAnimation Storyboard.TargetName="Ellipse"
+                                                        Storyboard.TargetProperty="Margin"
+                                                        To="2 1 2 1"
+                                                        Duration="0:0:0.1" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ToggleButton.Style>
+                    </ToggleButton>
+                     
                 </Grid>
             </TabItem>
             <TabItem x:Name="other" Header="Primary Display" >
@@ -91,7 +153,7 @@
                     <CheckBox Content="No Braring Data Measured" IsChecked="{Binding IsChecked3, Mode=TwoWay}" HorizontalAlignment="Left" Margin="54,247,0,0" VerticalAlignment="Top"/>
                     <Button Content="Start Scenario" Margin="1198,622,37,0" VerticalAlignment="Top" Height="82" Click="Button_Click_1"/>
                     <Button Content="Stop Scenario" HorizontalAlignment="Left" Margin="1011,617,0,0" VerticalAlignment="Top" Height="82" Width="161" RenderTransformOrigin="-2.82,-1.323"/>
-                    <ToggleButton x:Name="toggle1" Margin="752,634,425,69">
+                    <ToggleButton x:Name="ToggleButton1" Margin="752,634,425,69">
                         <ToggleButton.Style>
                             <Style TargetType="{x:Type ToggleButton}">
                                 <Setter Property="Template">

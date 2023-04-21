@@ -28,6 +28,7 @@ using System.Diagnostics.Metrics;
 using System.Drawing;
 using StrategicFMS;
 using System.Windows.Media.Animation;
+using System.Diagnostics;
 
 namespace StrategicFMSDemo
 {
@@ -80,17 +81,26 @@ namespace StrategicFMSDemo
         public Graphic PolylineGraphic { get => polylineGraphic; set => polylineGraphic = value; }
         public Graphic AirPolylineRoute { get => airPolylineRouteGraphic; set => airPolylineRouteGraphic = value; }
         public List<Graphic> AircraftPointGraphics { get => aircraftPointGraphics; set => aircraftPointGraphics = value; }
-        public bool StartScenario 
+        public bool StartScenario
         {
             get { return _startScenario; }
             set
             {
                 _startScenario = value;
+                if (_startScenario)
+                {
+                    _timer = new Timer(AnimateOverlay);
+                    _timer.Change(0, 1000 / 15);
+                }
+                else
+                {
+                    _timer.Dispose();
+                }
                 OnPropertyChanged();
             }
         }
 
-        private List<Graphic> aircraftPointGraphics =new List<Graphic> { };
+        private List<Graphic> aircraftPointGraphics = new List<Graphic> { };
 
         private Graphic airPolylineRouteGraphic;
 
@@ -139,15 +149,33 @@ namespace StrategicFMSDemo
             //    aircraftPointGraphics.Add(graphic);
             //}
             //Initializes a new instance of the Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol class from an image URI.
-            //temp use the abs path here for testing
-            var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri("D:\\repos\\MapDemo\\images\\7.png"));
-            symbolAircraft.Angle = 180;
-            symbolAircraft.Opacity = 0.5;
-            foreach( Aircraft a in _flightData.aircrafts)
+            try
             {
-                var mp = new MapPoint(a.State.Latitude,a.State.Longitude, SpatialReferences.Wgs84);
-                var graphic2 = new Graphic(mp, symbolAircraft);
-                aircraftPointGraphics.Add(graphic2);
+                var imagePath = "images/7.png"; // relative path to the image file
+                var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                symbolAircraft.Angle = 180;//this variable shall be updated period
+                symbolAircraft.Opacity = 0.5;
+                imagePath = "images/5.png";
+                var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                foreach (Aircraft a in _flightData.aircrafts)
+                {
+                    var mp = new MapPoint(a.State.Latitude, a.State.Longitude, SpatialReferences.Wgs84);
+                    if (a.Type == "Helicopter")
+                    {
+                        var graphicHelicopter = new Graphic(mp, symbolHelicopter);
+                        aircraftPointGraphics.Add(graphicHelicopter);
+                    }
+                    else
+                    {
+                        var graphicAircraft = new Graphic(mp, symbolAircraft);
+                        aircraftPointGraphics.Add(graphicAircraft);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception here
+                Trace.WriteLine($"Error: {ex.Message}");
             }
             //var p2 = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
             // Create a graphic with the geometry and PictureMarkerSymbol.
@@ -171,8 +199,7 @@ namespace StrategicFMSDemo
 
             _aircraftGraphicsOverlay.Graphics.Add(polylineGraphic);
 
-            _timer = new Timer(AnimateOverlay);
-            _timer.Change(0, 1000 / 15);
+
         }
         List<MapPoint> linePoints = new List<MapPoint>
         {
@@ -187,12 +214,12 @@ namespace StrategicFMSDemo
         {
             // Calculate new coordinates which have the effect of moving each object by the same amount each time.
             // The Y coordinate is shifted by a smaller amount to ensure the objects move generally across the map.
-            for(int i=0;i<aircraftPointGraphics.Count;i++)
+            for (int i = 0; i < aircraftPointGraphics.Count; i++)
             {
                 _flightData.aircrafts[i].Update();
-                Point3D aircraftPoint= _flightData.aircrafts[i].GetPoint3D();
+                Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
                 MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
-                
+
                 aircraftPointGraphics[i].Geometry = p;
             }
             // Create a new graphics overlay to contain a variety of graphics.
@@ -202,12 +229,6 @@ namespace StrategicFMSDemo
             var westwardBeachPolyline = new Polyline(linePoints);
             //PolylineGraphic.Geometry = westwardBeachPolyline;
             x += 0.001;
-
-
-            if(StartScenario)
-            {
-                StartScenario = StartScenario;
-            }
         }
 
         private GraphicsOverlay _aircraftGraphicsOverlay;
@@ -276,13 +297,13 @@ namespace StrategicFMSDemo
             //create a symbol to define how the circle is displayed.
 
             // Create polyline geometry from the points.
-            var circle = DrawCircle(new MapPoint(117.354909531352, 39.125833959383186, SpatialReferences.Wgs84),0.01,360);
+            var circle = DrawCircle(new MapPoint(117.354909531352, 39.125833959383186, SpatialReferences.Wgs84), 0.01, 360);
 
             // Create a fill symbol to display the polygon.
             var circleSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
 
 
-            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100,0, 255, 100), circleSymbolOutline); //color from argb
+            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 0, 255, 100), circleSymbolOutline); //color from argb
             // Create a polygon graphic with the geometry and fill symbol.
             var circleGraphic = new Graphic(circle, circleFillSymbol);
 
@@ -321,10 +342,10 @@ namespace StrategicFMSDemo
             //TODO: encapsulate the graphics represent the aircraft region on the map, the parameter shall at last include area and color
             // Create polygon geometry.
             var mahouRivieraPolygon = new Polygon(polygonPoints);
-    
+
             // Create a fill symbol to display the polygon.
             var polygonSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
-            
+
             //var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.Orange, polygonSymbolOutline);
             var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 255, 100, 100), polygonSymbolOutline); //color from argb
             // Create a polygon graphic with the geometry and fill symbol.
