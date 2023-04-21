@@ -23,22 +23,23 @@
             <TabItem x:Name="FlightTrackerTabItem" Header="Scenario" AutomationProperties.Name="Flight">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="56*"/>
-                        <ColumnDefinition Width="22*"/>
-                        <ColumnDefinition Width="16*"/>
-                        <ColumnDefinition Width="35*"/>
-                        <ColumnDefinition Width="398*"/>
+                        <ColumnDefinition Width="58*"/>
                         <ColumnDefinition Width="23*"/>
-                        <ColumnDefinition Width="842*"/>
+                        <ColumnDefinition Width="16*"/>
+                        <ColumnDefinition Width="36*"/>
+                        <ColumnDefinition Width="382*"/>
+                        <ColumnDefinition Width="28*"/>
+                        <ColumnDefinition Width="24*"/>
+                        <ColumnDefinition Width="867*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Button" HorizontalAlignment="Left" Margin="104,1,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.361,0.169" Click="Button_Click" Grid.Column="6"/>
+                    <Button Content="Button" HorizontalAlignment="Left" Margin="104,1,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.361,0.169" Click="Button_Click" Grid.Column="7"/>
                     <esri:MapView x:Name="MainMapView"
-                      Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="7" />
+                      Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="8" />
                     <TextBox x:Name="lat" HorizontalAlignment="Left" Margin="2,4,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="270" Grid.ColumnSpan="5"/>
                     <TextBox x:Name="Lon" HorizontalAlignment="Left" Margin="161,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176" Grid.Column="4"/>
-                    <TextBox x:Name="alt" HorizontalAlignment="Left" Margin="341,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158" Grid.Column="4" Grid.ColumnSpan="3"/>
-                    <Button x:Name="VisibilityButton" Content="Visibility" Grid.Column="6" Margin="536,792,198,10" Click="Start_Click" />
-                    <ToggleButton x:Name="ToggleButtonScenarioControl" Margin="712,792,10,10" Grid.Column="6" IsChecked="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}" >
+                    <TextBox x:Name="alt" HorizontalAlignment="Left" Margin="341,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158" Grid.Column="4" Grid.ColumnSpan="4"/>
+                    <Button x:Name="VisibilityButton" Content="Visibility" Grid.Column="7" Margin="536,792,198,10" Click="Start_Click" />
+                    <ToggleButton x:Name="ToggleButtonScenarioControl" Margin="712,792,10,10" Grid.Column="7" IsChecked="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}" >
                         <ToggleButton.Style>
                             <Style TargetType="{x:Type ToggleButton}">
                                 <Setter Property="Template">
@@ -97,7 +98,7 @@
                             </Style>
                         </ToggleButton.Style>
                     </ToggleButton>
-                     
+
                 </Grid>
             </TabItem>
             <TabItem x:Name="other" Header="Primary Display" >
@@ -121,7 +122,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Airspace Structure"/>
-            <TabItem x:Name="IntrudersTabItem" Header="Intruders" HorizontalAlignment="Right" Width="64" RenderTransformOrigin="2.628,0.195" Margin="0,-2,-3,0" >
+            <TabItem x:Name="IntrudersTabItem" Header="Intruders"  RenderTransformOrigin="2.628,0.195"  >
                 <Grid Background="#FFE5E5E5" VerticalAlignment="Top" Height="751" >
                     <RadioButton x:Name="radioButton" Content="RadioButton" HorizontalAlignment="Left" Margin="54,28,0,0" VerticalAlignment="Top" GroupName="Position"/>
                     <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="179,31,0,0" VerticalAlignment="Top" GroupName="Position"/>
@@ -214,6 +215,7 @@
                     </ToggleButton>
                 </Grid>
             </TabItem>
+            <TabItem Header="SimConnect"/>
         </TabControl>
     </Grid>
 </Window>  
