@@ -24,6 +24,8 @@ namespace StrategicFMS
         public string TzDatabaseTimezone { get; set; } // Timezone in the tz database format
 
         public List<Runway> Runways { get; set; }
+
+        public Point3D FixDecisionPoint { get; set; } //TODO: add arrival and departure precedure here
         public Airdrome(string type, double latitude, double longitude, double altitude)
         {
             Type = type ?? throw new ArgumentNullException(nameof(type));

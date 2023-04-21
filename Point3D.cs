@@ -31,11 +31,11 @@ namespace StrategicFMS
         public double Z { get => z; set => z = value; }
 
         /// <summary>
-        /// Function to move an aircraft a certain distance and bearing
+        /// Function to move a certain distance and bearing
         /// </summary>
         /// <param name="distance">Distance to move in km</param>
         /// <param name="bearing">Bearing to move in degrees</param>
-        public void MoveAircraft(double distance, double bearing)
+        public void MoveTo(double distance, double bearing)
         {
             const double radiusEarth = 6371.01; // in km
             double angularDistance = distance / radiusEarth;

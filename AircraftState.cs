@@ -68,7 +68,7 @@ namespace StrategicFMS
 
         public bool Move( double distance ,double bearing)
         {
-            Position.MoveAircraft(distance, bearing);
+            Position.MoveTo(distance, bearing);
             return true;
         }
 

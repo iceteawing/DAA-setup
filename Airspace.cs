@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace StrategicFMS
 {
-    public class Airspace
+    public class Airspace //TODO: need to define the structure of airspace and the class structure as well
     {
         // Define necessary information for airspace, such as range and altitude
 
@@ -24,10 +24,10 @@ namespace StrategicFMS
         }
         public enum LayerType
         {
-            VeryLow = 0,
-            Low = 1,
-            Medium = 2,
-            High = 3
+            VeryLow = 0,//0-120 m
+            Low = 1,//120-30 m
+            Medium = 2,//300-1000 m
+            High = 3//1000- m
         }
         // The above code defines an enum type called LayerType that represents different layers based on flight altitude.
         public enum AirspaceType

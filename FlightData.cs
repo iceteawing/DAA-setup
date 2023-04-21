@@ -192,11 +192,11 @@ namespace StrategicFMSDemo
 
     public class ScenarioData
     {
-        public bool Start { get; set; }
+        public bool Status { get; set; } // Playing or Stopped
         public int ScenarioID { get; set; } //001
-        public double Density { get; set; } //50.0
-
-        public double Throughput { get; set; } //unit is ?
+        public double Density { get; set; } //range from 0 to 100
+        public double Capacity { get; set; } //air vehicles within 1 km*km or one airline
+        public double Throughput { get; set; } // aircrafts landed per hour?
 
         public double HoldingTime { get; set; } //unit is second
         public IList<Airdrome> Airdromes { get; set; }

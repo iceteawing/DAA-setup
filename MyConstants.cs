@@ -10,7 +10,7 @@ namespace StrategicFMS
     {
         // Define height constants to differentiate the altitude levels for different types of aircrafts, unit is meter
         // for small UAV
-        public const int LOW_ALTITUDE = 100;
+        public const int LOW_ALTITUDE = 120;
         // for middle UAV
         public const int MEDIUM_ALTITUDE = 300;
         //for big UAV, helicopter and eVTOL

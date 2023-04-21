@@ -50,7 +50,7 @@ namespace StrategicFMS
         }
         public void SetWaypoints(List<Point3D> waypoints)
         {
-            //TODO:
+            //TODO: Set the way points
         }
         // Function to generate a list of points representing a flight trajectory with its start point and destination
         public bool GenerateTrajectory(Point3D startPoint, Point3D endPoint)
