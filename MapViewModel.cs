@@ -36,6 +36,7 @@ namespace StrategicFMSDemo
     class MapViewModel : INotifyPropertyChanged
     {
         FlightData _flightData;
+        private const int _frequency = 60; // determin the refresh hz required, it is better to match the visual system
         public MapViewModel()
         {
             _flightData = FlightData.GetInstance();
@@ -81,7 +82,7 @@ namespace StrategicFMSDemo
         public Graphic PolylineGraphic { get => polylineGraphic; set => polylineGraphic = value; }
         public Graphic AirPolylineRoute { get => airPolylineRouteGraphic; set => airPolylineRouteGraphic = value; }
         public List<Graphic> AircraftPointGraphics { get => aircraftPointGraphics; set => aircraftPointGraphics = value; }
-        public bool StartScenario
+        public bool StartScenario // it is binded to the start scenario button
         {
             get { return _startScenario; }
             set
@@ -90,7 +91,7 @@ namespace StrategicFMSDemo
                 if (_startScenario)
                 {
                     _timer = new Timer(AnimateOverlay);
-                    _timer.Change(0, 1000 / 15);
+                    _timer.Change(0, 1000 / _frequency);
                 }
                 else
                 {
@@ -105,11 +106,6 @@ namespace StrategicFMSDemo
         private Graphic airPolylineRouteGraphic;
 
         List<MapPoint>[] airRoutelinePoints;
-
-        List<MapPoint> aircraftPoints = new List<MapPoint>
-        {
-
-        };
 
         private void SetupMap()
         {

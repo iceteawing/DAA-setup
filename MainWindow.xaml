@@ -7,18 +7,13 @@
         xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" xmlns:StrategicFMSDemo="clr-namespace:StrategicFMSDemo" x:Class="StrategicFMSDemo.MainWindow"
         d:DataContext="{d:DesignInstance Type={x:Type local:MapViewModel}}"
         mc:Ignorable="d"
-        Title="StrategicFMSDemo" Height="900" Width="1440" >
+        Title="StrategicFMSDemo" Height="900" Width="1600" >
 
     <Window.Resources>
         <local:MapViewModel x:Key="MapViewModel" />
     </Window.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="50*"/>
-            <ColumnDefinition Width="159*"/>
-            <ColumnDefinition Width="591*"/>
-        </Grid.ColumnDefinitions>
         <TabControl Margin="0,0,0,0" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="True">
             <TabItem x:Name="FlightTrackerTabItem" Header="Scenario" AutomationProperties.Name="Flight">
                 <Grid Background="#FFE5E5E5">
