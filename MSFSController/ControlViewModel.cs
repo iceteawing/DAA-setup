@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace MSFSControlApp
@@ -313,8 +314,8 @@ namespace MSFSControlApp
 
             try
             {
-                //uint configIndex = uint.Parse(ConfigurationManager.AppSettings["HostIP"].ToString());
-                uint configIndex = 0;
+                uint configIndex = uint.Parse(ConfigurationManager.AppSettings["MSFSConfigIndex"].ToString());
+                //uint configIndex = 1;
                 connect = new MSFSControlConnect(lHwnd, WM_USER_SIMCONNECT, configIndex);
                 connect.init();
 
@@ -322,7 +323,8 @@ namespace MSFSControlApp
             }
             catch (COMException ex)
             {
-                Console.WriteLine("Connection to MSFS failed: " + ex.Message);
+                //Console.WriteLine("Connection to MSFS failed: " + ex.Message);
+                MessageBox.Show("Connection to MSFS failed: " + ex.Message);
             }
         }
 

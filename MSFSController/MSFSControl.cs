@@ -30,6 +30,7 @@ namespace MSFSConnect
             UserEventWin32 = _UserEventWin32;
             configIndex = _configIndex;
 
+            objectIDs = new ObservableCollection<uint>();
             objectIDs.Add(1);
 
             this.timer.Interval = 20;
@@ -45,7 +46,7 @@ namespace MSFSConnect
         {
             // create real visual system communication object
             simConnect = new SimConnect(szName, hWnd, UserEventWin32, null, configIndex);
-
+            
             /// Listen to connect and quit msgs
             simConnect.OnRecvOpen += new SimConnect.RecvOpenEventHandler(SimConnect_OnRecvOpen);
             simConnect.OnRecvQuit += new SimConnect.RecvQuitEventHandler(SimConnect_OnRecvQuit);
