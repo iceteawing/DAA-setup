@@ -1,0 +1,120 @@
+﻿<Window x:Class="MSFSControlApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MSFSControlApp"
+        mc:Ignorable="d"
+        Title="MSFS Control" Height="650" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="10"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="5"/>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="36"/>
+                <RowDefinition Height="25"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="0.5*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0">
+                    <Button Content="{Binding sConnectButtonLabel}" Command="{Binding cmdToggleConnect}" HorizontalAlignment="Left" Margin="19,11,0,0" VerticalAlignment="Top" Width="102" RenderTransformOrigin="-0.009,0.419" Height="26"/>
+                </Grid>
+                <Ellipse Grid.Column="1" Height="14" Stroke="Black" Width="14">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding bConnected}" Value="false">
+                                    <Setter Property="Fill" Value="#FFFF5030" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding bConnected}" Value="true">
+                                    <Setter Property="Fill" Value="#FF50FF30" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding bOddTick}" Value="true">
+                                    <!-- Assume bOddTick is true only when bConnected is true-->
+                                    <Setter Property="Fill" Value="#FF45E2F4" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+            </Grid>
+            <ComboBox ItemsSource="{Binding aIntruders}" SelectedValue="{Binding iIndexRequest, Mode=OneWayToSource}" SelectedIndex="0" HorizontalAlignment="Left" Margin="105,12,0,0" Grid.Row="2" VerticalAlignment="Top" Width="135" />
+            <Label Content="Intruder index" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" RenderTransformOrigin="0.443,0.147" Width="90"/>
+            <Label Content="Latitude" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="3" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbLatitude" Text="{Binding sSetLatitude, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="3" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="degrees" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="3" VerticalAlignment="Top"/>
+            <Label Content="Longitude" HorizontalAlignment="Left" Margin="0,4,0,0" Grid.Row="4" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbLongitude" Text="{Binding sSetLongitude, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="4" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="degrees" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="4" VerticalAlignment="Top"/>
+            <Label Content="Altitude" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbAltitude" Text="{Binding sSetAltitude, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="5" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="feet" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="5" VerticalAlignment="Top"/>
+            <Label Content="Pitch" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="6" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbPitch" Text="{Binding sSetPitch, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="6" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="radians" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="6" VerticalAlignment="Top"/>
+            <Label Content="Bank" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="7" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbBank" Text="{Binding sSetBank, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="7" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="radians" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="7" VerticalAlignment="Top"/>
+            <Label Content="Heading" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="8" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbHeading" Text="{Binding sSetHeading, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="8" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="radians" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="8" VerticalAlignment="Top"/>
+            <Button Content="Add" Command="{Binding cmdAddIntruder}" HorizontalAlignment="Left" Margin="165,7,0,0" Grid.Row="9" VerticalAlignment="Top" Width="75"/>
+            <Label Content="Object ID" HorizontalAlignment="Left" Margin="6,4,0,0" Grid.Row="10" VerticalAlignment="Top"/>
+            <ComboBox ItemsSource="{Binding lObjectIDs}" SelectedValue="{Binding iObjectIdRequest, Mode=OneWayToSource}" SelectedIndex="0" HorizontalAlignment="Left" Margin="71,4,0,0" Grid.Row="10" VerticalAlignment="Top" Width="169" Height="26"/>
+
+            <Label Content="Latitude" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="11" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbuLatitude" Text="{Binding uSetLatitude, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="degrees" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="11" VerticalAlignment="Top"/>
+            <Label Content="Longitude" HorizontalAlignment="Left" Margin="0,4,0,0" Grid.Row="12" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbuLongitude" Text="{Binding uSetLongitude, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="12" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="degrees" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="12" VerticalAlignment="Top"/>
+            <Label Content="Altitude" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="13" VerticalAlignment="Top"/>
+            <TextBox x:Name="tbuAltitude" Text="{Binding uSetAltitude, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="13" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+            <Label Content="feet" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="13" VerticalAlignment="Top"/>
+            <Label Content="Message" HorizontalAlignment="Left" Margin="10,33.667,0,0" Grid.Row="14" VerticalAlignment="Top" Grid.RowSpan="2"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,4.667,0,10" Grid.Row="16" TextWrapping="Wrap" Text="{Binding vMessage, Mode=OneWayToSource}" Foreground="Blue"  Width="230"/>
+            <Button Command="{Binding cmdUpdatePosition}" Content="Update Position" HorizontalAlignment="Left" Margin="142,6,0,0" Grid.Row="14" VerticalAlignment="Top" Width="98"/>
+        </Grid>
+        <Grid Grid.Column="3">
+            <ListView x:Name="lv_Positions" SelectionMode="Single" ItemsSource="{Binding lSimObjectRequests}" SelectedItem="{Binding oSelectedSimObjectRequest, Mode=OneWayToSource}" >
+                <ListView.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Remove Intruder" Command="{Binding cmdRemoveIntruderRequests}" />
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Object ID" Width="80" DisplayMemberBinding="{Binding sObjectId}"/>
+                        <GridViewColumn Header="Latitude (degrees)" Width="150" DisplayMemberBinding="{Binding sLatitude}"/>
+                        <GridViewColumn Header="Longitude (degrees)" Width="150" DisplayMemberBinding="{Binding sLongitude}"/>
+                        <GridViewColumn Header="Altitude (feet)" Width="150" DisplayMemberBinding="{Binding sAltitude}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </Grid>
+</Window>

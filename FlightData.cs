@@ -124,9 +124,9 @@ namespace StrategicFMSDemo
         }
         private void UpdateFlightData(object state)
         {
-            foreach (Aircraft a in aircrafts)
+            foreach (Aircraft aircraft in aircrafts)
             {
-                a.Update();
+                aircraft.Update();
             }
         }
         public struct UdpState

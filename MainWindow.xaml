@@ -210,7 +210,10 @@
                     </ToggleButton>
                 </Grid>
             </TabItem>
-            <TabItem Header="SimConnect"/>
+            <TabItem Header="SimConnect">
+                <Button Content="Button" Click="Button_Click_2"/>
+            </TabItem>
+            
         </TabControl>
     </Grid>
 </Window>  

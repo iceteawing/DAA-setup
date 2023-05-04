@@ -106,6 +106,12 @@ namespace StrategicFMSDemo
             }
             
         }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            MSFSControlApp.MainWindow window = new MSFSControlApp.MainWindow();
+            window.Show();
+        }
     }
 }
 
