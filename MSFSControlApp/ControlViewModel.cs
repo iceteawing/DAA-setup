@@ -38,7 +38,7 @@ namespace MSFSControlApp
     };
     public class ControlViewModel : BaseViewModel,IBaseSimConnectWrapper
     {
-        private MSFSControlConnect connet = null;
+        private MSFSControlConnect connect = null;
         /// Window handle
         private IntPtr lHwnd = new IntPtr(0);
         /// User-defined win32 event
@@ -194,8 +194,8 @@ namespace MSFSControlApp
         {
             uint objectId = oSelectedSimObjectRequest.sObjectId;
             lObjectIDs.Remove(objectId);
-            connet.dicData.Remove(objectId);
-            connet.DeleteIAPlane(objectId);
+            connect.dicData.Remove(objectId);
+            connect.DeleteAIPlane(objectId);
             lSimObjectRequests.Remove(oSelectedSimObjectRequest);
         }
 
@@ -208,7 +208,7 @@ namespace MSFSControlApp
                 pos.Longitude = double.Parse(uSetLongitude);
                 pos.Altitude = double.Parse(uSetAltitude);
 
-                bool status = connet.SetIAPlanePosition(m_iObjectIdRequest, pos);
+                bool status = connect.SetAIPlanePosition(m_iObjectIdRequest, pos);
                 if (status)
                 {
                     m_vMessage = "Setting successfully.";
@@ -238,7 +238,7 @@ namespace MSFSControlApp
                 initpos.Airspeed = 0;
                 initpos.OnGround = 0;
 
-                bool status = connet.CreateIAPlane("DA62 Asobo", "001", initpos, (MSFSControlConnect.TYPE_REQUESTS)iIndexRequest);
+                bool status = connect.CreateAIPlane("DA62 Asobo", "001", initpos, (MSFSControlConnect.TYPE_REQUESTS)iIndexRequest);
                 if (status)
                 {
                     m_vMessage="Creation successfully.";
@@ -270,9 +270,9 @@ namespace MSFSControlApp
         {
             Console.WriteLine("OnTick");
 
-            lObjectIDs = connet.objectIDs;
-            bOddTick = connet.bOddTick;
-            bConnected = connet.bConnected;
+            lObjectIDs = connect.objectIDs;
+            bOddTick = connect.bOddTick;
+            bConnected = connect.bConnected;
             if (bConnected)
             {
                 sConnectButtonLabel = "Disconnect";
@@ -281,7 +281,7 @@ namespace MSFSControlApp
             {
                 sConnectButtonLabel = "Connect";
             }
-            foreach (var item in connet.dicData)
+            foreach (var item in connect.dicData)
             {
                 foreach (var itemObject in lSimObjectRequests)
                 {
@@ -301,7 +301,7 @@ namespace MSFSControlApp
                     }
                 }   
             }
-            if (!connet.bStart)
+            if (!connect.bStart)
             {
                 m_oTimer.Stop();
             }
@@ -313,9 +313,10 @@ namespace MSFSControlApp
 
             try
             {
-                uint configIndex = uint.Parse(ConfigurationManager.AppSettings["HostIP"].ToString());
-                connet = new MSFSControlConnect(lHwnd, WM_USER_SIMCONNECT, configIndex);
-                connet.init();
+                //uint configIndex = uint.Parse(ConfigurationManager.AppSettings["HostIP"].ToString());
+                uint configIndex = 0;
+                connect = new MSFSControlConnect(lHwnd, WM_USER_SIMCONNECT, configIndex);
+                connect.init();
 
                 m_oTimer.Start();
             }
@@ -332,12 +333,12 @@ namespace MSFSControlApp
 
         public void ReceiveSimConnectMessage()
         {
-            connet?.ReceiveSimConnectMessage();
+            connect?.ReceiveSimConnectMessage();
         }
 
         public void Disconnect()
         {
-            connet?.Disconnect();
+            connect?.Disconnect();
         }
     }
 }

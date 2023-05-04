@@ -32,7 +32,7 @@ namespace MSFSConnect
 
             objectIDs.Add(1);
 
-            this.timer.Interval = 16.66; //
+            this.timer.Interval = 20;
             this.timer.Elapsed += new ElapsedEventHandler(this.OnTimer);
         }
         private void OnTimer(object sender, ElapsedEventArgs e)
@@ -118,14 +118,15 @@ namespace MSFSConnect
             }
             if ((TYPE_REQUESTS)data.dwRequestID == TYPE_REQUESTS.REQUEST_POSITION)
             {
-                if (!dicData.ContainsKey(iObject))
+                if (dicData.ContainsKey(iObject))
                 {
-                    dicData.Add(iObject, (SIMCONNECT_DATA_LATLONALT)data.dwData[0]);
+                    dicData.Remove(iObject);
                 }
+                dicData.Add(iObject, (SIMCONNECT_DATA_LATLONALT)data.dwData[0]);
             }
         }
 
-        public bool CreateIAPlane(string containerTitle,string tailNumber, SIMCONNECT_DATA_INITPOSITION InitPos, Enum RequestID)
+        public bool CreateAIPlane(string containerTitle,string tailNumber, SIMCONNECT_DATA_INITPOSITION InitPos, Enum RequestID)
         {
             try
             {
@@ -138,7 +139,7 @@ namespace MSFSConnect
             }
         }
 
-        public bool SetIAPlanePosition(uint i, SIMCONNECT_DATA_LATLONALT pos)
+        public bool SetAIPlanePosition(uint i, SIMCONNECT_DATA_LATLONALT pos)
         {
             try
             {
@@ -151,7 +152,7 @@ namespace MSFSConnect
             }
         }
 
-        public bool DeleteIAPlane(uint i)
+        public bool DeleteAIPlane(uint i)
         {
             try
             {

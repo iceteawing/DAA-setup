@@ -22,7 +22,6 @@ namespace MSFSControlApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MSFSControlConnect connet = null;
         private IntPtr lHwnd = new IntPtr(0);
         public MainWindow()
         {
