@@ -45,15 +45,11 @@ namespace StrategicFMSDemo
             this.DataContext = this;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            MapPoint mapCenterPoint = new MapPoint(-118.805, 34.027, SpatialReferences.Wgs84);
-            MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 100000));
+            MapPoint mapCenterPoint = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
+            MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 20000));
 
             //MainMapView.LocationDisplay.IsEnabled = true;
             //MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
-
-
-            Intruder_TCAS intruder = new Intruder_TCAS();
-            intruder.IsADSReportingchecked = true;
         }
 
         public bool IsChecked1 { get; set; }
