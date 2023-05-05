@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
+using StrategicFMSDemo;
+using Esri.ArcGISRuntime.Geometry;
+using StrategicFMS;
+using Windows.ApplicationModel.Contacts;
+using System.Diagnostics;
 
 namespace MSFSConnect
 {
@@ -41,6 +46,34 @@ namespace MSFSConnect
             bOddTick = !bOddTick;
             simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
             simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
+
+            //Get the aircraft position and set the corresponding AI plane position
+            FlightData _flightData = FlightData.GetInstance();
+            for (int i = 0; i < _flightData.aircrafts.Count; i++)
+            {
+                Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
+                try
+                {
+                    SIMCONNECT_DATA_LATLONALT pos;
+                    pos.Latitude = aircraftPoint.latitude;
+                    pos.Longitude = aircraftPoint.longitude;
+                    pos.Altitude = aircraftPoint.altitude;
+                    uint m_iObjectIdRequest = (uint)i;//TODO: I do not know how to get the object id
+                    bool status = SetAIPlanePosition(m_iObjectIdRequest, pos);
+                    if (status)
+                    {
+                        Trace.WriteLine( "Setting successfully.");
+                    }
+                    else
+                    {
+                        Trace.WriteLine("Setting failed.");
+                    }
+                }
+                catch
+                {
+                    Trace.WriteLine("Setting failed, it may be that the content is incorrect.");
+                }
+            }
         }
         public bool init()
         {

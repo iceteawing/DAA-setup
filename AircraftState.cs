@@ -10,10 +10,10 @@ namespace StrategicFMS
     {
         public AircraftState()
         {
-            Latitude = -118.8066;
-            Longitude = 34.0006;
+            Latitude = 34.0006;
+            Longitude =  - 118.8066;
             Altitude = 1000.0;
-            Position = new(Latitude, Longitude,Altitude);
+            Position = new(Longitude, Latitude, Altitude);
         }
 
         public string AircraftID { get; set; } //780254

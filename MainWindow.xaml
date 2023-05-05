@@ -34,7 +34,7 @@
                     <TextBox x:Name="Lon" HorizontalAlignment="Left" Margin="161,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176" Grid.Column="4"/>
                     <TextBox x:Name="alt" HorizontalAlignment="Left" Margin="341,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158" Grid.Column="4" Grid.ColumnSpan="4"/>
                     <Button x:Name="VisibilityButton" Content="Visibility" Grid.Column="7" Margin="536,792,198,10" Click="Start_Click" />
-                    <ToggleButton x:Name="ToggleButtonScenarioControl" Margin="712,792,10,10" Grid.Column="7" IsChecked="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}" >
+                    <ToggleButton x:Name="ToggleButtonScenarioControl" Margin="712,792,10,10" Grid.Column="7" IsChecked="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}">
                         <ToggleButton.Style>
                             <Style TargetType="{x:Type ToggleButton}">
                                 <Setter Property="Template">
@@ -93,6 +93,7 @@
                             </Style>
                         </ToggleButton.Style>
                     </ToggleButton>
+                    <TextBlock Grid.Column="4" HorizontalAlignment="Left" Margin="238,806,0,0" TextWrapping="Wrap" Text="00:00:00" VerticalAlignment="Top"/>
 
                 </Grid>
             </TabItem>

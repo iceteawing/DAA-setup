@@ -64,8 +64,7 @@ namespace StrategicFMSDemo
         {
             MapPoint mapCenterPoint = new MapPoint(-118.805, 34.027, SpatialReferences.Wgs84);
             MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 10000));
-            FlightData flightData = FlightData.GetInstance();
-            flightData.StartScenario();
+   
             //MapPoint mapCenterPoint = new MapPoint(FlightData1.ownshipPoint.x, FlightData1.ownshipPoint.y, SpatialReferences.Wgs84);
             //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, FlightData1.ownshipPoint.z));
         }

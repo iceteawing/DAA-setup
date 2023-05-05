@@ -62,9 +62,7 @@ namespace StrategicFMSDemo
 
 
             
-            // create a timer to update the flight data
-            _timer = new Timer(UpdateFlightData); 
-            _timer.Change(0, 1000 / 15); //the update freq is 15 hz
+
 
             //https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.udpclient.receive?view=net-6.0
             ////Creates a UdpClient for reading incoming data.
@@ -98,26 +96,36 @@ namespace StrategicFMSDemo
             
         }
 
-        public void StartScenario()
+        public void StartScenario( bool state)
         {
-            if (instance != null)
+            if (state)
             {
-                UdpClient udpClient = new UdpClient();
-
-                Byte[] sendBytes = Encoding.ASCII.GetBytes("Is anybody there");
-                try
+                // create a timer to update the flight data
+                _timer = new Timer(UpdateFlightData);
+                _timer.Change(0, 20); //the update freq is 15 hz
+                if (instance != null)
                 {
-                    udpClient.Send(sendBytes, sendBytes.Length, "www.contoso.com", 11000);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.ToString());
-                }
+                    UdpClient udpClient = new UdpClient();
 
-                //set up a thread to keep receive data over udp
-                ReceiveMessages();
+                    Byte[] sendBytes = Encoding.ASCII.GetBytes("Is anybody there");
+                    try
+                    {
+                        udpClient.Send(sendBytes, sendBytes.Length, "www.contoso.com", 11000);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
+
+                    //set up a thread to keep receive data over udp
+                    ReceiveMessages();
+                }
             }
-            MessageBox.Show("Start Scenario!");
+            else
+            {
+                _timer.Dispose();
+            }
+
         }
         public static FlightData GetInstance() {
         return instance;
@@ -126,7 +134,8 @@ namespace StrategicFMSDemo
         {
             foreach (Aircraft aircraft in aircrafts)
             {
-                aircraft.Update();
+                //aircraft.Update();
+                aircraft.Update(20, aircraft.Intent.GetCurrentTargetPoint());
             }
         }
         public struct UdpState

@@ -37,6 +37,7 @@ namespace StrategicFMSDemo
     {
         FlightData _flightData;
         private const int _frequency = 60; // determin the refresh hz required, it is better to match the visual system
+        private const int _period = 20; // ms
         public MapViewModel()
         {
             _flightData = FlightData.GetInstance();
@@ -91,11 +92,15 @@ namespace StrategicFMSDemo
                 if (_startScenario)
                 {
                     _timer = new Timer(AnimateOverlay);
-                    _timer.Change(0, 1000 / _frequency);
+                    _timer.Change(0, _period);
+                    FlightData flightData = FlightData.GetInstance();
+                    flightData.StartScenario(true);
                 }
                 else
                 {
                     _timer.Dispose();
+                    FlightData flightData = FlightData.GetInstance();
+                    flightData.StartScenario(false);
                 }
                 OnPropertyChanged();
             }
@@ -155,7 +160,7 @@ namespace StrategicFMSDemo
                 var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
                 foreach (Aircraft a in _flightData.aircrafts)
                 {
-                    var mp = new MapPoint(a.State.Latitude, a.State.Longitude, SpatialReferences.Wgs84);
+                    var mp = new MapPoint(a.State.Longitude, a.State.Latitude, SpatialReferences.Wgs84);
                     if (a.Type == "Helicopter")
                     {
                         var graphicHelicopter = new Graphic(mp, symbolHelicopter);
@@ -185,18 +190,21 @@ namespace StrategicFMSDemo
 
             // Create new Timer and set the timeout interval to approximately 15 image frames per second.
             // Create polyline geometry from the points.
-            var westwardBeachPolyline = new Polyline(linePoints);
+            _westwardBeachPolyline = new Polyline(linePoints);
 
             // Create a symbol for displaying the line.
             var polylineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 3.0);
 
             // Create a polyline graphic with geometry and symbol.
-            PolylineGraphic = new Graphic(westwardBeachPolyline, polylineSymbol);
+            PolylineGraphic = new Graphic(_westwardBeachPolyline, polylineSymbol);
 
             _aircraftGraphicsOverlay.Graphics.Add(polylineGraphic);
 
 
         }
+
+        private Polyline _westwardBeachPolyline;
+
         List<MapPoint> linePoints = new List<MapPoint>
         {
 
@@ -209,22 +217,23 @@ namespace StrategicFMSDemo
         private void AnimateOverlay(object state)
         {
             // Calculate new coordinates which have the effect of moving each object by the same amount each time.
-            // The Y coordinate is shifted by a smaller amount to ensure the objects move generally across the map.
+            //update the aircrafts' position on the map
             for (int i = 0; i < aircraftPointGraphics.Count; i++)
             {
-                _flightData.aircrafts[i].Update();
+
                 Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
                 MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
 
                 aircraftPointGraphics[i].Geometry = p;
             }
-            // Create a new graphics overlay to contain a variety of graphics.
 
-            MapPoint mapPoint = new MapPoint(x, y, SpatialReferences.Wgs84);
-            linePoints.Add(mapPoint);
-            var westwardBeachPolyline = new Polyline(linePoints);
-            //PolylineGraphic.Geometry = westwardBeachPolyline;
-            x += 0.001;
+            //TODO: update the flight path on the map ,Need to find a way to update the polylinegraphic dynamicly
+            //MapPoint mapPoint = new MapPoint(x, y, SpatialReferences.Wgs84);
+            //linePoints.Add(mapPoint);
+            //Polyline BeachPolyline = new Polyline(linePoints);//may trigger System.InvalidOperationException:“Collection was modified; enumeration operation may not execute.”
+            //
+            //PolylineGraphic.Geometry = BeachPolyline;
+            //x += 0.001;
         }
 
         private GraphicsOverlay _aircraftGraphicsOverlay;
