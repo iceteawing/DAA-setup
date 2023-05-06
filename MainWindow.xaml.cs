@@ -56,13 +56,15 @@ namespace StrategicFMSDemo
         public bool IsChecked2 { get; set; }
         public bool IsChecked3 { get; set; }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)//this is for the test button
         {
-            MapPoint mapCenterPoint = new MapPoint(-118.805, 34.027, SpatialReferences.Wgs84);
-            MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 10000));
-   
-            //MapPoint mapCenterPoint = new MapPoint(FlightData1.ownshipPoint.x, FlightData1.ownshipPoint.y, SpatialReferences.Wgs84);
-            //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, FlightData1.ownshipPoint.z));
+
+
+            FlightData _flightData = FlightData.GetInstance();
+            MapPoint mapCenterPoint = new MapPoint(_flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, SpatialReferences.Wgs84);
+            MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
+            
+            MessageBox.Show(string.Format("{0},{1},{2}", _flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, _flightData.Ownship.State.Altitude));
         }
 
         private void MainMapView_GeoViewDoubleTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)

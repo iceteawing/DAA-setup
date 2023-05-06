@@ -212,8 +212,6 @@ namespace StrategicFMSDemo
 
         private Graphic polylineGraphic;
 
-        double x = -118.8215;
-        double y = 34.0140;
         private void AnimateOverlay(object state)
         {
             // Calculate new coordinates which have the effect of moving each object by the same amount each time.

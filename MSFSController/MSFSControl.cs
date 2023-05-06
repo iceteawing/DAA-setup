@@ -12,6 +12,7 @@ using Esri.ArcGISRuntime.Geometry;
 using StrategicFMS;
 using Windows.ApplicationModel.Contacts;
 using System.Diagnostics;
+using System.Windows.Markup;
 
 namespace MSFSConnect
 {
@@ -47,7 +48,12 @@ namespace MSFSConnect
             simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
             simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
 
-            //Get the aircraft position and set the corresponding AI plane position
+            GetAIAircraftInformation();
+        }
+
+        private void GetAIAircraftInformation()//Get the aircraft position and set the corresponding AI plane position
+        {
+            
             FlightData _flightData = FlightData.GetInstance();
             for (int i = 0; i < _flightData.aircrafts.Count; i++)
             {
@@ -55,14 +61,14 @@ namespace MSFSConnect
                 try
                 {
                     SIMCONNECT_DATA_LATLONALT pos;
-                    pos.Latitude = aircraftPoint.latitude;
-                    pos.Longitude = aircraftPoint.longitude;
-                    pos.Altitude = aircraftPoint.altitude;
+                    pos.Latitude = aircraftPoint.Y;
+                    pos.Longitude = aircraftPoint.X;
+                    pos.Altitude = aircraftPoint.Z;
                     uint m_iObjectIdRequest = (uint)i;//TODO: I do not know how to get the object id
                     bool status = SetAIPlanePosition(m_iObjectIdRequest, pos);
                     if (status)
                     {
-                        Trace.WriteLine( "Setting successfully.");
+                        Trace.WriteLine("Setting successfully.");
                     }
                     else
                     {
@@ -75,6 +81,7 @@ namespace MSFSConnect
                 }
             }
         }
+
         public bool init()
         {
             // create real visual system communication object
@@ -157,6 +164,18 @@ namespace MSFSConnect
                     dicData.Remove(iObject);
                 }
                 dicData.Add(iObject, (SIMCONNECT_DATA_LATLONALT)data.dwData[0]);
+                SetOwnshipInformation(data, iObject);
+            }
+        }
+
+        private static void SetOwnshipInformation(SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data, uint iObject)//Get the ownship information from MSFS
+        {
+            
+            if (iObject == 0)
+            {
+                FlightData _flightData = FlightData.GetInstance();
+                SIMCONNECT_DATA_LATLONALT pos = (SIMCONNECT_DATA_LATLONALT)data.dwData[0];
+                _flightData.Ownship.SetAircraftPosition(pos.Longitude, pos.Latitude, pos.Altitude);
             }
         }
 
@@ -169,8 +188,10 @@ namespace MSFSConnect
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error in CreateAIPlane: " + ex.Message);
                 return false;
             }
+
         }
 
         public bool SetAIPlanePosition(uint i, SIMCONNECT_DATA_LATLONALT pos)
@@ -182,8 +203,10 @@ namespace MSFSConnect
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error in SetAIPlanePosition: " + ex.Message);
                 return false;
             }
+
         }
 
         public bool DeleteAIPlane(uint i)
@@ -195,8 +218,10 @@ namespace MSFSConnect
             }
             catch (Exception ex)
             {
+                Console.WriteLine("Error in DeleteAIPlane: " + ex.Message);
                 return false;
             }
+
         }
 
         public void ReceiveSimConnectMessage()

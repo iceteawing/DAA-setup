@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS
 {
-    internal class StickInceptor
+    internal class StickInceptor //reserved for future 
     {
         private int x;//vertical control
         private int y;//honrizontal   control

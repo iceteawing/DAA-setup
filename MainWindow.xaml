@@ -27,7 +27,7 @@
                         <ColumnDefinition Width="24*"/>
                         <ColumnDefinition Width="867*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Button" HorizontalAlignment="Left" Margin="104,1,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.361,0.169" Click="Button_Click" Grid.Column="7"/>
+                    <Button x:Name="TestButton" Content="Test" HorizontalAlignment="Left" Margin="104,1,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.361,0.169" Click="Button_Click" Grid.Column="7"/>
                     <esri:MapView x:Name="MainMapView"
                       Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="8" />
                     <TextBox x:Name="lat" HorizontalAlignment="Left" Margin="2,4,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="270" Grid.ColumnSpan="5"/>

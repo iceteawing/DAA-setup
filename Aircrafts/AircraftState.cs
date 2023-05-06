@@ -65,12 +65,5 @@ namespace StrategicFMS
             DateTime = DateTime.Now;
             return true;
         }
-
-        public bool Move( double distance ,double bearing)
-        {
-            Position.MoveTo(distance, bearing);
-            return true;
-        }
-
     }
 }

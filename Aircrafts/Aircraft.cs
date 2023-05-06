@@ -18,7 +18,7 @@ namespace StrategicFMS
         }
 
         // The enum is added above the private string _type; line.
-        private string _type;
+        private string _type; //A320, B737, Cessna208,Volocity etc
         private Point3D _position;
         private AircraftCategory _aircraftCategory;
         private TrajectoryIntentData _intent;
@@ -26,7 +26,7 @@ namespace StrategicFMS
         private double _verticalPerformance;
         private double _alongPathPerformance;
         private double _separationRiskTolerance;
-        private AircraftState state;
+        private AircraftState _state;
         // Add the following variables and methods to the Aircraft class:
 
         private double _cruiseSpeed;
@@ -79,7 +79,7 @@ namespace StrategicFMS
         }
 
         public string Type { get => _type; set => _type = value; }
-        public AircraftState State { get => state; set => state = value; }
+        public AircraftState State { get => _state; set => _state = value; }
         public TrajectoryIntentData Intent { get => _intent; set => _intent = value; }
         public double LateralPerformance { get => _lateralPerformance; set => _lateralPerformance = value; }
         public double VerticalPerformance { get => _verticalPerformance; set => _verticalPerformance = value; }
@@ -100,10 +100,12 @@ namespace StrategicFMS
             this.GroundSpeed = 150.0;//km/h
             this.Bearing = 30;//degree, the north is 0
             this.VerticalSpeed = 100;//m/s
-            double distance=this.GroundSpeed * period/3600.0/1000.0;
+
             //TODO: move the aircraft one step by invoke the move function here, which update the aircraft state and intent
+            double distance = this.GroundSpeed * period / 3600.0 / 1000.0;
             Move(distance, Bearing);
-            MoveVertically(VerticalSpeed*period/1000);
+            double verticalDistance = VerticalSpeed * period / 1000;
+            MoveVertically(verticalDistance);
             //TODO: update the state and intent accordingly
             //bool resultOfState = State.Update(Intent.GetCurrentTargetPoint());
             //bool resultOfIntent = Intent.Update();
@@ -164,10 +166,9 @@ namespace StrategicFMS
         }
 
 
-        public void Move(double distance, double bearing, double vertical) //3D movement
+        public void Move(double distance, double bearing, double verticalDistance) //3D movement
         {
-            State.Move(distance, bearing);
-            State.Altitude += vertical;
+
         }
 
         public void MoveVertically(double verticalDistance) //vertical climb
@@ -192,7 +193,25 @@ namespace StrategicFMS
             else
                 return 0;
         }
-    
+        /// <summary>
+        /// Sets the position of the aircraft to the specified longitude, latitude, and altitude.
+        /// </summary>
+        /// <param name="lon">The longitude of the new position. (in degrees)</param>
+        /// <param name="lat">The latitude of the new position. (in degrees)</param>
+        /// <param name="altitude">The altitude of the new position. (in meters)</param>
+        /// <returns>True if the position was set successfully, false otherwise.</returns>
+        public bool SetAircraftPosition(double lon, double lat, double altitude)
+        {
+            if (lon < -180 || lon > 180 || lat < -90 || lat > 90 || altitude < 0)
+            {
+                return false;
+            }
+            State.Longitude = lon;
+            State.Latitude = lat;
+            State.Altitude = altitude;
+            return true;
+        }
+
     }
 }
 

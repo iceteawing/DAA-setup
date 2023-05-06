@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace StrategicFMS
 {
-    public class Airspace //TODO: need to define the structure of airspace and the class structure as well
+    public class AirspaceStructure //TODO: need to define the structure of airspace and the class structure as well
     {
         // Define necessary information for airspace, such as range and altitude
 
@@ -19,7 +19,7 @@ namespace StrategicFMS
         public double centerLatitude { get; set; } //The latitude of the center point of the airspace entity
         public double centerLontitude { get; set; }//The lontitude of the center point of the airspace entity
 
-        public Airspace()
+        public AirspaceStructure()
         {
         }
         public enum LayerType
@@ -95,10 +95,10 @@ namespace StrategicFMS
         public void ReadFromXml(string filePath)
         {
             //TODO: read from XML file and populate the Airspace object
-            XmlSerializer serializer = new XmlSerializer(typeof(Airspace));
+            XmlSerializer serializer = new XmlSerializer(typeof(AirspaceStructure));
             using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
             {
-                Airspace airspace = (Airspace)serializer.Deserialize(fileStream);
+                AirspaceStructure airspace = (AirspaceStructure)serializer.Deserialize(fileStream);
                 this.Range = airspace.Range;
                 this.MaxAltitude = airspace.MaxAltitude;
                 this.MinAltitude = airspace.MinAltitude;
@@ -116,7 +116,7 @@ namespace StrategicFMS
         public void WriteToXml(string filePath)
         {
             //TODO: write the Airspace object to an XML file
-            XmlSerializer serializer = new XmlSerializer(typeof(Airspace));
+            XmlSerializer serializer = new XmlSerializer(typeof(AirspaceStructure));
             using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
             {
                 serializer.Serialize(fileStream, this);
@@ -132,7 +132,7 @@ namespace StrategicFMS
         {
             //TODO: read from JSON file and populate the Airspace object
             string json = File.ReadAllText(filePath);
-            Airspace airspace = JsonConvert.DeserializeObject<Airspace>(json);
+            AirspaceStructure airspace = JsonConvert.DeserializeObject<AirspaceStructure>(json);
             this.Range = airspace.Range;
             this.MaxAltitude = airspace.MaxAltitude;
             this.MinAltitude = airspace.MinAltitude;

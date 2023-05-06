@@ -1,4 +1,5 @@
 ﻿using MSFSConnect;
+using StrategicFMSDemo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,6 @@ namespace MSFSControlApp
         {
             InitializeComponent();
             this.DataContext = new ControlViewModel();
-
         }
         protected HwndSource GetHWinSource()
         {

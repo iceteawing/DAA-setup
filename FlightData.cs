@@ -23,8 +23,7 @@ namespace StrategicFMSDemo
     {
         private static readonly FlightData instance = new FlightData();
         private ScenarioData scenarioData =new ScenarioData(0);
-        private Airspace airspace=new Airspace();
-        private Point ownshipPoint;
+        private AirspaceStructure airspace =new AirspaceStructure();
         private Aircraft firstAircraft =new ("VoloCity"); //AI agent
         private Aircraft secondAircraft = new ("Helicopter");//AI agent
         private Aircraft thirdAircraft = new ("Airplane");//AI agent
@@ -36,12 +35,11 @@ namespace StrategicFMSDemo
         {
 
         };
-        public Point OwnshipPoint { get => ownshipPoint; set => ownshipPoint = value; }
 
         private FlightData()
         {
             //TODO: Initialize the ownship 
-            OwnshipPoint = new Point();
+
             //Initialize the AI aircrafts
             Point3D startPoint = new Point3D(-119.805, 34.027, 1000.0);
             Point3D endPoint = new Point3D(-119.805, 39.027, 1000.0); 
@@ -58,12 +56,6 @@ namespace StrategicFMSDemo
             thirdAircraft.Intent.CurrentPointIndex = 1;
             thirdAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
             aircrafts.Add(thirdAircraft);
-
-
-
-            
-
-
             //https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.udpclient.receive?view=net-6.0
             ////Creates a UdpClient for reading incoming data.
             //UdpClient receivingUdpClient = new UdpClient(11000);
@@ -146,6 +138,8 @@ namespace StrategicFMSDemo
 
         public static bool messageReceived = false;
 
+        internal Ownship Ownship { get => ownship; set => ownship = value; }
+
         public static void ReceiveCallback(IAsyncResult ar)
         {
             UdpClient u = ((UdpState)(ar.AsyncState)).u;
@@ -177,14 +171,14 @@ namespace StrategicFMSDemo
 
             //}
             string jsonin = @"{
-  'Email': 'james@example.com',
-  'Active': true,
-  'CreatedDate': '2013-01-20T00:00:00Z',
-  'Roles': [
-    'User',
-    'Admin'
-  ]
-}";
+              'Email': 'james@example.com',
+              'Active': true,
+              'CreatedDate': '2013-01-20T00:00:00Z',
+              'Roles': [
+                'User',
+                'Admin'
+              ]
+            }";
             Account account = JsonConvert.DeserializeObject<Account>(jsonin);
             string jsonout = JsonConvert.SerializeObject(account, Formatting.Indented);
             Debug.WriteLine(jsonout);
