@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace StrategicFMS
 {
@@ -17,7 +18,7 @@ namespace StrategicFMS
             Others
         }
 
-        // The enum is added above the private string _type; line.
+        // The enum is added above
         private string _type; //A320, B737, Cessna208,Volocity etc
         private Point3D _position;
         private AircraftCategory _aircraftCategory;
@@ -204,6 +205,7 @@ namespace StrategicFMS
         {
             if (lon < -180 || lon > 180 || lat < -90 || lat > 90 || altitude < 0)
             {
+                Trace.WriteLine("Invalid aircraft position: longitude must be between -180 and 180, latitude must be between -90 and 90, altitude must be non-negative.");
                 return false;
             }
             State.Longitude = lon;

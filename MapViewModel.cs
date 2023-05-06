@@ -36,7 +36,7 @@ namespace StrategicFMSDemo
     class MapViewModel : INotifyPropertyChanged
     {
         FlightData _flightData;
-        private const int _frequency = 60; // determin the refresh hz required, it is better to match the visual system
+        private const int _frequency = 50; // determin the refresh hz required, it is better to match the visual system
         private const int _period = 20; // ms
         public MapViewModel()
         {
@@ -47,8 +47,6 @@ namespace StrategicFMSDemo
             SetupMap();
 
             CreateGraphics();
-
-            //MessageBox.Show(string.Format("{0},{1},{2} from MapViewModel", flightData.OwnshipPoint.x, flightData.OwnshipPoint.y, flightData.OwnshipPoint.z));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -114,12 +112,10 @@ namespace StrategicFMSDemo
 
         private void SetupMap()
         {
-
             // Create a new map with a 'topographic vector' basemap.
             Map = new Map(BasemapStyle.ArcGISTopographic);
-
         }
-        // Timer for animating images.
+        // Timer for animating.
         private Timer _timer;
         private void AddGraphics()
         {
@@ -199,8 +195,6 @@ namespace StrategicFMSDemo
             PolylineGraphic = new Graphic(_westwardBeachPolyline, polylineSymbol);
 
             _aircraftGraphicsOverlay.Graphics.Add(polylineGraphic);
-
-
         }
 
         private Polyline _westwardBeachPolyline;
@@ -295,7 +289,6 @@ namespace StrategicFMSDemo
 
             // Add the point graphic to graphics overlay.
             malibuGraphicsOverlay.Graphics.Add(pointGraphic);
-
 
             //create a symbol to define how the circle is displayed.
 

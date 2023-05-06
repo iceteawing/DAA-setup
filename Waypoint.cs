@@ -10,13 +10,13 @@ namespace StrategicFMS
     {
         public Waypoint() { }
         private int _idx;
-        private double Longtitude;
-        private double Latitude;
-        private double Altitude;
-        private int HeightType;
-        private int Type;
-        private double airspeed;
-        private int crossType;//flyby or flyover
+        private double _longtitude;
+        private double _latitude;
+        private double _altitude;
+        private int _heightType;
+        private int _type;
+        private double _airspeed;
+        private int _crossType;//flyby or flyover
 
     }
 }
