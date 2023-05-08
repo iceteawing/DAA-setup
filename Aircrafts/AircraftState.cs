@@ -13,7 +13,18 @@ namespace StrategicFMS
             Latitude = 34.0006;
             Longitude =  - 118.8066;
             Altitude = 1000.0;
-            Position = new(Longitude, Latitude, Altitude);
+ 
+        }
+
+        public AircraftState(string aircraftID, string callSign, string aircraftType, double latitude, double longitude, double altitude, double speed)
+        {
+            AircraftID = aircraftID;
+            CallSign = callSign;
+            AircraftType = aircraftType;
+            Latitude = latitude;
+            Longitude = longitude;
+            Altitude = altitude;
+            Speed = speed;
         }
 
         public string AircraftID { get; set; } //780254
@@ -31,9 +42,7 @@ namespace StrategicFMS
         public double Distance { get; set; }//12.8 nmi
         public DateTime DateTime { get; set; }//'2013-01-20T00:00:00Z'
         public string Region { get; set; } //China
-        public Point3D Position { get => position; set => position = value; }
 
-        private Point3D position;
         public bool update()
         {
             Latitude = Latitude;

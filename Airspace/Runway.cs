@@ -16,7 +16,7 @@ namespace StrategicFMS
         private double _elevation; // the elevation of the runway in meters above sea level
         private string _surfaceType; // the type of surface of the runway (e.g. asphalt, concrete, grass)
         private double _heading; // the heading of the runway in degrees
-
+        //TODO:Location shall be added here
         public string Name { get => _name; set => _name = value; }
         public double Length { get => _length; set => _length = value; }
         public double Width { get => _width; set => _width = value; }

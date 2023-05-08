@@ -45,4 +45,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="data\performance\" />
+    <Folder Include="Scenarios\" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace StrategicFMS
 {
@@ -20,14 +21,16 @@ namespace StrategicFMS
 
         // The enum is added above
         private string _type; //A320, B737, Cessna208,Volocity etc
-        private Point3D _position;
+
         private AircraftCategory _aircraftCategory;
-        private TrajectoryIntentData _intent;
+       
         private double _lateralPerformance;
         private double _verticalPerformance;
         private double _alongPathPerformance;
         private double _separationRiskTolerance;
         private AircraftState _state;
+        private TrajectoryIntentData _intent;
+        private Traffic.Route _route;
         // Add the following variables and methods to the Aircraft class:
 
         private double _cruiseSpeed;
@@ -79,6 +82,13 @@ namespace StrategicFMS
             Intent = new TrajectoryIntentData();
         }
 
+        public Aircraft(string aircraftID, string callSign, string aircraftType, double latitude, double longitude, double altitude, double speed) 
+        {
+            Type = aircraftType;
+            State = new AircraftState(aircraftID, callSign, aircraftType, latitude, longitude, altitude, speed);
+            Intent = new TrajectoryIntentData();//TODO: more reasonable constructor
+        }
+
         public string Type { get => _type; set => _type = value; }
         public AircraftState State { get => _state; set => _state = value; }
         public TrajectoryIntentData Intent { get => _intent; set => _intent = value; }
@@ -87,7 +97,7 @@ namespace StrategicFMS
         public double AlongPathPerformance { get => _alongPathPerformance; set => _alongPathPerformance = value; }
         public double SeparationRiskTolerance { get => _separationRiskTolerance; set => _separationRiskTolerance = value; }
         public AircraftCategory AircraftCategory1 { get => _aircraftCategory; set => _aircraftCategory = value; }
-        public Point3D Position { get => _position; set => _position = value; }
+      
         public double Bearing { get => _bearing; set => _bearing = value; }
         /// <summary>
         /// update the state of the aircraft according to the period

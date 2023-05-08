@@ -148,11 +148,11 @@ namespace StrategicFMSDemo
             //Initializes a new instance of the Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol class from an image URI.
             try
             {
-                var imagePath = "images/7.png"; // relative path to the image file
+                var imagePath = "data/images/7.png"; // relative path to the image file
                 var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
                 symbolAircraft.Angle = 180;//this variable shall be updated period
                 symbolAircraft.Opacity = 0.5;
-                imagePath = "images/5.png";
+                imagePath = "data/images/5.png";
                 var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
                 foreach (Aircraft a in _flightData.aircrafts)
                 {
