@@ -113,6 +113,11 @@ namespace StrategicFMS.Aircrafts
             {
                 Actived = false;
                 Trace.WriteLine("Reach the destination");
+
+                //
+                MyEventArgs args= new MyEventArgs();
+                args.done = true;
+                PutOutinformation(this, args);
                 return;
             }
 
@@ -126,7 +131,7 @@ namespace StrategicFMS.Aircrafts
             var desiredTrueAirSpeed = 150;
             //Vertical following
             var desiredAltitude = activeWaypoint.Altitude;
-            
+
             double desiredVerticalSpeed = 0;
             if (Swvnavvs)
             {
@@ -140,20 +145,20 @@ namespace StrategicFMS.Aircrafts
                 }
             }
             else if (true)//else if (Dist2vs > 0)
-                {
+            {
                 double maxVerticalSpeed = 20;//TODO: shall match the aircraft performance
                 double altitudeDifference = state.Altitude - activeWaypoint.Altitude;
-                if (altitudeDifference <1&& altitudeDifference >-1)
+                if (altitudeDifference < 1 && altitudeDifference > -1)
                 {
                     desiredVerticalSpeed = 0;
                 }
-                if (altitudeDifference<0)
+                if (altitudeDifference < 0)
                 {
                     desiredVerticalSpeed = maxVerticalSpeed;
                 }
                 else
                 {
-                    if(DistanceToActiveWaypoint>desiredGroundSpeed *1000/ 3600.0  * (altitudeDifference) / maxVerticalSpeed)//TODO:can not reach the ground exactly
+                    if (DistanceToActiveWaypoint > desiredGroundSpeed * 1000 / 3600.0 * (altitudeDifference) / maxVerticalSpeed)//TODO:can not reach the ground exactly
                     {
                         desiredVerticalSpeed = 0;
                     }
@@ -181,6 +186,13 @@ namespace StrategicFMS.Aircrafts
             DesiredAltitude = desiredAltitude;
             DesiredVerticalSpeed = desiredVerticalSpeed;
 
+        }
+        public delegate void Autopilot_CallBack(object sender, MyEventArgs e);
+        public event Autopilot_CallBack PutOutinformation;
+        
+        public class MyEventArgs : System.EventArgs
+        {
+            public bool done;
         }
     }
 }

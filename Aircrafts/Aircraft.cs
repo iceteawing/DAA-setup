@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Windows;
 
 namespace StrategicFMS
 {
@@ -85,6 +86,12 @@ namespace StrategicFMS
             Intent = new TrajectoryIntentData();
             Route = new Route();
             AutoPilot = new AutoPilot(Route);
+            AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
+        }
+
+        private void ProcessInformation(object sender, AutoPilot.MyEventArgs e)
+        {
+            MessageBox.Show("Reach the destination");
         }
 
         public Aircraft(string aircraftID, string callSign, string aircraftType, double latitude, double longitude, double altitude, double speed) 
@@ -240,7 +247,6 @@ namespace StrategicFMS
             State.Altitude = altitude;
             return true;
         }
-
     }
 }
 
