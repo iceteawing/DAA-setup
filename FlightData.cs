@@ -24,8 +24,8 @@ namespace StrategicFMSDemo
         private static readonly FlightData instance = new FlightData();
         private ScenarioData scenarioData =new ScenarioData(0);
         private AirspaceStructure airspace =new AirspaceStructure();
-        private Aircraft firstAircraft =new ("VoloCity"); //AI agent
-        private Aircraft secondAircraft = new ("Helicopter");//AI agent
+        private Aircraft firstAircraft =new ("Helicopter"); //AI agent
+        private Aircraft secondAircraft = new ("VoloCity");//AI agent
         private Aircraft thirdAircraft = new ("Airplane");//AI agent
         private Aircraft fourthAircraft = new ("Helicopter");//AI agent
         private Ownship ownship = new("Cessna208");
@@ -126,8 +126,7 @@ namespace StrategicFMSDemo
         {
             foreach (Aircraft aircraft in aircrafts)
             {
-                //aircraft.Update();
-                aircraft.Update(20, aircraft.Intent.GetCurrentTargetPoint());
+                aircraft.Update(20, aircraft.Intent.GetCurrentTargetPoint());// TODO: The period is fixed here
             }
         }
         public struct UdpState

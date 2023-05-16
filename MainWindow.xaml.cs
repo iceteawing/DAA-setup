@@ -30,6 +30,8 @@ using System.Windows.Shapes;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.UI.Controls;
+using StrategicFMS;
+using StrategicFMS.Traffic;
 
 namespace StrategicFMSDemo
 {
@@ -61,10 +63,25 @@ namespace StrategicFMSDemo
 
 
             FlightData _flightData = FlightData.GetInstance();
-            MapPoint mapCenterPoint = new MapPoint(_flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, SpatialReferences.Wgs84);
-            MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
+            //MapPoint mapCenterPoint = new MapPoint(_flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, SpatialReferences.Wgs84);
+            //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
             
-            MessageBox.Show(string.Format("{0},{1},{2}", _flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, _flightData.Ownship.State.Altitude));
+            //MessageBox.Show(string.Format("{0},{1},{2}", _flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, _flightData.Ownship.State.Altitude));
+
+            Airdrome originAirdrom = new Airdrome("big", 34, 118, 100);
+            Airdrome desAirdrom = new Airdrome("big", 35, 119, 100);
+            _flightData.aircrafts[0].Route = new StrategicFMS.Traffic.Route(originAirdrom,desAirdrom);
+            Waypoint wp0 = new Waypoint(0,"wp0",-118.8066,34.0006,600);
+            Waypoint wp1 = new Waypoint(1,"wp1", -118.8066, 34.003, 600);
+            Waypoint wp2 = new Waypoint(2, "wp2", -118.8134, 34.0028, 1200);
+            Waypoint wp3 = new Waypoint(3, "wp3", -118.8134, 33.97, 0);
+            _flightData.aircrafts[0].Route.AddWaypoint(wp0);
+            _flightData.aircrafts[0].Route.AddWaypoint(wp1);
+            _flightData.aircrafts[0].Route.AddWaypoint(wp2);
+            _flightData.aircrafts[0].Route.AddWaypoint(wp3);
+            _flightData.aircrafts[0].AutoPilot.Route = _flightData.aircrafts[0].Route;
+            _flightData.aircrafts[0].AutoPilot.Actived = true;
+            _flightData.aircrafts[0].Route.SerializeToJson("route.json");
         }
 
         private void MainMapView_GeoViewDoubleTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)

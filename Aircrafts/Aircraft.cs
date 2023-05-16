@@ -1,4 +1,6 @@
-﻿using System;
+﻿using StrategicFMS.Aircrafts;
+using StrategicFMS.Traffic;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
@@ -31,6 +33,7 @@ namespace StrategicFMS
         private AircraftState _state;
         private TrajectoryIntentData _intent;
         private Traffic.Route _route;
+        private AutoPilot _autoPilot;
         // Add the following variables and methods to the Aircraft class:
 
         private double _cruiseSpeed;
@@ -80,6 +83,8 @@ namespace StrategicFMS
             Type = type;
             State = new AircraftState();
             Intent = new TrajectoryIntentData();
+            Route = new Route();
+            AutoPilot = new AutoPilot(Route);
         }
 
         public Aircraft(string aircraftID, string callSign, string aircraftType, double latitude, double longitude, double altitude, double speed) 
@@ -99,6 +104,9 @@ namespace StrategicFMS
         public AircraftCategory AircraftCategory1 { get => _aircraftCategory; set => _aircraftCategory = value; }
       
         public double Bearing { get => _bearing; set => _bearing = value; }
+        internal Route Route { get => _route; set => _route = value; }
+        public AutoPilot AutoPilot { get => _autoPilot; set => _autoPilot = value; }
+
         /// <summary>
         /// update the state of the aircraft according to the period
         /// </summary>
@@ -106,14 +114,23 @@ namespace StrategicFMS
         public bool Update( double period, Point3D targetPoint)
         {
             //TODO: add the AFAS logic here to impact the aircraft's behavior
-            
-            //TODO: the groundspeed, bearing, verticalspeed shall be calculated according to the autopilot
-            this.GroundSpeed = 150.0;//km/h
-            this.Bearing = 30;//degree, the north is 0
-            this.VerticalSpeed = 100;//m/s
-
+            if (AutoPilot!= null & AutoPilot.Actived) //TODO: add the autopilot logic here 
+            {
+                AutoPilot.VerifyActiveWaypointReached(State);
+                AutoPilot.FlyToNextWaypoint(State);
+                this.GroundSpeed = AutoPilot.DesiredGroundSpeed;//km/h
+                this.Bearing = AutoPilot.DesiredTrack;//degree, the north is 0
+                this.VerticalSpeed = AutoPilot.DesiredVerticalSpeed;//m/s
+            }
+            else
+            {
+                //TODO: the groundspeed, bearing, verticalspeed shall be calculated according to the autopilot
+                this.GroundSpeed = 150.0;//km/h
+                this.Bearing = 30;//degree, the north is 0
+                this.VerticalSpeed = 100;//m/s
+            }
             //TODO: move the aircraft one step by invoke the move function here, which update the aircraft state and intent
-            double distance = this.GroundSpeed * period / 3600.0 / 1000.0;
+            double distance = this.GroundSpeed * period / 3600.0 / 1000.0;//convert to km
             Move(distance, Bearing);
             double verticalDistance = VerticalSpeed * period / 1000;
             MoveVertically(verticalDistance);
