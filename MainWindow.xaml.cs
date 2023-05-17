@@ -1,4 +1,4 @@
-﻿//   Copyright 2021 Esri
+﻿//   Copyright 2023 albatross-ai
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
@@ -60,8 +60,6 @@ namespace StrategicFMSDemo
 
         private void Button_Click(object sender, RoutedEventArgs e)//this is for the test button
         {
-
-
             FlightData _flightData = FlightData.GetInstance();
             //MapPoint mapCenterPoint = new MapPoint(_flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, SpatialReferences.Wgs84);
             //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
@@ -82,10 +80,7 @@ namespace StrategicFMSDemo
             _flightData.aircrafts[0].AutoPilot.Route = _flightData.aircrafts[0].Route;
             _flightData.aircrafts[0].AutoPilot.Actived = true;
             _flightData.aircrafts[0].Route.SerializeToJson("route.json");
-
-            string duration = DurationTextBlock.Text;
         }
-
         private void MainMapView_GeoViewDoubleTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)
         {
             MapPoint mp=(MapPoint)e.Location;
@@ -120,7 +115,6 @@ namespace StrategicFMSDemo
             {
                 MainMapView.Visibility = Visibility.Hidden;
             }
-            
         }
 
         private void SimconnectButton_Click(object sender, RoutedEventArgs e)

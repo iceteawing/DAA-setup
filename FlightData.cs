@@ -38,33 +38,33 @@ namespace StrategicFMSDemo
 
         private FlightData()
         {
-            //Initialization(_scenarioData);
-            //https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.udpclient.receive?view=net-6.0
-            ////Creates a UdpClient for reading incoming data.
-            //UdpClient receivingUdpClient = new UdpClient(11000);
+        //Initialization(_scenarioData);
+        //https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.udpclient.receive?view=net-6.0
+        //    //Creates a UdpClient for reading incoming data.
+        //    UdpClient receivingUdpClient = new UdpClient(11000);
 
-            ////Creates an IPEndPoint to record the IP Address and port number of the sender.
-            //// The IPEndPoint will allow you to read datagrams sent from any source.
-            //IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            //try
-            //{
+        //    //Creates an IPEndPoint to record the IP Address and port number of the sender.
+        //    // The IPEndPoint will allow you to read datagrams sent from any source.
+        //    IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+        //    try
+        //    {
 
-            //    // Blocks until a message returns on this socket from a remote host.
-            //    Byte[] receiveBytes = receivingUdpClient.Receive(ref RemoteIpEndPoint);
+        //        // Blocks until a message returns on this socket from a remote host.
+        //        Byte[] receiveBytes = receivingUdpClient.Receive(ref RemoteIpEndPoint);
 
-            //    string returnData = Encoding.ASCII.GetString(receiveBytes);
+        //        string returnData = Encoding.ASCII.GetString(receiveBytes);
 
-            //    Console.WriteLine("This is the message you received " +
-            //                              returnData.ToString());
-            //    Console.WriteLine("This message was sent from " +
-            //                                RemoteIpEndPoint.Address.ToString() +
-            //                                " on their port number " +
-            //                                RemoteIpEndPoint.Port.ToString());
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.ToString());
-            //}
+        //        Console.WriteLine("This is the message you received " +
+        //                                  returnData.ToString());
+        //        Console.WriteLine("This message was sent from " +
+        //                                    RemoteIpEndPoint.Address.ToString() +
+        //                                    " on their port number " +
+        //                                    RemoteIpEndPoint.Port.ToString());
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e.ToString());
+        //    }
         }
         static  FlightData() //used for singleton
         {
@@ -108,20 +108,7 @@ namespace StrategicFMSDemo
 
                 if (instance != null)
                 {
-                    UdpClient udpClient = new UdpClient();
-
-                    Byte[] sendBytes = Encoding.ASCII.GetBytes("Is anybody there");
-                    try
-                    {
-                        udpClient.Send(sendBytes, sendBytes.Length, "www.contoso.com", 11000);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.ToString());
-                    }
-
-                    //set up a thread to keep receive data over udp
-                    ReceiveMessages();
+                    //StartUdpCommunication(); //reserved
                 }
             }
             else
@@ -132,7 +119,23 @@ namespace StrategicFMSDemo
                 }
                 ScenarioData = null;
             }
+        }
+        public void StartUdpCommunication()
+        {
+            UdpClient udpClient = new UdpClient();
 
+            Byte[] sendBytes = Encoding.ASCII.GetBytes("Is anybody there");
+            try
+            {
+                udpClient.Send(sendBytes, sendBytes.Length, "www.contoso.com", 11000);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+
+            //set up a thread to keep receive data over udp
+            ReceiveMessages();
         }
         public static FlightData GetInstance() {
         return instance;
@@ -164,7 +167,7 @@ namespace StrategicFMSDemo
             byte[] receiveBytes = u.EndReceive(ar, ref e);
             string receiveString = Encoding.ASCII.GetString(receiveBytes);
 
-            Console.WriteLine($"Received: {receiveString}");
+            Trace.WriteLine($"Received: {receiveString}");
             messageReceived = true;
         }
         public static void ReceiveMessages()
