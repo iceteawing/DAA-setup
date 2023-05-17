@@ -8,5 +8,29 @@ namespace StrategicFMS.AFAS
 {
     internal class AutoFlightAssistSystem
     {
+        public AutoFlightAssistSystem() { }
+        
+        public void SequenceOperations()
+        {
+
+        }
+
+        public void SchedulingSessionInitialization()
+        {
+
+        }
+        public bool ConfirmLock()
+        {
+            return false;
+        }
+        public bool ConfirmUnlock()
+        {
+            return false;
+        }
+        public bool SchedulingSessionTimeout()
+        { 
+            return false; 
+        }
+
     }
 }

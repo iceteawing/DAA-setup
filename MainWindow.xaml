@@ -93,7 +93,7 @@
                             </Style>
                         </ToggleButton.Style>
                     </ToggleButton>
-                    <TextBlock Grid.Column="4" HorizontalAlignment="Left" Margin="238,806,0,0" TextWrapping="Wrap" Text="00:00:00" VerticalAlignment="Top"/>
+                    <TextBlock x:Name="DurationTextBlock" Grid.Column="4" HorizontalAlignment="Left" Margin="238,806,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding ScenarioDuration, Mode=TwoWay, Source={StaticResource MapViewModel}}"/>
 
                 </Grid>
             </TabItem>
@@ -212,7 +212,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="SimConnect">
-                <Button Content="Button" Click="Button_Click_2"/>
+                <Button x:Name="SimconnectBution" Content="SimconnectBution" Click="SimconnectButton_Click" Height="291" Margin="474,0,405,0"/>
             </TabItem>
             
         </TabControl>

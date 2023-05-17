@@ -11,24 +11,17 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
 using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
-using System.Windows;
-using System.Threading;
-using System.Diagnostics.Metrics;
-using System.Drawing;
 using StrategicFMS;
-using System.Windows.Media.Animation;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace StrategicFMSDemo
 {
@@ -77,10 +70,11 @@ namespace StrategicFMSDemo
             }
         }
 
-        private bool _startScenario = false;
+ 
         public Graphic PolylineGraphic { get => polylineGraphic; set => polylineGraphic = value; }
         public Graphic AirPolylineRoute { get => airPolylineRouteGraphic; set => airPolylineRouteGraphic = value; }
-        public List<Graphic> AircraftPointGraphics { get => aircraftPointGraphics; set => aircraftPointGraphics = value; }
+        public List<Graphic> AircraftPointGraphics { get => _aircraftPointGraphics; set => _aircraftPointGraphics = value; }
+        private bool _startScenario = false;
         public bool StartScenario // it is binded to the start scenario button
         {
             get { return _startScenario; }
@@ -89,14 +83,18 @@ namespace StrategicFMSDemo
                 _startScenario = value;
                 if (_startScenario)
                 {
-                    _timer = new Timer(AnimateOverlay);
-                    _timer.Change(0, _period);
                     FlightData flightData = FlightData.GetInstance();
                     flightData.StartScenario(true);
+                    CreateGraphicsForScenario();
+                    _timer = new Timer(AnimateOverlay);
+                    _timer.Change(0, _period);
+                    ScenarioDuration = 0;
                 }
                 else
                 {
                     _timer.Dispose();
+                    _aircraftGraphicsOverlay.Graphics.Clear();
+                    _aircraftPointGraphics.Clear();
                     FlightData flightData = FlightData.GetInstance();
                     flightData.StartScenario(false);
                 }
@@ -104,7 +102,22 @@ namespace StrategicFMSDemo
             }
         }
 
-        private List<Graphic> aircraftPointGraphics = new List<Graphic> { };
+        public double ScenarioDuration 
+        { 
+            get 
+            {
+                return _scenarioDuration; 
+            } 
+            set 
+            {
+                _scenarioDuration = value;
+                OnPropertyChanged();
+            } 
+        }
+
+        private double _scenarioDuration = 0;
+
+        private List<Graphic> _aircraftPointGraphics = new List<Graphic> { };
 
         private Graphic airPolylineRouteGraphic;
 
@@ -114,10 +127,103 @@ namespace StrategicFMSDemo
         {
             // Create a new map with a 'topographic vector' basemap.
             Map = new Map(BasemapStyle.ArcGISTopographic);
+            //Map = new Map(BasemapStyle.ArcGISTerrainDetail);
+            
         }
         // Timer for animating.
         private Timer _timer;
-        private void AddGraphics()
+        private void CreateGraphicsForScenario()
+        {
+            AddAircraftPointGraphics();
+        }
+        private void AddAirspaceGraphics()
+        {
+            // Create a point geometry.
+            var dumeBeachPoint = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
+
+            // Create a symbol to define how the point is displayed.
+            var pointSymbol = new SimpleMarkerSymbol
+            {
+                Style = SimpleMarkerSymbolStyle.Circle,
+                Color = System.Drawing.Color.Orange,
+                Size = 10.0
+            };
+
+            // Add an outline to the symbol.
+            pointSymbol.Outline = new SimpleLineSymbol
+            {
+                Style = SimpleLineSymbolStyle.Solid,
+                Color = System.Drawing.Color.Blue,
+                Width = 2.0
+            };
+
+            // Create a point graphic with the geometry and symbol.
+            var pointGraphic = new Graphic(dumeBeachPoint, pointSymbol);
+
+            // Add the point graphic to graphics overlay.
+            _airspaceGraphicsOverlay.Graphics.Add(pointGraphic);
+
+            //create a symbol to define how the circle is displayed.
+
+            // Create polyline geometry from the points.
+            var circle = DrawCircle(new MapPoint(117.354909531352, 39.125833959383186, SpatialReferences.Wgs84), 0.01, 360);
+
+            // Create a fill symbol to display the polygon.
+            var circleSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
+
+
+            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 0, 255, 100), circleSymbolOutline); //color from argb
+            // Create a polygon graphic with the geometry and fill symbol.
+            var circleGraphic = new Graphic(circle, circleFillSymbol);
+
+            // Add the polygon graphic to the graphics overlay.
+            _airspaceGraphicsOverlay.Graphics.Add(circleGraphic);
+
+            // Create a list of points that define a polyline.
+            List<MapPoint> linePoints = new List<MapPoint>
+            {
+                new MapPoint(-118.8215, 34.0140, SpatialReferences.Wgs84),
+                new MapPoint(-118.8149, 34.0081, SpatialReferences.Wgs84),
+                new MapPoint(-118.8089, 34.0017, SpatialReferences.Wgs84)
+            };
+
+            // Create polyline geometry from the points.
+            var westwardBeachPolyline = new Polyline(linePoints);
+
+            // Create a symbol for displaying the line.
+            var polylineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 3.0);
+
+            // Create a polyline graphic with geometry and symbol.
+            var polylineGraphic = new Graphic(westwardBeachPolyline, polylineSymbol);
+
+            // Add polyline to graphics overlay.
+            _airspaceGraphicsOverlay.Graphics.Add(polylineGraphic);
+
+            // Create a list of points that define a polygon boundary.
+            List<MapPoint> polygonPoints = new List<MapPoint>
+            {
+                new MapPoint(-118.8190, 34.0138, SpatialReferences.Wgs84),
+                new MapPoint(-118.8068, 34.0216, SpatialReferences.Wgs84),
+                new MapPoint(-118.7914, 34.0164, SpatialReferences.Wgs84),
+                new MapPoint(-118.7960, 34.0086, SpatialReferences.Wgs84),
+                new MapPoint(-118.8086, 34.0035, SpatialReferences.Wgs84)
+            };
+            //TODO: encapsulate the graphics represent the aircraft region on the map, the parameter shall at last include area and color
+            // Create polygon geometry.
+            var mahouRivieraPolygon = new Polygon(polygonPoints);
+
+            // Create a fill symbol to display the polygon.
+            var polygonSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
+
+            //var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.Orange, polygonSymbolOutline);
+            var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 255, 100, 100), polygonSymbolOutline); //color from argb
+            // Create a polygon graphic with the geometry and fill symbol.
+            var polygonGraphic = new Graphic(mahouRivieraPolygon, polygonFillSymbol);
+
+            // Add the polygon graphic to the graphics overlay.
+            _airspaceGraphicsOverlay.Graphics.Add(polygonGraphic);
+        }
+        private void AddAircraftPointGraphics()
         {
             // Create a point geometry.
             var dumeBeachPoint = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
@@ -160,12 +266,12 @@ namespace StrategicFMSDemo
                     if (a.Type == "Helicopter")
                     {
                         var graphicHelicopter = new Graphic(mp, symbolHelicopter);
-                        aircraftPointGraphics.Add(graphicHelicopter);
+                        _aircraftPointGraphics.Add(graphicHelicopter);
                     }
                     else
                     {
                         var graphicAircraft = new Graphic(mp, symbolAircraft);
-                        aircraftPointGraphics.Add(graphicAircraft);
+                        _aircraftPointGraphics.Add(graphicAircraft);
                     }
                 }
             }
@@ -178,7 +284,7 @@ namespace StrategicFMSDemo
             // Create a graphic with the geometry and PictureMarkerSymbol.
 
             //add graphis into graphic overlay which represent the position of aircrafts
-            foreach (Graphic g in aircraftPointGraphics)
+            foreach (Graphic g in _aircraftPointGraphics)
             {
                 // Add the graphic to graphics overlay.
                 _aircraftGraphicsOverlay.Graphics.Add(g);
@@ -208,15 +314,16 @@ namespace StrategicFMSDemo
 
         private void AnimateOverlay(object state)
         {
+            ScenarioDuration += _period;
             // Calculate new coordinates which have the effect of moving each object by the same amount each time.
             //update the aircrafts' position on the map
-            for (int i = 0; i < aircraftPointGraphics.Count; i++)
+            for (int i = 0; i < _aircraftPointGraphics.Count; i++)
             {
 
                 Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
                 MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
 
-                aircraftPointGraphics[i].Geometry = p;
+                _aircraftPointGraphics[i].Geometry = p;
             }
 
             //TODO: update the flight path on the map ,Need to find a way to update the polylinegraphic dynamicly
@@ -227,7 +334,7 @@ namespace StrategicFMSDemo
             //PolylineGraphic.Geometry = BeachPolyline;
             //x += 0.001;
         }
-
+        private GraphicsOverlay _airspaceGraphicsOverlay;
         private GraphicsOverlay _aircraftGraphicsOverlay;
         private GraphicsOverlay _airRouteGraphicsOverlay;
 
@@ -251,108 +358,20 @@ namespace StrategicFMSDemo
         private void CreateGraphics()
         {
             // Create a new graphics overlay to contain a variety of graphics.
-            var malibuGraphicsOverlay = new GraphicsOverlay();
+            _airspaceGraphicsOverlay = new GraphicsOverlay();
             _aircraftGraphicsOverlay = new GraphicsOverlay();
             _airRouteGraphicsOverlay = new GraphicsOverlay();
             // Add the overlay to a graphics overlay collection.
             GraphicsOverlayCollection overlays = new GraphicsOverlayCollection
             {
-                malibuGraphicsOverlay,
+                _airspaceGraphicsOverlay,
                 _aircraftGraphicsOverlay,
                 _airRouteGraphicsOverlay
             };
-
             // Set the view model's "GraphicsOverlays" property (will be consumed by the map view).
             this.GraphicsOverlays = overlays;
-
-            // Create a point geometry.
-            var dumeBeachPoint = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
-
-            // Create a symbol to define how the point is displayed.
-            var pointSymbol = new SimpleMarkerSymbol
-            {
-                Style = SimpleMarkerSymbolStyle.Circle,
-                Color = System.Drawing.Color.Orange,
-                Size = 10.0
-            };
-
-            // Add an outline to the symbol.
-            pointSymbol.Outline = new SimpleLineSymbol
-            {
-                Style = SimpleLineSymbolStyle.Solid,
-                Color = System.Drawing.Color.Blue,
-                Width = 2.0
-            };
-
-            // Create a point graphic with the geometry and symbol.
-            var pointGraphic = new Graphic(dumeBeachPoint, pointSymbol);
-
-            // Add the point graphic to graphics overlay.
-            malibuGraphicsOverlay.Graphics.Add(pointGraphic);
-
-            //create a symbol to define how the circle is displayed.
-
-            // Create polyline geometry from the points.
-            var circle = DrawCircle(new MapPoint(117.354909531352, 39.125833959383186, SpatialReferences.Wgs84), 0.01, 360);
-
-            // Create a fill symbol to display the polygon.
-            var circleSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
-
-
-            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 0, 255, 100), circleSymbolOutline); //color from argb
-            // Create a polygon graphic with the geometry and fill symbol.
-            var circleGraphic = new Graphic(circle, circleFillSymbol);
-
-            // Add the polygon graphic to the graphics overlay.
-            malibuGraphicsOverlay.Graphics.Add(circleGraphic);
-
-            // Create a list of points that define a polyline.
-            List<MapPoint> linePoints = new List<MapPoint>
-            {
-                new MapPoint(-118.8215, 34.0140, SpatialReferences.Wgs84),
-                new MapPoint(-118.8149, 34.0081, SpatialReferences.Wgs84),
-                new MapPoint(-118.8089, 34.0017, SpatialReferences.Wgs84)
-            };
-
-            // Create polyline geometry from the points.
-            var westwardBeachPolyline = new Polyline(linePoints);
-
-            // Create a symbol for displaying the line.
-            var polylineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 3.0);
-
-            // Create a polyline graphic with geometry and symbol.
-            var polylineGraphic = new Graphic(westwardBeachPolyline, polylineSymbol);
-
-            // Add polyline to graphics overlay.
-            malibuGraphicsOverlay.Graphics.Add(polylineGraphic);
-
-            // Create a list of points that define a polygon boundary.
-            List<MapPoint> polygonPoints = new List<MapPoint>
-            {
-                new MapPoint(-118.8190, 34.0138, SpatialReferences.Wgs84),
-                new MapPoint(-118.8068, 34.0216, SpatialReferences.Wgs84),
-                new MapPoint(-118.7914, 34.0164, SpatialReferences.Wgs84),
-                new MapPoint(-118.7960, 34.0086, SpatialReferences.Wgs84),
-                new MapPoint(-118.8086, 34.0035, SpatialReferences.Wgs84)
-            };
-            //TODO: encapsulate the graphics represent the aircraft region on the map, the parameter shall at last include area and color
-            // Create polygon geometry.
-            var mahouRivieraPolygon = new Polygon(polygonPoints);
-
-            // Create a fill symbol to display the polygon.
-            var polygonSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
-
-            //var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.Orange, polygonSymbolOutline);
-            var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 255, 100, 100), polygonSymbolOutline); //color from argb
-            // Create a polygon graphic with the geometry and fill symbol.
-            var polygonGraphic = new Graphic(mahouRivieraPolygon, polygonFillSymbol);
-
-            // Add the polygon graphic to the graphics overlay.
-            malibuGraphicsOverlay.Graphics.Add(polygonGraphic);
-
-            AddGraphics();
+            AddAirspaceGraphics();
         }
     }
-
 }
 

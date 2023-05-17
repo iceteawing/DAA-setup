@@ -199,13 +199,6 @@ namespace StrategicFMS
             State.Longitude += delta_lon;
             State.Latitude += delta_lat;
         }
-
-
-        public void Move(double distance, double bearing, double verticalDistance) //3D movement
-        {
-
-        }
-
         public void MoveVertically(double verticalDistance) //vertical climb
         {
             State.Altitude += verticalDistance;

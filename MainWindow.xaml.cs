@@ -82,6 +82,8 @@ namespace StrategicFMSDemo
             _flightData.aircrafts[0].AutoPilot.Route = _flightData.aircrafts[0].Route;
             _flightData.aircrafts[0].AutoPilot.Actived = true;
             _flightData.aircrafts[0].Route.SerializeToJson("route.json");
+
+            string duration = DurationTextBlock.Text;
         }
 
         private void MainMapView_GeoViewDoubleTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)
@@ -121,7 +123,7 @@ namespace StrategicFMSDemo
             
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void SimconnectButton_Click(object sender, RoutedEventArgs e)
         {
             MSFSControlApp.MainWindow window = new MSFSControlApp.MainWindow();
             window.Show();

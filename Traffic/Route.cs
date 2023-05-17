@@ -37,9 +37,8 @@ namespace StrategicFMS.Traffic
         }
         public void SerializeToJson(string filePath)
         {
-    string json = Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
-    System.IO.File.WriteAllText(filePath, json);
-
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+            System.IO.File.WriteAllText(filePath, json);
         }
 
         public static Route DeserializeFromJson(string filePath)
