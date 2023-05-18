@@ -65,7 +65,6 @@ namespace StrategicFMSDemo
             //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
             
             //MessageBox.Show(string.Format("{0},{1},{2}", _flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, _flightData.Ownship.State.Altitude));
-
             Airdrome originAirdrom = new Airdrome("big", 34, 118, 100);
             Airdrome desAirdrom = new Airdrome("big", 35, 119, 100);
             _flightData.aircrafts[0].Route = new StrategicFMS.Traffic.Route(originAirdrom,desAirdrom);
@@ -116,7 +115,6 @@ namespace StrategicFMSDemo
                 MainMapView.Visibility = Visibility.Hidden;
             }
         }
-
         private void SimconnectButton_Click(object sender, RoutedEventArgs e)
         {
             MSFSControlApp.MainWindow window = new MSFSControlApp.MainWindow();

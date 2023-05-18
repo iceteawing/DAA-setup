@@ -24,11 +24,12 @@ namespace StrategicFMSDemo
         private static readonly FlightData instance = new FlightData();
         private ScenarioData _scenarioData;
         private AirspaceStructure airspace =new AirspaceStructure();
-        private Aircraft firstAircraft =new ("Helicopter"); //AI agent
-        private Aircraft secondAircraft = new ("VoloCity");//AI agent
-        private Aircraft thirdAircraft = new ("Airplane");//AI agent
-        private Aircraft fourthAircraft = new ("Helicopter");//AI agent
-        private Ownship ownship = new("Cessna208");
+        private Ownship ownship = new("001", "Cessna208");
+        private Aircraft firstAircraft =new ("002","Helicopter"); //AI agent
+        private Aircraft secondAircraft = new ("003", "VoloCity");//AI agent
+        private Aircraft thirdAircraft = new ("004", "Airplane");//AI agent
+        private Aircraft fourthAircraft = new ("005", "Helicopter");//AI agent
+        
         // Timer for update flight data.
         private Timer _timer;
         public List<Aircraft> aircrafts = new List<Aircraft>
@@ -73,10 +74,14 @@ namespace StrategicFMSDemo
         public bool Initialization(ScenarioData _scenarioData)
         {
             //TODO: Initialize the ownship 
-
-            //Initialize the AI aircrafts
             Point3D startPoint = new Point3D(-119.805, 34.027, 1000.0);
-            Point3D endPoint = new Point3D(-119.805, 39.027, 1000.0); 
+            Point3D endPoint = new Point3D(-119.805, 39.027, 1000.0);
+            ownship.Intent.GenerateTrajectory(startPoint, endPoint);
+            ownship.Intent.CurrentPointIndex = 1;
+            aircrafts.Add(ownship);
+            //Initialize the AI aircrafts
+            startPoint = new Point3D(-119.805, 34.027, 1000.0);
+            endPoint = new Point3D(-119.805, 39.027, 1000.0); 
             firstAircraft.Intent.GenerateTrajectory(startPoint,endPoint);
             firstAircraft.Intent.CurrentPointIndex = 1;
             aircrafts.Add(firstAircraft);
@@ -145,7 +150,7 @@ namespace StrategicFMSDemo
             ScenarioData.ScenarioDuration += 0.02;
             foreach (Aircraft aircraft in aircrafts)
             {
-                aircraft.Update(20, aircraft.Intent.GetCurrentTargetPoint());// TODO: The period is fixed here
+                aircraft.Update(20);// TODO: The period is fixed here
             }
         }
         public struct UdpState

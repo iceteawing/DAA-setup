@@ -8,8 +8,9 @@ namespace StrategicFMS
 {
     class Ownship : Aircraft
     {
-        public Ownship(string type) : base(type)
+        public Ownship(string acid,string type) : base(acid,type)
         {
         }
+
     }
 }

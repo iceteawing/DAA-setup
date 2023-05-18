@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS.AFAS
 {
-    internal class AutoFlightAssistSystem
+    public class AutoFlightAssistSystem
     {
         public AutoFlightAssistSystem() { }
         

@@ -48,7 +48,7 @@ namespace MSFSConnect
             simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
             simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
 
-            GetAIAircraftInformation();
+            //GetAIAircraftInformation();
         }
 
         private void GetAIAircraftInformation()//Get the aircraft position and set the corresponding AI plane position
@@ -163,7 +163,7 @@ namespace MSFSConnect
                 {
                     dicData.Remove(iObject);
                 }
-                dicData.Add(iObject, (SIMCONNECT_DATA_LATLONALT)data.dwData[0]);
+                //dicData.Add(iObject, (SIMCONNECT_DATA_LATLONALT)data.dwData[0]); // TODO:shall be fixed ,there is problem here,can not convert dwData[0] to SIMCONNECT_DATA_LATLONALT;
                 SetOwnshipInformation(data, iObject);
             }
         }

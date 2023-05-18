@@ -1,5 +1,7 @@
-﻿using StrategicFMS.Aircrafts;
+﻿using StrategicFMS.AFAS;
+using StrategicFMS.Aircrafts;
 using StrategicFMS.Traffic;
+using StrategicFMSDemo;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -23,6 +25,7 @@ namespace StrategicFMS
         }
 
         // The enum is added above
+        private string _aircraftId;
         private string _type; //A320, B737, Cessna208,Volocity etc
 
         private AircraftCategory _aircraftCategory;
@@ -35,6 +38,8 @@ namespace StrategicFMS
         private TrajectoryIntentData _intent;
         private Traffic.Route _route;
         private AutoPilot _autoPilot;
+        private AirborneSeparationAssuranceSystem _asas;
+        private AutoFlightAssistSystem _afas;
         // Add the following variables and methods to the Aircraft class:
 
         private double _cruiseSpeed;
@@ -79,13 +84,16 @@ namespace StrategicFMS
         {
             VerticalSpeed = speed;
         }
-        public Aircraft(string type)
+        public Aircraft(string acid,string type)
         {
+            AircraftId = acid;
             Type = type;
             State = new AircraftState();
             Intent = new TrajectoryIntentData();
             Route = new Route();
             AutoPilot = new AutoPilot(Route);
+            Asas=new AirborneSeparationAssuranceSystem(AircraftId);
+            Afas=new AutoFlightAssistSystem();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
         }
 
@@ -94,11 +102,17 @@ namespace StrategicFMS
             MessageBox.Show("Reach the destination");
         }
 
-        public Aircraft(string aircraftID, string callSign, string aircraftType, double latitude, double longitude, double altitude, double speed) 
+        public Aircraft(string acid, string callSign, string type, double latitude, double longitude, double altitude, double speed)
         {
-            Type = aircraftType;
-            State = new AircraftState(aircraftID, callSign, aircraftType, latitude, longitude, altitude, speed);
-            Intent = new TrajectoryIntentData();//TODO: more reasonable constructor
+            AircraftId = acid;
+            Type = type;
+            State = new AircraftState();
+            Intent = new TrajectoryIntentData();
+            Route = new Route();
+            AutoPilot = new AutoPilot(Route);
+            Asas = new AirborneSeparationAssuranceSystem(AircraftId);
+            Afas = new AutoFlightAssistSystem();
+            AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
         }
 
         public string Type { get => _type; set => _type = value; }
@@ -113,15 +127,26 @@ namespace StrategicFMS
         public double Bearing { get => _bearing; set => _bearing = value; }
         internal Route Route { get => _route; set => _route = value; }
         public AutoPilot AutoPilot { get => _autoPilot; set => _autoPilot = value; }
+        public AirborneSeparationAssuranceSystem Asas { get => _asas; set => _asas = value; }
+        public AutoFlightAssistSystem Afas { get => _afas; set => _afas = value; }
+        public string AircraftId { get => _aircraftId; set => _aircraftId = value; }
 
         /// <summary>
         /// update the state of the aircraft according to the period
         /// </summary>
         /// <param name="period">The update period. (in ms)</param>
-        public bool Update( double period, Point3D targetPoint)
+        public bool Update( double period)
         {
+
+            //TODO: add the ASAS logic here to impact the aircraft's behavior
+            FlightData flightData = FlightData.GetInstance();
+            bool isconflict = Asas.ConflictDetection(flightData.aircrafts); //asas_dt=1.0 sec
             //TODO: add the AFAS logic here to impact the aircraft's behavior
-            if (AutoPilot!= null & AutoPilot.Actived) //TODO: add the autopilot logic here 
+            if (isconflict)
+            {
+
+            }
+            else if(AutoPilot!= null & AutoPilot.Actived) //TODO: add the autopilot logic here 
             {
                 AutoPilot.VerifyActiveWaypointReached(State);
                 AutoPilot.FlyToNextWaypoint(State);
@@ -131,15 +156,15 @@ namespace StrategicFMS
             }
             else
             {
-                //TODO: the groundspeed, bearing, verticalspeed shall be calculated according to the autopilot
-                this.GroundSpeed = 150.0;//km/h
-                this.Bearing = 30;//degree, the north is 0
-                this.VerticalSpeed = 100;//m/s
+                //TODO: following a fixed logic here,may be hovering or hold the last state
+                this.GroundSpeed = 100;//km/h
+                this.Bearing = 0;//degree, the north is 0
+                this.VerticalSpeed = 0;//m/s
             }
             //TODO: move the aircraft one step by invoke the move function here, which update the aircraft state and intent
             double distance = this.GroundSpeed * period / 3600.0 / 1000.0;//convert to km
-            Move(distance, Bearing);
-            double verticalDistance = VerticalSpeed * period / 1000;
+            Move(distance, this.Bearing);
+            double verticalDistance = this.VerticalSpeed * period / 1000;
             MoveVertically(verticalDistance);
             //TODO: update the state and intent accordingly
             //bool resultOfState = State.Update(Intent.GetCurrentTargetPoint());

@@ -311,19 +311,16 @@ namespace MSFSControlApp
         private void Connect()
         {
             Console.WriteLine("Connect");
-
             try
             {
                 uint configIndex = uint.Parse(ConfigurationManager.AppSettings["MSFSConfigIndex"].ToString());
                 //uint configIndex = 1;
                 connect = new MSFSControlConnect(lHwnd, WM_USER_SIMCONNECT, configIndex);
                 connect.init();
-
                 m_oTimer.Start();
             }
             catch (COMException ex)
             {
-                //Console.WriteLine("Connection to MSFS failed: " + ex.Message);
                 MessageBox.Show("Connection to MSFS failed: " + ex.Message);
             }
         }
