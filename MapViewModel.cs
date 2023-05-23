@@ -125,6 +125,7 @@ namespace StrategicFMSDemo
 
         List<MapPoint>[] airRoutelinePoints;
 
+        private PictureMarkerSymbol _symbolOwnship;
         private void SetupMap()
         {
             // Create a new map with a 'topographic vector' basemap.
@@ -280,15 +281,12 @@ namespace StrategicFMSDemo
                 imagePath = "data/images/5.png";
                 var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
 
-                imagePath = "data/images/4.png";
-                var symbolOwnship = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-
                 foreach (Aircraft a in _flightData.aircrafts)
                 {
                     var mp = new MapPoint(a.State.Longitude, a.State.Latitude, SpatialReferences.Wgs84);
                     if (a.AircraftId == "001")
                     {
-                        var graphicOwnship = new Graphic(mp, symbolOwnship);
+                        var graphicOwnship = new Graphic(mp, _symbolOwnship);
                         _aircraftPointGraphics.Add(graphicOwnship);
                     }
                     else
@@ -356,6 +354,11 @@ namespace StrategicFMSDemo
                     Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
                     MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
                     _aircraftPointGraphics[i].Geometry = p;
+                    if(i==0)//only update the heading of ownship here
+                    {
+                        _symbolOwnship.Angle = _flightData.aircrafts[i].Heading;
+                        _aircraftPointGraphics[i].Symbol = _symbolOwnship;
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -408,7 +411,11 @@ namespace StrategicFMSDemo
             };
             // Set the view model's "GraphicsOverlays" property (will be consumed by the map view).
             this.GraphicsOverlays = overlays;
-
+            //set the symbol for ownship
+            var imagePath = "data/images/cessna-icon-11-256.png";
+            _symbolOwnship = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+            _symbolOwnship.Width = 50;
+            _symbolOwnship.Height = 50;
         }
     }
 }

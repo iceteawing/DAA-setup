@@ -33,7 +33,6 @@ namespace MSFSControlApp
         {
             IntPtr lHwnd = new WindowInteropHelper(System.Windows.Application.Current.MainWindow).Handle;
             HwndSource Hwnd = HwndSource.FromHwnd(lHwnd);
-
             return Hwnd;
         }
         protected override void OnSourceInitialized(EventArgs e)
@@ -62,7 +61,6 @@ namespace MSFSControlApp
                     oBaseSimConnectWrapper.Disconnect();
                 }
             }
-
             return IntPtr.Zero;
         }
 
