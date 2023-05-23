@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Microsoft.FlightSimulator.SimConnect;
+using StrategicFMS.Airspace;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace StrategicFMS
 {
@@ -16,6 +19,7 @@ namespace StrategicFMS
         private double _elevation; // the elevation of the runway in meters above sea level
         private string _surfaceType; // the type of surface of the runway (e.g. asphalt, concrete, grass)
         private double _heading; // the heading of the runway in degrees
+
         //TODO:Location shall be added here
         public string Name { get => _name; set => _name = value; }
         public double Length { get => _length; set => _length = value; }
@@ -23,5 +27,24 @@ namespace StrategicFMS
         public double Elevation { get => _elevation; set => _elevation = value; }
         public string SurfaceType { get => _surfaceType; set => _surfaceType = value; }
         public double Heading { get => _heading; set => _heading = value; }
+
+        public StandardTerminalArrivalRoute  _star { get; set; } //TODO: add arrival and departure precedure here
+
+        public Runway(string name, double length, double width, double elevation, string surfaceType, double heading, StandardTerminalArrivalRoute star)
+        {
+            Name = name;
+            Length = length;
+            Width = width;
+            Elevation = elevation;
+            SurfaceType = surfaceType;
+            Heading = heading;
+            Name = name;
+            Length = length;
+            Width = width;
+            Elevation = elevation;
+            SurfaceType = surfaceType;
+            Heading = heading;
+            _star = star;
+        }
     }
 }

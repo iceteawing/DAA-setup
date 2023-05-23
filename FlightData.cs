@@ -16,6 +16,7 @@ using System.Diagnostics;
 using StrategicFMSDemo;
 using Esri.ArcGISRuntime.Geometry;
 using StrategicFMS;
+using StrategicFMS.Traffic;
 
 namespace StrategicFMSDemo
 {
@@ -23,7 +24,7 @@ namespace StrategicFMSDemo
     {
         private static readonly FlightData instance = new FlightData();
         private ScenarioData _scenarioData;
-        private AirspaceStructure airspace =new AirspaceStructure();
+        private AirspaceStructure _airspace;
         private Ownship ownship = new("001", "Cessna208");
         private Aircraft firstAircraft =new ("002","Helicopter"); //AI agent
         private Aircraft secondAircraft = new ("003", "VoloCity");//AI agent
@@ -95,6 +96,10 @@ namespace StrategicFMSDemo
             thirdAircraft.Intent.CurrentPointIndex = 1;
             thirdAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
             aircrafts.Add(thirdAircraft);
+
+            int index = 1;
+            aircrafts[index].AutoPilot.Route = Route.DeserializeFromJson("route.json");
+            aircrafts[index].AutoPilot.Actived = true;
             return false;
         }
         public void StartScenario( bool state)
@@ -103,12 +108,15 @@ namespace StrategicFMSDemo
             {
                 if (instance != null)
                 {
+                    int scenarioID = Guid.NewGuid().GetHashCode();
+                    ScenarioData = new ScenarioData(scenarioID);
+                    Airspace = AirspaceStructure.DeserializeFromJson("airspace.json");
+
+
+                    bool result=Initialization(ScenarioData);
                     // create a timer to update the flight data
                     _timer = new Timer(UpdateFlightData);
                     _timer.Change(0, 20); //the period is 20ms
-                    int scenarioID = Guid.NewGuid().GetHashCode();
-                    ScenarioData = new ScenarioData(scenarioID);
-                    bool result=Initialization(ScenarioData);
                 }
 
                 if (instance != null)
@@ -147,7 +155,10 @@ namespace StrategicFMSDemo
         }
         private void UpdateFlightData(object state)
         {
-            ScenarioData.ScenarioDuration += 0.02;
+            if(ScenarioData != null)
+            {
+                ScenarioData.ScenarioDuration += 0.02;
+            }
             foreach (Aircraft aircraft in aircrafts)
             {
                 aircraft.Update(20);// TODO: The period is fixed here
@@ -163,6 +174,7 @@ namespace StrategicFMSDemo
 
         internal Ownship Ownship { get => ownship; set => ownship = value; }
         public ScenarioData ScenarioData { get => _scenarioData; set => _scenarioData = value; }
+        public AirspaceStructure Airspace { get => _airspace; set => _airspace = value; }
 
         public static void ReceiveCallback(IAsyncResult ar)
         {
@@ -222,7 +234,6 @@ namespace StrategicFMSDemo
         public bool Status { get; set; } // Playing or Stopped
         public int ScenarioID { get; set; } //001
         private double _scenarioDuration; //unit is second
-
         public string formattedDuration {get; set;}
         public double Density { get; set; } //range from 0 to 100
         public double Capacity { get; set; } //air vehicles within 1 km*km or one airline

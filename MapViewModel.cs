@@ -70,7 +70,7 @@ namespace StrategicFMSDemo
             }
         }
 
- 
+
         public Graphic PolylineGraphic { get => polylineGraphic; set => polylineGraphic = value; }
         public Graphic AirPolylineRoute { get => airPolylineRouteGraphic; set => airPolylineRouteGraphic = value; }
         public List<Graphic> AircraftPointGraphics { get => _aircraftPointGraphics; set => _aircraftPointGraphics = value; }
@@ -95,24 +95,26 @@ namespace StrategicFMSDemo
                     _timer.Dispose();
                     _aircraftGraphicsOverlay.Graphics.Clear();
                     _aircraftPointGraphics.Clear();
+                    _airspaceGraphicsOverlay.Graphics.Clear();
                     FlightData flightData = FlightData.GetInstance();
                     flightData.StartScenario(false);
+                    
                 }
                 OnPropertyChanged();
             }
         }
 
-        public double ScenarioDuration 
-        { 
-            get 
+        public double ScenarioDuration
+        {
+            get
             {
-                return _scenarioDuration; 
-            } 
-            set 
+                return _scenarioDuration;
+            }
+            set
             {
                 _scenarioDuration = value;
                 OnPropertyChanged();
-            } 
+            }
         }
 
         private double _scenarioDuration = 0;
@@ -128,12 +130,13 @@ namespace StrategicFMSDemo
             // Create a new map with a 'topographic vector' basemap.
             Map = new Map(BasemapStyle.ArcGISTopographic);
             //Map = new Map(BasemapStyle.ArcGISTerrainDetail);
-            
+
         }
         // Timer for animating.
         private Timer _timer;
         private void CreateGraphicsForScenario()
         {
+            AddAirspaceGraphics();
             AddAircraftPointGraphics();
         }
         private void AddAirspaceGraphics()
@@ -163,16 +166,31 @@ namespace StrategicFMSDemo
             // Add the point graphic to graphics overlay.
             _airspaceGraphicsOverlay.Graphics.Add(pointGraphic);
 
-            //create a symbol to define how the circle is displayed.
+            //draw star points
+            var p = new MapPoint(_flightData.Airspace.Airdrome.Runways[0]._star.IAF1.X, _flightData.Airspace.Airdrome.Runways[0]._star.IAF1.Y, SpatialReferences.Wgs84); ;
+            var pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
+            p = new MapPoint(_flightData.Airspace.Airdrome.Runways[0]._star.IAF2.X, _flightData.Airspace.Airdrome.Runways[0]._star.IAF2.Y, SpatialReferences.Wgs84); ;
+             pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
+             p = new MapPoint(_flightData.Airspace.Airdrome.Runways[0]._star.IF.X, _flightData.Airspace.Airdrome.Runways[0]._star.IF.Y, SpatialReferences.Wgs84); ;
+             pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
+             p = new MapPoint(_flightData.Airspace.Airdrome.Runways[0]._star.FAF.X, _flightData.Airspace.Airdrome.Runways[0]._star.FAF.Y, SpatialReferences.Wgs84); ;
+             pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
+             p = new MapPoint(_flightData.Airspace.Airdrome.Runways[0]._star.Mapt.X, _flightData.Airspace.Airdrome.Runways[0]._star.Mapt.Y, SpatialReferences.Wgs84); ;
+             pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
 
-            // Create polyline geometry from the points.
-            var circle = DrawCircle(new MapPoint(117.354909531352, 39.125833959383186, SpatialReferences.Wgs84), 0.01, 360);
+            //add airspace type representation such Class B 
+            //create a symbol to define how the circle is displayed.
+            var circle = DrawCircle(new MapPoint(117.354909531352, 39.125833959383186, SpatialReferences.Wgs84), 0.5, 360);
 
             // Create a fill symbol to display the polygon.
             var circleSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
 
-
-            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 0, 255, 100), circleSymbolOutline); //color from argb
+            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(50, 0, 255, 100), circleSymbolOutline); //color from argb
             // Create a polygon graphic with the geometry and fill symbol.
             var circleGraphic = new Graphic(circle, circleFillSymbol);
 
@@ -208,7 +226,7 @@ namespace StrategicFMSDemo
                 new MapPoint(-118.7960, 34.0086, SpatialReferences.Wgs84),
                 new MapPoint(-118.8086, 34.0035, SpatialReferences.Wgs84)
             };
-            //TODO: encapsulate the graphics represent the aircraft region on the map, the parameter shall at last include area and color
+            //TODO: encapsulate the graphics represent the region on the map, the parameter shall at last include area and color
             // Create polygon geometry.
             var mahouRivieraPolygon = new Polygon(polygonPoints);
 
@@ -262,13 +280,13 @@ namespace StrategicFMSDemo
                 imagePath = "data/images/5.png";
                 var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
 
-                imagePath = "data/images/1.png";
+                imagePath = "data/images/4.png";
                 var symbolOwnship = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
 
                 foreach (Aircraft a in _flightData.aircrafts)
                 {
                     var mp = new MapPoint(a.State.Longitude, a.State.Latitude, SpatialReferences.Wgs84);
-                    if(a.AircraftId == "001")
+                    if (a.AircraftId == "001")
                     {
                         var graphicOwnship = new Graphic(mp, symbolOwnship);
                         _aircraftPointGraphics.Add(graphicOwnship);
@@ -390,7 +408,7 @@ namespace StrategicFMSDemo
             };
             // Set the view model's "GraphicsOverlays" property (will be consumed by the map view).
             this.GraphicsOverlays = overlays;
-            AddAirspaceGraphics();
+
         }
     }
 }

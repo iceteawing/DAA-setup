@@ -58,7 +58,7 @@ namespace StrategicFMS.Aircrafts
 
             var activeWaypoint = Route.Waypoints[ActiveWaypointIndex];
             DistanceToActiveWaypoint = CalculateDistance(activeWaypoint.Latitude, activeWaypoint.Longtitude, state.Latitude, state.Longitude);
-            Trace.WriteLine("distance:" + DistanceToActiveWaypoint.ToString());
+            Trace.WriteLine("Distance to active waypoint:" + DistanceToActiveWaypoint.ToString() +"meters.");
             return DistanceToActiveWaypoint <= 1;//TODO: will stop before reach the exact point
         }
 
@@ -113,8 +113,6 @@ namespace StrategicFMS.Aircrafts
             {
                 Actived = false;
                 Trace.WriteLine("Reach the destination");
-
-                //
                 MyEventArgs args= new MyEventArgs();
                 args.done = true;
                 PutOutinformation(this, args);
@@ -126,9 +124,9 @@ namespace StrategicFMS.Aircrafts
             //var desiredHeading = activeWaypoint.Position.BearingTo(Route.Waypoints[ActiveWaypointIndex + 1].Position);
             //var desiredTrack = desiredHeading - state.MagneticHeading;
             var desiredTrack = CalculateBearing(state.Latitude, state.Longitude, activeWaypoint.Latitude, activeWaypoint.Longtitude);
-            Trace.WriteLine("Track:" + desiredTrack.ToString());
-            var desiredGroundSpeed = 150;//TODO: shall match the aircraft performance
-            var desiredTrueAirSpeed = 150;
+            
+            var desiredGroundSpeed = 240;//TODO: shall match the aircraft performance and shall be calculated based on the 4D trajectory
+            var desiredTrueAirSpeed = 240;
             //Vertical following
             var desiredAltitude = activeWaypoint.Altitude;
 
@@ -178,8 +176,11 @@ namespace StrategicFMS.Aircrafts
                 {
                     desiredVerticalSpeed = Math.Max(desiredVerticalSpeed, -2000);
                 }
-                Trace.WriteLine("activeWaypoint.Altitude:" + activeWaypoint.Altitude.ToString() + "state.Altitude:" + state.Altitude.ToString() + "desiredVerticalSpeed:" + desiredVerticalSpeed.ToString());
+                
             }
+            Trace.WriteLine("activeWaypoint.Lon:" + activeWaypoint.Longtitude.ToString() + " activeWaypoint.Lat:" + activeWaypoint.Latitude.ToString() + " activeWaypoint.Altitude:" + activeWaypoint.Altitude.ToString());
+            Trace.WriteLine("state.Lon:" + state.Longitude.ToString() + " state.Lat:" + state.Latitude.ToString() + " state.Altitude:" + state.Altitude.ToString()) ;
+            Trace.WriteLine("Track=" + desiredTrack.ToString()+" Speed="+ desiredGroundSpeed.ToString()+" vertical speed=" +DesiredVerticalSpeed.ToString());
             DesiredTrack = desiredTrack;
             DesiredGroundSpeed = desiredGroundSpeed;
             DesiredTrueAirSpeed = desiredTrueAirSpeed;

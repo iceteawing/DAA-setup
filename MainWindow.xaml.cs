@@ -31,6 +31,7 @@ using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.UI.Controls;
 using StrategicFMS;
+using StrategicFMS.Airspace;
 using StrategicFMS.Traffic;
 
 namespace StrategicFMSDemo
@@ -47,9 +48,10 @@ namespace StrategicFMSDemo
             this.DataContext = this;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            MapPoint mapCenterPoint = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
-            MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 20000));
-
+            MapPoint mapCenterPoint = new MapPoint(117.34520307268038, 39.12595698615364, SpatialReferences.Wgs84);
+            MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 100000));
+            string version = Application.ResourceAssembly.GetName().Version.ToString();
+            System.Diagnostics.Debug.WriteLine("MainWindow created, version = "+version);
             //MainMapView.LocationDisplay.IsEnabled = true;
             //MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
         }
@@ -63,26 +65,47 @@ namespace StrategicFMSDemo
             FlightData _flightData = FlightData.GetInstance();
             //MapPoint mapCenterPoint = new MapPoint(_flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, SpatialReferences.Wgs84);
             //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
-            
+
             //MessageBox.Show(string.Format("{0},{1},{2}", _flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, _flightData.Ownship.State.Altitude));
+
+            createAirspaceStructrue();
+            createRoute();
+
+        }
+
+        private void createRoute()
+        {
+            FlightData _flightData = FlightData.GetInstance();
             Airdrome originAirdrom = new Airdrome("big", 34, 118, 100);
             Airdrome desAirdrom = new Airdrome("big", 35, 119, 100);
-            int index = 1;
-            //_flightData.aircrafts[index].Route = new StrategicFMS.Traffic.Route(originAirdrom,desAirdrom);
-            //Waypoint wp0 = new Waypoint(0,"wp0",-118.8066,34.0006,600);
-            //Waypoint wp1 = new Waypoint(1,"wp1", -118.8066, 34.003, 600);
-            //Waypoint wp2 = new Waypoint(2, "wp2", -118.8134, 34.0028, 1200);
-            //Waypoint wp3 = new Waypoint(3, "wp3", -118.8134, 33.97, 0);
-            //_flightData.aircrafts[index].Route.AddWaypoint(wp0);
-            //_flightData.aircrafts[index].Route.AddWaypoint(wp1);
-            //_flightData.aircrafts[index].Route.AddWaypoint(wp2);
-            //_flightData.aircrafts[index].Route.AddWaypoint(wp3);
-            //_flightData.aircrafts[index].AutoPilot.Route = _flightData.aircrafts[index].Route;
-            //_flightData.aircrafts[index].AutoPilot.Actived = true;
-            //_flightData.aircrafts[index].Route.SerializeToJson("route.json");
-            _flightData.aircrafts[index].AutoPilot.Route = Route.DeserializeFromJson("route.json");
-            _flightData.aircrafts[index].AutoPilot.Actived = true;
+            Route route = new StrategicFMS.Traffic.Route(originAirdrom, desAirdrom);
+            Waypoint wp0 = new Waypoint(0, "wp0", 117.12976889083656, 39.262667330863536, 600);
+            Waypoint wp1 = new Waypoint(1, "wp1", 117.22762759279414, 39.3111315533505, 600);
+            Waypoint wp2 = new Waypoint(2, "wp2", 117.28257863691368, 39.22176648931558, 527);
+            Waypoint wp3 = new Waypoint(3, "wp3", 117.33825437858884, 39.13730579607521, 3);
+            route.AddWaypoint(wp0);
+            route.AddWaypoint(wp1);
+            route.AddWaypoint(wp2);
+            route.AddWaypoint(wp3);
+            route.SerializeToJson("route.json");
         }
+        private void createAirspaceStructrue()
+        {
+            FlightData _flightData = FlightData.GetInstance();
+            Point3D p0 = new Point3D(117.12976889083656, 39.262667330863536, 600);
+            Point3D p1 = new Point3D(117.32555771988048, 39.37460577003032, 600);
+            Point3D p2 = new Point3D(117.22762759279414, 39.3111315533505, 600);
+            Point3D p3 = new Point3D(117.28257863691368, 39.22176648931558, 527);
+            Point3D p4 = new Point3D(117.33825437858884, 39.13730579607521, 3);
+            StandardTerminalArrivalRoute star = new(p0, p1, p2, p3, p4);
+            Runway runway = new("34L", 1500, 100, 20, "concrete", 340, star);
+            List<Runway> runways = new List<Runway>();
+            runways.Add(runway);
+            Airdrome airdrome = new("Tianjin", 34, 118, 40,runways);
+            AirspaceStructure structure = new(airdrome);
+            structure.SerializeToJson("airspace.json");
+        }
+
         private void MainMapView_GeoViewDoubleTapped(object sender, Esri.ArcGISRuntime.UI.Controls.GeoViewInputEventArgs e)
         {
             MapPoint mp=(MapPoint)e.Location;

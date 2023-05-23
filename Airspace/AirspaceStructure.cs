@@ -19,8 +19,14 @@ namespace StrategicFMS
         public double centerLatitude { get; set; } //The latitude of the center point of the airspace entity
         public double centerLontitude { get; set; }//The lontitude of the center point of the airspace entity
 
+        public Airdrome Airdrome { get; set; }
+        public AirspaceStructure(Airdrome airdrome)
+        {
+            Airdrome = airdrome;
+        }
         public AirspaceStructure()
         {
+            
         }
         public enum LayerType
         {
@@ -128,17 +134,10 @@ namespace StrategicFMS
         /// Reads from a JSON file and populates the Airspace object.
         /// </summary>
         /// <param name="filePath">The path of the JSON file.</param>
-        public void ReadFromJson(string filePath)
+        public static AirspaceStructure DeserializeFromJson(string filePath)
         {
-            //TODO: read from JSON file and populate the Airspace object
-            string json = File.ReadAllText(filePath);
-            AirspaceStructure airspace = JsonConvert.DeserializeObject<AirspaceStructure>(json);
-            this.Range = airspace.Range;
-            this.MaxAltitude = airspace.MaxAltitude;
-            this.MinAltitude = airspace.MinAltitude;
-            this.centerLatitude = airspace.centerLatitude;
-            this.centerLontitude = airspace.centerLontitude;
-            this.airspaceType = airspace.airspaceType;
+            string json = System.IO.File.ReadAllText(filePath);
+            return Newtonsoft.Json.JsonConvert.DeserializeObject<AirspaceStructure>(json);
         }
 
         // Add a function to write the Airspace object to a JSON file
@@ -146,11 +145,10 @@ namespace StrategicFMS
         /// Writes the Airspace object to a JSON file.
         /// </summary>
         /// <param name="filePath">The path of the JSON file.</param>
-        public void WriteToJson(string filePath)
+        public void SerializeToJson(string filePath)
         {
-            //TODO: write the Airspace object to a JSON file
-            string json = JsonConvert.SerializeObject(this);
-            File.WriteAllText(filePath, json);
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+            System.IO.File.WriteAllText(filePath, json);
         }
     }
 }

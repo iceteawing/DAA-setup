@@ -152,7 +152,6 @@ namespace StrategicFMS
             }
             else if(AutoPilot!= null & AutoPilot.Actived) //TODO: add the autopilot logic here 
             {
-                AutoPilot.VerifyActiveWaypointReached(State);
                 AutoPilot.FlyToNextWaypoint(State);
                 this.GroundSpeed = AutoPilot.DesiredGroundSpeed;//km/h
                 this.Bearing = AutoPilot.DesiredTrack;//degree, the north is 0

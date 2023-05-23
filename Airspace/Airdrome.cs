@@ -12,8 +12,7 @@ namespace StrategicFMS
         public double Latitude { get; set; }//40.028 degree
         public double Longitude { get; set; }//116.580 degree
         public double Altitude { get; set; }//50ft
-                                            // To add variables and methods required for an airport, we can add the following code inside the Airdrome class:
-
+                                            
         public string Name { get; set; } // Name of the airport
         public string IATA { get; set; } // International Air Transport Association code
         public string ICAO { get; set; } // International Civil Aviation Organization code
@@ -25,13 +24,26 @@ namespace StrategicFMS
 
         public List<Runway> Runways { get; set; }
 
-        public Point3D FixDecisionPoint { get; set; } //TODO: add arrival and departure precedure here
+
+        public Airdrome(string type, double latitude, double longitude, double altitude, List<Runway> runways)
+        {
+            Type = type ?? throw new ArgumentNullException(nameof(type));
+            Latitude = latitude;
+            Longitude = longitude;
+            Altitude = altitude;
+            Runways= runways;
+        }
+
         public Airdrome(string type, double latitude, double longitude, double altitude)
         {
             Type = type ?? throw new ArgumentNullException(nameof(type));
             Latitude = latitude;
             Longitude = longitude;
             Altitude = altitude;
+        }
+
+        public Airdrome()
+        { 
         }
     }
 }
