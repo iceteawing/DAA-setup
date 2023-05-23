@@ -11,6 +11,5 @@ namespace StrategicFMS
         public Ownship(string acid,string type) : base(acid,type)
         {
         }
-
     }
 }

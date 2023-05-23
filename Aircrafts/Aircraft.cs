@@ -140,6 +140,10 @@ namespace StrategicFMS
 
             //TODO: add the ASAS logic here to impact the aircraft's behavior
             FlightData flightData = FlightData.GetInstance();
+            if (this.AircraftId == "001")
+            {
+                return true;
+            }
             bool isconflict = Asas.ConflictDetection(flightData.aircrafts); //asas_dt=1.0 sec
             //TODO: add the AFAS logic here to impact the aircraft's behavior
             if (isconflict)
@@ -257,7 +261,7 @@ namespace StrategicFMS
         {
             if (lon < -180 || lon > 180 || lat < -90 || lat > 90 || altitude < 0)
             {
-                Trace.WriteLine("Invalid aircraft position: longitude must be between -180 and 180, latitude must be between -90 and 90, altitude must be non-negative.");
+                Debug.WriteLine("Invalid aircraft position: longitude must be between -180 and 180, latitude must be between -90 and 90, altitude must be non-negative.");
                 return false;
             }
             State.Longitude = lon;

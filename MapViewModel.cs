@@ -256,22 +256,35 @@ namespace StrategicFMSDemo
             {
                 var imagePath = "data/images/7.png"; // relative path to the image file
                 var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-                symbolAircraft.Angle = 180;//this variable shall be updated period
+                symbolAircraft.Angle = -45;//this variable shall be updated period
                 symbolAircraft.Opacity = 0.5;
+
                 imagePath = "data/images/5.png";
                 var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+
+                imagePath = "data/images/1.png";
+                var symbolOwnship = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+
                 foreach (Aircraft a in _flightData.aircrafts)
                 {
                     var mp = new MapPoint(a.State.Longitude, a.State.Latitude, SpatialReferences.Wgs84);
-                    if (a.Type == "Helicopter")
+                    if(a.AircraftId == "001")
                     {
-                        var graphicHelicopter = new Graphic(mp, symbolHelicopter);
-                        _aircraftPointGraphics.Add(graphicHelicopter);
+                        var graphicOwnship = new Graphic(mp, symbolOwnship);
+                        _aircraftPointGraphics.Add(graphicOwnship);
                     }
                     else
                     {
-                        var graphicAircraft = new Graphic(mp, symbolAircraft);
-                        _aircraftPointGraphics.Add(graphicAircraft);
+                        if (a.Type == "Helicopter")
+                        {
+                            var graphicHelicopter = new Graphic(mp, symbolHelicopter);
+                            _aircraftPointGraphics.Add(graphicHelicopter);
+                        }
+                        else
+                        {
+                            var graphicAircraft = new Graphic(mp, symbolAircraft);
+                            _aircraftPointGraphics.Add(graphicAircraft);
+                        }
                     }
                 }
             }
@@ -319,11 +332,18 @@ namespace StrategicFMSDemo
             //update the aircrafts' position on the map
             for (int i = 0; i < _aircraftPointGraphics.Count; i++)
             {
+                try
+                {
 
-                Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
-                MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
-
-                _aircraftPointGraphics[i].Geometry = p;
+                    Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
+                    MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
+                    _aircraftPointGraphics[i].Geometry = p;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Error in AnimateOverlay: " + ex.Message);
+                    throw;
+                }
             }
 
             //TODO: update the flight path on the map ,Need to find a way to update the polylinegraphic dynamicly

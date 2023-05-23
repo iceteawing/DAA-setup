@@ -53,7 +53,6 @@ namespace MSFSConnect
 
         private void GetAIAircraftInformation()//Get the aircraft position and set the corresponding AI plane position
         {
-            
             FlightData _flightData = FlightData.GetInstance();
             for (int i = 0; i < _flightData.aircrafts.Count; i++)
             {
@@ -68,16 +67,16 @@ namespace MSFSConnect
                     bool status = SetAIPlanePosition(m_iObjectIdRequest, pos);
                     if (status)
                     {
-                        Trace.WriteLine("Setting successfully.");
+                        Debug.WriteLine("Setting successfully.");
                     }
                     else
                     {
-                        Trace.WriteLine("Setting failed.");
+                        Debug.WriteLine("Setting failed.");
                     }
                 }
                 catch
                 {
-                    Trace.WriteLine("Setting failed, it may be that the content is incorrect.");
+                    Debug.WriteLine("Setting failed, it may be that the content is incorrect.");
                 }
             }
         }
@@ -99,14 +98,42 @@ namespace MSFSConnect
             simConnect.AddToDataDefinition(DEFINITIONS.POSITIONINFO, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             simConnect.AddToDataDefinition(DEFINITIONS.POSITIONINFO, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             simConnect.AddToDataDefinition(DEFINITIONS.POSITIONINFO, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            simConnect.RegisterDataDefineStruct<SIMCONNECT_DATA_LATLONALT>(DEFINITIONS.POSITIONINFO);
+
+            try
+            {
+                SIMCONNECT_DATA_INITPOSITION initpos;
+                initpos.Latitude = 39.11152;
+                initpos.Longitude = 117.35386;
+                initpos.Altitude = 0;
+                initpos.Bank = 0;
+                initpos.Pitch = 0;
+                initpos.Heading = 0;
+                initpos.Airspeed = 0;
+                initpos.OnGround = 0;
+
+                bool status = CreateAIPlane("DA62 Asobo", "002", initpos, (MSFSControlConnect.TYPE_REQUESTS)1);
+                if (status)
+                {
+                    Debug.WriteLine("Creation successfully.");
+                }
+                else
+                {
+                    Debug.WriteLine("Creation failed.");
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Creation failed, it may be that the content is incorrect.");
+            }
 
             return simConnect != null;
         }
 
         private void SimConnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
         {
-            Console.WriteLine("SimConnect_OnRecvOpen");
-            Console.WriteLine("Connected to MSFS");
+            Debug.WriteLine("SimConnect_OnRecvOpen");
+            Debug.WriteLine("Connected to MSFS");
 
             bStart = true;
 
@@ -121,14 +148,14 @@ namespace MSFSConnect
         /// The case where the user closes game
         private void SimConnect_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
         {
-            Console.WriteLine("SimConnect_OnRecvQuit");
-            Console.WriteLine("MSFS has exited");
+            Debug.WriteLine("SimConnect_OnRecvQuit");
+            Debug.WriteLine("MSFS has exited");
 
             Disconnect();
         }
         public void Disconnect()
         {
-            Console.WriteLine("Disconnect");
+            Debug.WriteLine("Disconnect");
 
             this.timer.Stop();
             bOddTick = false;
@@ -139,14 +166,13 @@ namespace MSFSConnect
                 simConnect.Dispose();
                 simConnect = null;
             }
-
             bStart = false;
             bConnected = false;
         }
         private void SimConnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
         {
             SIMCONNECT_EXCEPTION eException = (SIMCONNECT_EXCEPTION)data.dwException;
-            Console.WriteLine("SimConnect_OnRecvException: " + eException.ToString());
+            Debug.WriteLine("SimConnect_OnRecvException: " + eException.ToString());
         }
 
         private void simconnect_OnRecvSimobjectDataBytype(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data)
@@ -163,18 +189,25 @@ namespace MSFSConnect
                 {
                     dicData.Remove(iObject);
                 }
-                //dicData.Add(iObject, (SIMCONNECT_DATA_LATLONALT)data.dwData[0]); // TODO:shall be fixed ,there is problem here,can not convert dwData[0] to SIMCONNECT_DATA_LATLONALT;
-                SetOwnshipInformation(data, iObject);
+                if(iObject == 1)
+                {
+                    SIMCONNECT_DATA_LATLONALT pos = (SIMCONNECT_DATA_LATLONALT)data.dwData[0];
+                    SetOwnshipInformation(pos, iObject);
+                    //TODO: this is example to set the AI Plane
+                    //pos.Altitude += 10;
+                    //uint objectid=objectIDs.Last();
+                    //SetAIPlanePosition(objectid, pos);
+                    //dicData.Add(iObject, (SIMCONNECT_DATA_LATLONALT)data.dwData[0]); // TODO:shall be fixed ,there is problem here,can not convert dwData[0] to SIMCONNECT_DATA_LATLONALT;
+                }
             }
         }
 
-        private static void SetOwnshipInformation(SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data, uint iObject)//Get the ownship information from MSFS
+        private static void SetOwnshipInformation(SIMCONNECT_DATA_LATLONALT pos, uint iObject)//Get the ownship information from MSFS
         {
             
-            if (iObject == 0)
+            if (iObject == 1)
             {
                 FlightData _flightData = FlightData.GetInstance();
-                SIMCONNECT_DATA_LATLONALT pos = (SIMCONNECT_DATA_LATLONALT)data.dwData[0];
                 _flightData.Ownship.SetAircraftPosition(pos.Longitude, pos.Latitude, pos.Altitude);
             }
         }
@@ -188,10 +221,9 @@ namespace MSFSConnect
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in CreateAIPlane: " + ex.Message);
+                Debug.WriteLine("Error in CreateAIPlane: " + ex.Message);
                 return false;
             }
-
         }
 
         public bool SetAIPlanePosition(uint i, SIMCONNECT_DATA_LATLONALT pos)
@@ -203,10 +235,9 @@ namespace MSFSConnect
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in SetAIPlanePosition: " + ex.Message);
+                Debug.WriteLine("Error in SetAIPlanePosition: " + ex.Message);
                 return false;
             }
-
         }
 
         public bool DeleteAIPlane(uint i)
@@ -218,7 +249,7 @@ namespace MSFSConnect
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error in DeleteAIPlane: " + ex.Message);
+                Debug.WriteLine("Error in DeleteAIPlane: " + ex.Message);
                 return false;
             }
 
