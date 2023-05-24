@@ -31,6 +31,8 @@ namespace StrategicFMSDemo
         FlightData _flightData;
         private const int _frequency = 50; // determin the refresh hz required, it is better to match the visual system
         private const int _period = 20; // ms
+
+
         public MapViewModel()
         {
             _flightData = FlightData.GetInstance();
@@ -69,7 +71,6 @@ namespace StrategicFMSDemo
                 OnPropertyChanged();
             }
         }
-
 
         public Graphic PolylineGraphic { get => polylineGraphic; set => polylineGraphic = value; }
         public Graphic AirPolylineRoute { get => airPolylineRouteGraphic; set => airPolylineRouteGraphic = value; }
@@ -273,13 +274,16 @@ namespace StrategicFMSDemo
             //Initializes a new instance of the Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol class from an image URI.
             try
             {
-                var imagePath = "data/images/7.png"; // relative path to the image file
-                var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-                symbolAircraft.Angle = -45;//this variable shall be updated period
-                symbolAircraft.Opacity = 0.5;
+                var imagePath = "data/images/Airplane.png"; // relative path to the image file
+                var symbolAirplane = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                symbolAirplane.Angle = -45;//this variable shall be updated period
+                symbolAirplane.Opacity = 0.5;
 
-                imagePath = "data/images/5.png";
+                imagePath = "data/images/Helicopter.png";
                 var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+
+                imagePath = "data/images/Volocity.png";
+                var symbolVolocity = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
 
                 foreach (Aircraft a in _flightData.aircrafts)
                 {
@@ -296,10 +300,16 @@ namespace StrategicFMSDemo
                             var graphicHelicopter = new Graphic(mp, symbolHelicopter);
                             _aircraftPointGraphics.Add(graphicHelicopter);
                         }
+                        else if (a.Type == "Volocity")
+                        {
+                            var graphicVolocity = new Graphic(mp, symbolVolocity);
+                            _aircraftPointGraphics.Add(graphicVolocity);
+                        }
                         else
                         {
-                            var graphicAircraft = new Graphic(mp, symbolAircraft);
-                            _aircraftPointGraphics.Add(graphicAircraft);
+                            var graphicAirplane = new Graphic(mp, symbolAirplane);
+                            _aircraftPointGraphics.Add(graphicAirplane);
+
                         }
                     }
                 }
@@ -343,14 +353,14 @@ namespace StrategicFMSDemo
 
         private void AnimateOverlay(object state)
         {
-            ScenarioDuration += _period;
+            FlightData _flightData=FlightData.GetInstance();
+            ScenarioDuration = _flightData.ScenarioData.ScenarioDuration;
             // Calculate new coordinates which have the effect of moving each object by the same amount each time.
             //update the aircrafts' position on the map
             for (int i = 0; i < _aircraftPointGraphics.Count; i++)
             {
                 try
                 {
-
                     Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
                     MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
                     _aircraftPointGraphics[i].Geometry = p;
@@ -412,7 +422,7 @@ namespace StrategicFMSDemo
             // Set the view model's "GraphicsOverlays" property (will be consumed by the map view).
             this.GraphicsOverlays = overlays;
             //set the symbol for ownship
-            var imagePath = "data/images/cessna-icon-11-256.png";
+            var imagePath = "data/images/Cessna.png";
             _symbolOwnship = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
             _symbolOwnship.Width = 50;
             _symbolOwnship.Height = 50;

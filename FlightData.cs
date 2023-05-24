@@ -26,9 +26,9 @@ namespace StrategicFMSDemo
         private ScenarioData _scenarioData;
         private AirspaceStructure _airspace;
         private Ownship ownship = new("001", "Cessna208");
-        private Aircraft firstAircraft =new ("002","Helicopter"); //AI agent
-        private Aircraft secondAircraft = new ("003", "VoloCity");//AI agent
-        private Aircraft thirdAircraft = new ("004", "Airplane");//AI agent
+        private Aircraft firstAircraft =new ("002","Cessna208"); //AI agent
+        private Aircraft secondAircraft = new ("003", "Volocity");//AI agent
+        private Aircraft thirdAircraft = new ("004", "Volocity");//AI agent
         private Aircraft fourthAircraft = new ("005", "Helicopter");//AI agent
         
         // Timer for update flight data.
@@ -79,27 +79,41 @@ namespace StrategicFMSDemo
             Point3D endPoint = new Point3D(-119.805, 39.027, 1000.0);
             ownship.Intent.GenerateTrajectory(startPoint, endPoint);
             ownship.Intent.CurrentPointIndex = 1;
+            ownship.AutoPilot.Route = Route.DeserializeFromJson("route1.json");
             aircrafts.Add(ownship);
             //Initialize the AI aircrafts
             startPoint = new Point3D(-119.805, 34.027, 1000.0);
             endPoint = new Point3D(-119.805, 39.027, 1000.0); 
             firstAircraft.Intent.GenerateTrajectory(startPoint,endPoint);
             firstAircraft.Intent.CurrentPointIndex = 1;
+            firstAircraft.AutoPilot.Route = Route.DeserializeFromJson("route1.json");
+            firstAircraft.AutoPilot.Actived =true;
+            firstAircraft.SetAircraftPosition(117.04595554073023, 39.23010140637297, 1500.0);
             aircrafts.Add(firstAircraft);
             startPoint = new Point3D(-119.805, 34.027, 1000.0);
             endPoint = new Point3D(-121.805, 34.027, 1000.0);
             secondAircraft.Intent.CurrentPointIndex = 1;
             secondAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
+            secondAircraft.AutoPilot.Route = Route.DeserializeFromJson("route1.json");
+            secondAircraft.AutoPilot.Actived = true;
+            secondAircraft.SetAircraftPosition(117.0333869301425, 39.22087741005525, 1500.0);
             aircrafts.Add(secondAircraft);
             startPoint = new Point3D(-119.805, 34.027, 1000.0);
             endPoint = new Point3D(-135.805, 20.027, 1000.0);
             thirdAircraft.Intent.CurrentPointIndex = 1;
             thirdAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
+            thirdAircraft.AutoPilot.Route = Route.DeserializeFromJson("route2.json");
+            thirdAircraft.AutoPilot.Actived = true;
+            thirdAircraft.SetAircraftPosition(117.35299659032735, 39.38856696361833, 1500.0);
             aircrafts.Add(thirdAircraft);
-
-            int index = 1;
-            aircrafts[index].AutoPilot.Route = Route.DeserializeFromJson("route.json");
-            aircrafts[index].AutoPilot.Actived = true;
+            startPoint = new Point3D(-119.805, 34.027, 1000.0);
+            endPoint = new Point3D(-135.805, 20.027, 1000.0);
+            fourthAircraft.Intent.CurrentPointIndex = 1;
+            fourthAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
+            fourthAircraft.AutoPilot.Route = Route.DeserializeFromJson("route2.json");
+            fourthAircraft.AutoPilot.Actived = true;
+            fourthAircraft.SetAircraftPosition(117.34863470475673, 39.38951966826886, 1500.0);
+            aircrafts.Add(fourthAircraft);
             return false;
         }
         public void StartScenario( bool state)
@@ -159,9 +173,23 @@ namespace StrategicFMSDemo
             {
                 ScenarioData.ScenarioDuration += 0.02;
             }
+            bool stopSign=true;
+            bool isAFASConfirmingLockTrigger=false;
             foreach (Aircraft aircraft in aircrafts)
             {
                 aircraft.Update(20);// TODO: The period is fixed here
+                stopSign &= !aircraft.AutoPilot.Actived;
+                isAFASConfirmingLockTrigger |= aircraft.Afas.ConfirmLock();
+;            }
+            if(isAFASConfirmingLockTrigger)
+            {
+                FlightData_EventArgs args = new FlightData_EventArgs();
+                args.isConfirming = true;
+                PutOutinformation(this, args);
+            }
+            if (stopSign)
+            {
+                _timer.Dispose();
             }
         }
         public struct UdpState
@@ -219,6 +247,14 @@ namespace StrategicFMSDemo
             string jsonout = JsonConvert.SerializeObject(account, Formatting.Indented);
             Debug.WriteLine(jsonout);
         }
+
+        public delegate void FlightData_CallBack(object sender, FlightData_EventArgs e);
+        public event FlightData_CallBack PutOutinformation;
+
+        public class FlightData_EventArgs : System.EventArgs
+        {
+            public bool isConfirming;
+        }
     }
 
     public class Account
@@ -227,6 +263,11 @@ namespace StrategicFMSDemo
         public bool Active { get; set; }
         public DateTime CreatedDate { get; set; }
         public IList<string> Roles { get; set; }
+    }
+
+    public  class CommMessage
+    {
+        public bool Active = false;
     }
 
     public class ScenarioData
@@ -252,7 +293,6 @@ namespace StrategicFMSDemo
                 formattedDuration = $"{duration.Hours} hours, {duration.Minutes} minutes, {duration.Seconds} seconds";
             }
         }
-
         public ScenarioData(int scenarioID)
         {
             ScenarioID = scenarioID;

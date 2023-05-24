@@ -25,6 +25,7 @@ namespace MSFSConnect
         private uint configIndex = 0;
         private Timer timer = new Timer();
         public ObservableCollection<uint> objectIDs { get; set; }
+        public Dictionary<int, uint> _objectIDsDict = new Dictionary<int, uint>();
         public Dictionary<uint, SIMCONNECT_DATA_LATLONALT> dicData = new Dictionary<uint, SIMCONNECT_DATA_LATLONALT>();
         public bool bStart = true;
         public bool bConnected = true;
@@ -36,9 +37,8 @@ namespace MSFSConnect
             UserEventWin32 = _UserEventWin32;
             configIndex = _configIndex;
 
-            objectIDs = new ObservableCollection<uint>();
             objectIDs.Add(1);
-
+            _objectIDsDict.Add(0, 1);
             this.timer.Interval = 20;
             this.timer.Elapsed += new ElapsedEventHandler(this.OnTimer);
         }
@@ -46,46 +46,56 @@ namespace MSFSConnect
         {
             bOddTick = !bOddTick;
             simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
-            simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
 
-            //GetAIAircraftInformation();
+            //simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
+
+            simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_ATTITUDE, DEFINITIONS.ATTITUDEINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
+            GetAIAircraftInformation();
         }
 
         private void GetAIAircraftInformation()//Get the aircraft position and set the corresponding AI plane position
         {
             FlightData _flightData = FlightData.GetInstance();
-            for (int i = 0; i < _flightData.aircrafts.Count; i++)
+            if (_flightData != null)
             {
-                Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
-                try
+                for (int i = 1; i < _flightData.aircrafts.Count; i++)//The AI aircraft start from 1, the zero aircraft is the ownship
                 {
-                    SIMCONNECT_DATA_LATLONALT pos;
-                    pos.Latitude = aircraftPoint.Y;
-                    pos.Longitude = aircraftPoint.X;
-                    pos.Altitude = aircraftPoint.Z;
-                    uint m_iObjectIdRequest = (uint)i;//TODO: I do not know how to get the object id
-                    bool status = SetAIPlanePosition(m_iObjectIdRequest, pos);
-                    if (status)
+                    Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
+                    try
                     {
-                        Debug.WriteLine("Setting successfully.");
+                        SIMCONNECT_DATA_LATLONALT pos;
+                        pos.Latitude = aircraftPoint.Y;
+                        pos.Longitude = aircraftPoint.X;
+                        pos.Altitude = aircraftPoint.Z;
+                        uint iObjectIdRequest = _objectIDsDict[i];//TODO: I do not know how to get the object id
+                        Debug.WriteLine("objectId=" + iObjectIdRequest + ",pos.Longitude=" + pos.Longitude + ",pos.Latitude=" + pos.Latitude + ",pos.Altitude=" + pos.Altitude);
+                        bool status = SetAIPlanePosition(iObjectIdRequest, pos);
+                        if (!status)
+                        {
+                            Debug.WriteLine("Setting failed.");
+                        }
                     }
-                    else
+                    catch
                     {
-                        Debug.WriteLine("Setting failed.");
+                        Debug.WriteLine("Setting failed, it may be that the content is incorrect.");
                     }
-                }
-                catch
-                {
-                    Debug.WriteLine("Setting failed, it may be that the content is incorrect.");
                 }
             }
         }
 
+        public struct SIMCONNECT_DATA_ATTITUDE
+        {
+            public double heading;
+
+            public double pitch;
+
+            public double bank;
+        }
         public bool init()
         {
             // create real visual system communication object
             simConnect = new SimConnect(szName, hWnd, UserEventWin32, null, configIndex);
-            
+
             /// Listen to connect and quit msgs
             simConnect.OnRecvOpen += new SimConnect.RecvOpenEventHandler(SimConnect_OnRecvOpen);
             simConnect.OnRecvQuit += new SimConnect.RecvQuitEventHandler(SimConnect_OnRecvQuit);
@@ -95,24 +105,34 @@ namespace MSFSConnect
 
             simConnect.OnRecvSimobjectDataBytype += new SimConnect.RecvSimobjectDataBytypeEventHandler(simconnect_OnRecvSimobjectDataBytype);
 
+            simConnect.OnRecvAssignedObjectId += SimConnect_OnRecvAssignedObjectId;
+
             simConnect.AddToDataDefinition(DEFINITIONS.POSITIONINFO, "Plane Latitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             simConnect.AddToDataDefinition(DEFINITIONS.POSITIONINFO, "Plane Longitude", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             simConnect.AddToDataDefinition(DEFINITIONS.POSITIONINFO, "Plane Altitude", "feet", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
             simConnect.RegisterDataDefineStruct<SIMCONNECT_DATA_LATLONALT>(DEFINITIONS.POSITIONINFO);
 
+            simConnect.AddToDataDefinition(DEFINITIONS.ATTITUDEINFO, "PLANE HEADING DEGREES TRUE", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            simConnect.AddToDataDefinition(DEFINITIONS.ATTITUDEINFO, "PLANE PITCH DEGREES", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            simConnect.AddToDataDefinition(DEFINITIONS.ATTITUDEINFO, "PLANE BANK DEGREES", "degrees", SIMCONNECT_DATATYPE.FLOAT64, 0.0f, SimConnect.SIMCONNECT_UNUSED);
+            simConnect.RegisterDataDefineStruct<SIMCONNECT_DATA_ATTITUDE>(DEFINITIONS.ATTITUDEINFO);
+
             try
             {
                 SIMCONNECT_DATA_INITPOSITION initpos;
-                initpos.Latitude = 39.11152;
-                initpos.Longitude = 117.35386;
-                initpos.Altitude = 0;
+                initpos.Latitude = 39.12595698615364;
+                initpos.Longitude = 117.34520307268038;
+                initpos.Altitude = 20;
                 initpos.Bank = 0;
                 initpos.Pitch = 0;
                 initpos.Heading = 0;
                 initpos.Airspeed = 0;
                 initpos.OnGround = 0;
-
-                bool status = CreateAIPlane("DA62 Asobo", "002", initpos, (MSFSControlConnect.TYPE_REQUESTS)1);
+                bool status = false;
+                status = CreateAIPlane("Volocity Microsoft", "001", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_1);
+                status = CreateAIPlane("Volocity Microsoft", "002", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_2);
+                status = CreateAIPlane("Volocity Microsoft", "003", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_3);
+                status = CreateAIPlane("Volocity Microsoft", "004", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_4);
                 if (status)
                 {
                     Debug.WriteLine("Creation successfully.");
@@ -128,6 +148,21 @@ namespace MSFSConnect
             }
 
             return simConnect != null;
+        }
+
+        private void SimConnect_OnRecvAssignedObjectId(SimConnect sender, SIMCONNECT_RECV_ASSIGNED_OBJECT_ID data)
+        {
+            int iRequest = (int)data.dwRequestID;
+            uint iObject = data.dwObjectID;
+
+            if (!objectIDs.Contains(iObject))
+            {
+                objectIDs.Add(iObject);
+            }
+            if(!_objectIDsDict.ContainsKey(iRequest)) 
+            {
+                _objectIDsDict.Add(iRequest, iObject);
+            }
         }
 
         private void SimConnect_OnRecvOpen(SimConnect sender, SIMCONNECT_RECV_OPEN data)
@@ -179,44 +214,48 @@ namespace MSFSConnect
         {
             uint iRequest = data.dwRequestID;
             uint iObject = data.dwObjectID;
-            if (!objectIDs.Contains(iObject))
-            {
-                objectIDs.Add(iObject);
-            }
             if ((TYPE_REQUESTS)data.dwRequestID == TYPE_REQUESTS.REQUEST_POSITION)
             {
                 if (dicData.ContainsKey(iObject))
                 {
                     dicData.Remove(iObject);
                 }
-                if(iObject == 1)
+                if (iObject == 1)
                 {
                     SIMCONNECT_DATA_LATLONALT pos = (SIMCONNECT_DATA_LATLONALT)data.dwData[0];
-                    SetOwnshipInformation(pos, iObject);
-                    //TODO: this is example to set the AI Plane
-                    //pos.Altitude += 10;
-                    //uint objectid=objectIDs.Last();
-                    //SetAIPlanePosition(objectid, pos);
-                    //dicData.Add(iObject, (SIMCONNECT_DATA_LATLONALT)data.dwData[0]); // TODO:shall be fixed ,there is problem here,can not convert dwData[0] to SIMCONNECT_DATA_LATLONALT;
+                    SetOwnshipPosition(pos, iObject);
                 }
+            }
+            else if ((TYPE_REQUESTS)data.dwRequestID == TYPE_REQUESTS.REQUEST_ATTITUDE)
+            {
+                SIMCONNECT_DATA_ATTITUDE attitude = (SIMCONNECT_DATA_ATTITUDE)data.dwData[0];
+                SetOwnshipAttitude(attitude, iObject);
             }
         }
 
-        private static void SetOwnshipInformation(SIMCONNECT_DATA_LATLONALT pos, uint iObject)//Get the ownship information from MSFS
+        private static void SetOwnshipPosition(SIMCONNECT_DATA_LATLONALT pos, uint iObject)//Get the ownship information from MSFS
         {
-            
+
             if (iObject == 1)
             {
                 FlightData _flightData = FlightData.GetInstance();
                 _flightData.Ownship.SetAircraftPosition(pos.Longitude, pos.Latitude, pos.Altitude);
             }
         }
+        private static void SetOwnshipAttitude(SIMCONNECT_DATA_ATTITUDE attitude, uint iObject)//Get the ownship information from MSFS
+        {
 
-        public bool CreateAIPlane(string containerTitle,string tailNumber, SIMCONNECT_DATA_INITPOSITION InitPos, Enum RequestID)
+            if (iObject == 1)
+            {
+                FlightData _flightData = FlightData.GetInstance();
+                //_flightData.Ownship.SetAircraftPosition(attitude.Longitude, attitude.Latitude, attitude.Altitude);
+            }
+        }
+        public bool CreateAIPlane(string containerTitle, string tailNumber, SIMCONNECT_DATA_INITPOSITION InitPos, Enum RequestID)
         {
             try
             {
-                simConnect.AICreateNonATCAircraft(containerTitle,tailNumber,InitPos,RequestID);
+                simConnect.AICreateNonATCAircraft(containerTitle, tailNumber, InitPos, RequestID);
                 return true;
             }
             catch (Exception ex)
@@ -226,11 +265,11 @@ namespace MSFSConnect
             }
         }
 
-        public bool SetAIPlanePosition(uint i, SIMCONNECT_DATA_LATLONALT pos)
+        public bool SetAIPlanePosition(uint objectId, SIMCONNECT_DATA_LATLONALT pos)
         {
             try
             {
-                simConnect.SetDataOnSimObject(DEFINITIONS.POSITIONINFO, i, 0, pos);
+                simConnect.SetDataOnSimObject(DEFINITIONS.POSITIONINFO, objectId, 0, pos);
                 return true;
             }
             catch (Exception ex)
@@ -272,7 +311,8 @@ namespace MSFSConnect
             REQUEST_ADDINTRUDER_8,
             REQUEST_ADDINTRUDER_9,
             REQUEST_ADDINTRUDER_10,
-            REQUEST_ADDINTRUDER_DELETE
+            REQUEST_ADDINTRUDER_DELETE,
+            REQUEST_ATTITUDE,
         };
 
         public enum DEFINITIONS

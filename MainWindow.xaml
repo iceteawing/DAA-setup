@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StrategicFMSDemo"
         xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" xmlns:StrategicFMSDemo="clr-namespace:StrategicFMSDemo" x:Class="StrategicFMSDemo.MainWindow"
-        d:DataContext="{d:DesignInstance Type={x:Type local:MapViewModel}}"
+
+    
         mc:Ignorable="d"
         Title="StrategicFMSDemo" Height="900" Width="1600" >
 
     <Window.Resources>
         <local:MapViewModel x:Key="MapViewModel" />
     </Window.Resources>
-
+    
     <Grid>
         <TabControl Margin="0,0,0,0" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="True">
             <TabItem x:Name="FlightTrackerTabItem" Header="Scenario" AutomationProperties.Name="Flight">
@@ -100,7 +101,11 @@
             <TabItem x:Name="other" Header="Primary Display" >
                 <StrategicFMSDemo:SceneUserControl Height="708" Margin="4,0,24,0"/>
             </TabItem>
-            <TabItem Header="AI Agents"/>
+            <TabItem x:Name="AFASTabItem" Header="AFAS">
+                <Grid>
+                    <Button Content="Confirm" Width="200" Margin="618,738,0,69" HorizontalAlignment="Left" IsEnabled="{Binding IsConfirming}"/>
+                </Grid>
+            </TabItem>
             <TabItem Header="Digital Traffic Manager">
                 <TabItem.Background>
                     <LinearGradientBrush EndPoint="0,1">
@@ -120,37 +125,42 @@
             <TabItem Header="Airspace Structure"/>
             <TabItem x:Name="IntrudersTabItem" Header="Intruders"  RenderTransformOrigin="2.628,0.195"  >
                 <Grid Background="#FFE5E5E5" VerticalAlignment="Top" Height="751" >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="87*"/>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="704*"/>
+                    </Grid.ColumnDefinitions>
                     <RadioButton x:Name="radioButton" Content="RadioButton" HorizontalAlignment="Left" Margin="54,28,0,0" VerticalAlignment="Top" GroupName="Position"/>
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="179,31,0,0" VerticalAlignment="Top" GroupName="Position"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="6,31,0,0" VerticalAlignment="Top" GroupName="Position" Grid.ColumnSpan="2" Grid.Column="1"/>
                     <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="54,71,0,0" VerticalAlignment="Top" GroupName="Position"/>
                     <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="54,112,0,0" VerticalAlignment="Top" GroupName="Position"/>
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="179,112,0,0" VerticalAlignment="Top" GroupName="Position"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="6,112,0,0" VerticalAlignment="Top" GroupName="Position" Grid.ColumnSpan="2" Grid.Column="1"/>
 
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="281,71,0,0" VerticalAlignment="Top" GroupName="Position"/>
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="281,28,0,0" VerticalAlignment="Top" GroupName="Position"/>
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="281,112,0,0" VerticalAlignment="Top" GroupName="Position"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="96,71,0,0" VerticalAlignment="Top" GroupName="Position" Grid.Column="2"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="96,28,0,0" VerticalAlignment="Top" GroupName="Position" Grid.Column="2"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="96,112,0,0" VerticalAlignment="Top" GroupName="Position" Grid.Column="2"/>
 
-                    <RadioButton Content="Level" HorizontalAlignment="Left" Margin="470,78,0,0" VerticalAlignment="Top" GroupName="vertical flightpath"/>
-                    <RadioButton Content="Descending" HorizontalAlignment="Left" Margin="470,46,0,0" VerticalAlignment="Top" GroupName="vertical flightpath"/>
-                    <RadioButton Content="Climbing" HorizontalAlignment="Left" Margin="470,119,0,0" VerticalAlignment="Top" GroupName="vertical flightpath"/>
+                    <RadioButton Content="Level" HorizontalAlignment="Left" Margin="284,78,0,0" VerticalAlignment="Top" GroupName="vertical flightpath" Grid.Column="2"/>
+                    <RadioButton Content="Descending" HorizontalAlignment="Left" Margin="284,46,0,0" VerticalAlignment="Top" GroupName="vertical flightpath" Grid.Column="2"/>
+                    <RadioButton Content="Climbing" HorizontalAlignment="Left" Margin="284,119,0,0" VerticalAlignment="Top" GroupName="vertical flightpath" Grid.Column="2"/>
 
 
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="626,46,0,0" VerticalAlignment="Top" GroupName="Scenario"/>
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="626,85,0,0" VerticalAlignment="Top" GroupName="Scenario"/>
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="626,119,0,0" VerticalAlignment="Top" GroupName="Scenario"/>
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="626,158,0,0" VerticalAlignment="Top" GroupName="Scenario"/>
-                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="626,195,0,0" VerticalAlignment="Top" GroupName="Scenario"/>
-                    <Viewbox Height="50">
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="440,46,0,0" VerticalAlignment="Top" GroupName="Scenario" Grid.Column="2"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="440,85,0,0" VerticalAlignment="Top" GroupName="Scenario" Grid.Column="2"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="440,119,0,0" VerticalAlignment="Top" GroupName="Scenario" Grid.Column="2"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="440,158,0,0" VerticalAlignment="Top" GroupName="Scenario" Grid.Column="2"/>
+                    <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="440,195,0,0" VerticalAlignment="Top" GroupName="Scenario" Grid.Column="2"/>
+                    <Viewbox Height="50" Grid.ColumnSpan="3" Margin="0,350,0,351">
                         <RadioButton Content="Traffic Advisory Only (Single Threat)"  GroupName="Scenario"/>
                     </Viewbox>
 
 
-                    <CheckBox Content="Altitude Reporting" IsChecked="{Binding IsCheck1, Mode=TwoWay}" HorizontalAlignment="Left" Margin="54,202,0,0" VerticalAlignment="Top"/>
-                    <CheckBox Content="ADS-B Reporting" IsChecked="{Binding IsChecked2, Mode=TwoWay}" HorizontalAlignment="Left" Margin="224,202,0,0" VerticalAlignment="Top"/>
-                    <CheckBox Content="No Braring Data Measured" IsChecked="{Binding IsChecked3, Mode=TwoWay}" HorizontalAlignment="Left" Margin="54,247,0,0" VerticalAlignment="Top"/>
-                    <Button Content="Start Scenario" Margin="1198,622,37,0" VerticalAlignment="Top" Height="82" Click="Button_Click_1"/>
-                    <Button Content="Stop Scenario" HorizontalAlignment="Left" Margin="1011,617,0,0" VerticalAlignment="Top" Height="82" Width="161" RenderTransformOrigin="-2.82,-1.323"/>
-                    <ToggleButton x:Name="ToggleButton1" Margin="752,634,425,69">
+                    <CheckBox Content="Altitude Reporting" IsChecked="{Binding IsCheck1, Mode=TwoWay}" HorizontalAlignment="Left" Margin="54,202,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+                    <CheckBox Content="ADS-B Reporting" IsChecked="{Binding IsChecked2, Mode=TwoWay}" HorizontalAlignment="Left" Margin="38,202,0,0" VerticalAlignment="Top" Grid.Column="2"/>
+                    <CheckBox Content="No Braring Data Measured" IsChecked="{Binding IsChecked3, Mode=TwoWay}" HorizontalAlignment="Left" Margin="54,247,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
+                    <Button Content="Start Scenario" Margin="1014,617,36,0" VerticalAlignment="Top" Height="82" Click="Button_Click_1" Grid.Column="2"/>
+                    <Button Content="Stop Scenario" HorizontalAlignment="Left" Margin="826,617,0,0" VerticalAlignment="Top" Height="82" Width="161" RenderTransformOrigin="-2.82,-1.323" Grid.Column="2"/>
+                    <ToggleButton x:Name="ToggleButton1" Margin="566,634,425,69" Grid.Column="2">
                         <ToggleButton.Style>
                             <Style TargetType="{x:Type ToggleButton}">
                                 <Setter Property="Template">
@@ -214,7 +224,6 @@
             <TabItem Header="SimConnect">
                 <Button x:Name="SimconnectBution" Content="SimconnectBution" Click="SimconnectButton_Click" Height="291" Margin="474,0,405,0"/>
             </TabItem>
-            
         </TabControl>
     </Grid>
 </Window>  

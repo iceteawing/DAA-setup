@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using static System.Windows.Forms.AxHost;
 
 namespace StrategicFMS
 {
@@ -89,6 +90,7 @@ namespace StrategicFMS
             AircraftId = acid;
             Type = type;
             State = new AircraftState();
+            State.AircraftID=AircraftId;
             Intent = new TrajectoryIntentData();
             Route = new Route();
             AutoPilot = new AutoPilot(Route);
@@ -131,6 +133,7 @@ namespace StrategicFMS
         public AutoFlightAssistSystem Afas { get => _afas; set => _afas = value; }
         public string AircraftId { get => _aircraftId; set => _aircraftId = value; }
 
+        private double holdingTime = 20;//seconds
         /// <summary>
         /// update the state of the aircraft according to the period
         /// </summary>
@@ -140,6 +143,13 @@ namespace StrategicFMS
 
             //TODO: add the ASAS logic here to impact the aircraft's behavior
             FlightData flightData = FlightData.GetInstance();
+            if(Afas.IsConfirming==false && AutoPilot.CalculateDistance(State.Latitude,State.Longitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude,AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude) <MyConstants.SchedulingPointMargin)
+            {
+                Afas.IsConfirming = true;
+                Afas.SequenceOperations(flightData.aircrafts);
+                Debug.WriteLine(State.AircraftID + " Afas.IsConfirming！");
+            }
+
             if (this.AircraftId == "001")
             {
                 return true;
@@ -152,7 +162,19 @@ namespace StrategicFMS
             }
             else if(AutoPilot!= null & AutoPilot.Actived) //TODO: add the autopilot logic here 
             {
-                AutoPilot.FlyToNextWaypoint(State);
+                if(AircraftId=="002" && holdingTime>0)
+                {
+                    
+                    int flyPattern=AutoPilot.FlyInHoldingPattern(State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude, 1000, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Altitude, 1000);
+                    if(flyPattern==1)
+                    {
+                        holdingTime -= period / 1000;
+                    }
+                }
+                else
+                {
+                    AutoPilot.FlyToNextWaypoint(State);
+                }
                 this.GroundSpeed = AutoPilot.DesiredGroundSpeed;//km/h
                 this.Bearing = AutoPilot.DesiredTrack;//degree, the north is 0
                 this.VerticalSpeed = AutoPilot.DesiredVerticalSpeed;//m/s
@@ -160,7 +182,7 @@ namespace StrategicFMS
             else
             {
                 //TODO: following a fixed logic here,may be hovering or hold the last state
-                this.GroundSpeed = 100;//km/h
+                this.GroundSpeed = 0;//km/h
                 this.Bearing = 0;//degree, the north is 0
                 this.VerticalSpeed = 0;//m/s
             }

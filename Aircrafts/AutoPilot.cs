@@ -26,6 +26,8 @@ namespace StrategicFMS.Aircrafts
         private Traffic.Route _route;
         private int _activeWaypointIndex;
         private double _distanceToActiveWaypoint;
+
+        private const double _multipleParameter = 5;
         public AutoPilot(Traffic.Route route)
         {
             Route = route;
@@ -58,11 +60,11 @@ namespace StrategicFMS.Aircrafts
 
             var activeWaypoint = Route.Waypoints[ActiveWaypointIndex];
             DistanceToActiveWaypoint = CalculateDistance(activeWaypoint.Latitude, activeWaypoint.Longtitude, state.Latitude, state.Longitude);
-            Trace.WriteLine("Distance to active waypoint:" + DistanceToActiveWaypoint.ToString() +"meters.");
-            return DistanceToActiveWaypoint <= 1;//TODO: will stop before reach the exact point
+            //Debug.WriteLine(state.AircraftID + " Distance to active waypoint = " + ActiveWaypointIndex+" is "+ DistanceToActiveWaypoint.ToString() +" meters.");
+            return DistanceToActiveWaypoint <= 10;//TODO: will stop before reach the exact point
         }
 
-        double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        public double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
             var R = 6371e3; // metres
 
@@ -103,19 +105,26 @@ namespace StrategicFMS.Aircrafts
             {
                 return;
             }
-
-            if (VerifyActiveWaypointReached(state))
+            lock (this)
             {
-                ActiveWaypointIndex++;
+                if (VerifyActiveWaypointReached(state))
+                {
+
+                    Debug.WriteLine(state.AircraftID + " reach the active waypoint = " + ActiveWaypointIndex);
+                    ActiveWaypointIndex++;
+                }
             }
 
             if (ActiveWaypointIndex >= Route.Waypoints.Count)
             {
+                if(Actived == true)
+                {
+                    //MyEventArgs args = new MyEventArgs();//notify the aircraft to show message
+                    //args.done = true;
+                    //PutOutinformation(this, args);
+                    Debug.WriteLine(state.AircraftID + " reach the destination"); 
+                }
                 Actived = false;
-                Trace.WriteLine("Reach the destination");
-                MyEventArgs args= new MyEventArgs();
-                args.done = true;
-                PutOutinformation(this, args);
                 return;
             }
 
@@ -125,8 +134,8 @@ namespace StrategicFMS.Aircrafts
             //var desiredTrack = desiredHeading - state.MagneticHeading;
             var desiredTrack = CalculateBearing(state.Latitude, state.Longitude, activeWaypoint.Latitude, activeWaypoint.Longtitude);
             
-            var desiredGroundSpeed = 240;//TODO: shall match the aircraft performance and shall be calculated based on the 4D trajectory
-            var desiredTrueAirSpeed = 240;
+            var desiredGroundSpeed = 240*_multipleParameter;//TODO: shall match the aircraft performance and shall be calculated based on the 4D trajectory
+            var desiredTrueAirSpeed = 240 * _multipleParameter;
             //Vertical following
             var desiredAltitude = activeWaypoint.Altitude;
 
@@ -176,21 +185,69 @@ namespace StrategicFMS.Aircrafts
                 {
                     desiredVerticalSpeed = Math.Max(desiredVerticalSpeed, -2000);
                 }
-                
             }
-            Trace.WriteLine("activeWaypoint.Lon:" + activeWaypoint.Longtitude.ToString() + " activeWaypoint.Lat:" + activeWaypoint.Latitude.ToString() + " activeWaypoint.Altitude:" + activeWaypoint.Altitude.ToString());
-            Trace.WriteLine("state.Lon:" + state.Longitude.ToString() + " state.Lat:" + state.Latitude.ToString() + " state.Altitude:" + state.Altitude.ToString()) ;
-            Trace.WriteLine("Track=" + desiredTrack.ToString()+" Speed="+ desiredGroundSpeed.ToString()+" vertical speed=" +DesiredVerticalSpeed.ToString());
+            //Trace.WriteLine("activeWaypoint.Lon:" + activeWaypoint.Longtitude.ToString() + " activeWaypoint.Lat:" + activeWaypoint.Latitude.ToString() + " activeWaypoint.Altitude:" + activeWaypoint.Altitude.ToString());
+            //Trace.WriteLine("state.Lon:" + state.Longitude.ToString() + " state.Lat:" + state.Latitude.ToString() + " state.Altitude:" + state.Altitude.ToString()) ;
+            //Trace.WriteLine("Track=" + desiredTrack.ToString()+" Speed="+ desiredGroundSpeed.ToString()+" vertical speed=" +DesiredVerticalSpeed.ToString());
             DesiredTrack = desiredTrack;
             DesiredGroundSpeed = desiredGroundSpeed;
             DesiredTrueAirSpeed = desiredTrueAirSpeed;
             DesiredAltitude = desiredAltitude;
             DesiredVerticalSpeed = desiredVerticalSpeed;
-
         }
+        public int FlyInHoldingPattern(AircraftState state, double holdingCenterLongitude,double holdingCenterLatitude, double holdingSpeed, double holdingAltitude, double holdingRadius)
+        {
+            int flyPattern = 0;
+            if (state == null)
+            {
+                return 0;
+            }
+
+            // Set desired altitude and speed
+            DesiredAltitude = holdingAltitude;
+            DesiredGroundSpeed = holdingSpeed;
+            DesiredTrueAirSpeed = holdingSpeed;
+
+            // Calculate the distance from the holding point
+            double distanceToHoldingPoint = CalculateDistance(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
+
+            // Check if the aircraft is within the holding radius
+            if (distanceToHoldingPoint <= holdingRadius)
+            {
+                // Calculate the bearing to the holding point
+                double bearingToHoldingPoint = CalculateBearing(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
+
+                // Set the desired track to maintain the holding pattern
+                DesiredTrack = bearingToHoldingPoint - 90;
+
+                flyPattern=1;
+            }
+            else
+            {
+                // Fly towards the holding point
+                DesiredTrack = CalculateBearing(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
+                flyPattern = 2;
+            }
+
+            // Set the desired vertical speed to maintain the holding altitude
+            double altitudeDifference = state.Altitude - holdingAltitude;
+            if (altitudeDifference < 1 && altitudeDifference > -1)
+            {
+                DesiredVerticalSpeed = 0;
+            }
+            else if (altitudeDifference < 0)
+            {
+                DesiredVerticalSpeed = 20; // Climb at 20 m/s
+            }
+            else
+            {
+                DesiredVerticalSpeed = -20; // Descend at 20 m/s
+            }
+            return flyPattern;
+        }
+
         public delegate void Autopilot_CallBack(object sender, MyEventArgs e);
         public event Autopilot_CallBack PutOutinformation;
-        
         public class MyEventArgs : System.EventArgs
         {
             public bool done;

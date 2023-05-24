@@ -8,11 +8,25 @@ namespace StrategicFMS.AFAS
 {
     public class AutoFlightAssistSystem
     {
-        public AutoFlightAssistSystem() { }
-        
-        public void SequenceOperations()
-        {
+        public AutoFlightAssistSystem() { IsConfirmed = false; IsConfirming = false; }
 
+        private bool _isConfirmed;
+        private bool _isConfirming;
+        public bool IsConfirmed { get => _isConfirmed; set => _isConfirmed = value; }
+        public bool IsConfirming { get => _isConfirming; set => _isConfirming = value; }
+
+        public List<string> LandingSequence = new List<string>();
+        public void SequenceOperations(List<Aircraft> aircrafts)
+        {
+            // 使用LINQ根据EstimatedArrivalTime对飞机列表进行排序
+            var sortedAircrafts = aircrafts.OrderBy(aircraft => aircraft.AutoPilot.Route.EstimatedArrivalTime).ToList();
+
+            foreach (Aircraft aircraft in sortedAircrafts)
+            {
+                aircraft.Afas.IsConfirming = true;
+                DateTime dt = aircraft.AutoPilot.Route.EstimatedArrivalTime;
+                LandingSequence.Add(aircraft.AircraftId);
+            }
         }
 
         public void SchedulingSessionInitialization()
@@ -21,15 +35,15 @@ namespace StrategicFMS.AFAS
         }
         public bool ConfirmLock()
         {
-            return false;
+            return _isConfirming;
         }
         public bool ConfirmUnlock()
         {
-            return false;
+            return _isConfirmed;
         }
         public bool SchedulingSessionTimeout()
-        { 
-            return false; 
+        {
+            return false;
         }
 
     }
