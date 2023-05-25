@@ -167,6 +167,9 @@ namespace StrategicFMSDemo
         public static FlightData GetInstance() {
         return instance;
         }
+        public List<string> LandingSequence =new List<string>();
+        private bool _isAFASConfirmingLockTrigger=false;
+        private bool _isAFASConfirmingLockTriggerPre = false;
         private void UpdateFlightData(object state)
         {
             if(ScenarioData != null)
@@ -174,19 +177,21 @@ namespace StrategicFMSDemo
                 ScenarioData.ScenarioDuration += 0.02;
             }
             bool stopSign=true;
-            bool isAFASConfirmingLockTrigger=false;
+            _isAFASConfirmingLockTrigger = false;
             foreach (Aircraft aircraft in aircrafts)
             {
                 aircraft.Update(20);// TODO: The period is fixed here
                 stopSign &= !aircraft.AutoPilot.Actived;
-                isAFASConfirmingLockTrigger |= aircraft.Afas.ConfirmLock();
-;            }
-            if(isAFASConfirmingLockTrigger)
+                _isAFASConfirmingLockTrigger |= aircraft.Afas.ConfirmLock();
+            }
+            if(!_isAFASConfirmingLockTriggerPre && _isAFASConfirmingLockTrigger)
             {
                 FlightData_EventArgs args = new FlightData_EventArgs();
                 args.isConfirming = true;
+                args.landingSequence = LandingSequence;
                 PutOutinformation(this, args);
             }
+            _isAFASConfirmingLockTriggerPre = _isAFASConfirmingLockTrigger;
             if (stopSign)
             {
                 _timer.Dispose();
@@ -254,6 +259,7 @@ namespace StrategicFMSDemo
         public class FlightData_EventArgs : System.EventArgs
         {
             public bool isConfirming;
+            public List<string> landingSequence = new List<string>();
         }
     }
 

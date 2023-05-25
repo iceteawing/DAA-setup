@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StrategicFMSDemo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,8 @@ namespace StrategicFMS.AFAS
                 DateTime dt = aircraft.AutoPilot.Route.EstimatedArrivalTime;
                 LandingSequence.Add(aircraft.AircraftId);
             }
+            FlightData flightData = FlightData.GetInstance();
+            flightData.LandingSequence = LandingSequence;
         }
 
         public void SchedulingSessionInitialization()

@@ -13,7 +13,7 @@
     <Window.Resources>
         <local:MapViewModel x:Key="MapViewModel" />
     </Window.Resources>
-    
+
     <Grid>
         <TabControl Margin="0,0,0,0" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="True">
             <TabItem x:Name="FlightTrackerTabItem" Header="Scenario" AutomationProperties.Name="Flight">
@@ -101,18 +101,13 @@
             <TabItem x:Name="other" Header="Primary Display" >
                 <StrategicFMSDemo:SceneUserControl Height="708" Margin="4,0,24,0"/>
             </TabItem>
-            <TabItem x:Name="AFASTabItem" Header="AFAS">
+            <TabItem x:Name="AFASTabItem" Header="AFAS" Background="{Binding Background_AFASTabItem}">
                 <Grid>
                     <Button Content="Confirm" Width="200" Margin="618,738,0,69" HorizontalAlignment="Left" IsEnabled="{Binding IsConfirming}"/>
+                    <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="357,213,304,301" ItemsSource="{Binding LandingSequence}"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Digital Traffic Manager">
-                <TabItem.Background>
-                    <LinearGradientBrush EndPoint="0,1">
-                        <GradientStop Color="#FFF0F0F0"/>
-                        <GradientStop Color="#FFEC6464" Offset="1"/>
-                    </LinearGradientBrush>
-                </TabItem.Background>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="8*"/>

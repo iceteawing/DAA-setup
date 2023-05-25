@@ -52,7 +52,8 @@ namespace StrategicFMSDemo
             InitializeComponent();
             this.DataContext = this;
             this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
+            //MainMapView.LocationDisplay.IsEnabled = true;
+            //MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
             MapPoint mapCenterPoint = new MapPoint(117.34520307268038, 39.12595698615364, SpatialReferences.Wgs84);
             MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 100000));
             string version = Application.ResourceAssembly.GetName().Version.ToString();
@@ -60,18 +61,22 @@ namespace StrategicFMSDemo
             FlightData _flightData = FlightData.GetInstance();
             Debug.Assert( _flightData != null );
             IsConfirming = false;
-            //MainMapView.LocationDisplay.IsEnabled = true;
-            //MainMapView.LocationDisplay.AutoPanMode = Esri.ArcGISRuntime.UI.LocationDisplayAutoPanMode.Recenter;
+
             _flightData.PutOutinformation += new FlightData.FlightData_CallBack(this.ProcessInformation);
         }
         private void ProcessInformation(object sender, FlightData.FlightData_EventArgs e)
         {
             IsConfirming = e.isConfirming;
+            LandingSequence = e.landingSequence;
+            //AFASTabItem.Background = System.Windows.Media.Brushes.Red;
+            Background_AFASTabItem = System.Windows.Media.Brushes.LightPink;
         }
         public bool IsChecked1 { get; set; }
         public bool IsChecked2 { get; set; }
         public bool IsChecked3 { get; set; }
         private bool _isConfirming;
+        private List<string> _landingSequence;
+        private Brush _background_AFASTabItem;
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -87,17 +92,34 @@ namespace StrategicFMSDemo
                 OnPropertyChanged();
             }
         }
+
+        public List<string> LandingSequence
+        {
+            get { return _landingSequence; }
+            set
+            {
+                _landingSequence = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Brush Background_AFASTabItem
+        {
+            get { return _background_AFASTabItem; }
+            set
+            {
+                _background_AFASTabItem = value;
+                OnPropertyChanged();
+            }
+        }
         private void Button_Click(object sender, RoutedEventArgs e)//this is for the test button
         {
             FlightData _flightData = FlightData.GetInstance();
             //MapPoint mapCenterPoint = new MapPoint(_flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, SpatialReferences.Wgs84);
             //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
-
             //MessageBox.Show(string.Format("{0},{1},{2}", _flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, _flightData.Ownship.State.Altitude));
-
             createAirspaceStructrue();
             createRoute();
-
         }
 
         private void createRoute()

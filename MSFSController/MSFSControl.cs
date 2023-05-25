@@ -24,7 +24,7 @@ namespace MSFSConnect
         private UInt32 UserEventWin32;
         private uint configIndex = 0;
         private Timer timer = new Timer();
-        public ObservableCollection<uint> objectIDs { get; set; }
+        public ObservableCollection<uint> objectIDs = new ObservableCollection<uint>();
         public Dictionary<int, uint> _objectIDsDict = new Dictionary<int, uint>();
         public Dictionary<uint, SIMCONNECT_DATA_LATLONALT> dicData = new Dictionary<uint, SIMCONNECT_DATA_LATLONALT>();
         public bool bStart = true;
