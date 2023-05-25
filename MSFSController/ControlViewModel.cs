@@ -209,7 +209,7 @@ namespace MSFSControlApp
                 pos.Longitude = double.Parse(uSetLongitude);
                 pos.Altitude = double.Parse(uSetAltitude);
 
-                bool status = connect.SetAIPlanePosition(m_iObjectIdRequest, pos);
+                bool status = connect.SetAIAircraftPosition(m_iObjectIdRequest, pos);
                 if (status)
                 {
                     m_vMessage = "Setting successfully.";

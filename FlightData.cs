@@ -26,7 +26,7 @@ namespace StrategicFMSDemo
         private ScenarioData _scenarioData;
         private AirspaceStructure _airspace;
         private Ownship ownship = new("001", "Cessna208");
-        private Aircraft firstAircraft =new ("002","Cessna208"); //AI agent
+        private Aircraft firstAircraft =new ("002", "Volocity"); //AI agent
         private Aircraft secondAircraft = new ("003", "Volocity");//AI agent
         private Aircraft thirdAircraft = new ("004", "Volocity");//AI agent
         private Aircraft fourthAircraft = new ("005", "Helicopter");//AI agent
@@ -74,6 +74,7 @@ namespace StrategicFMSDemo
         }
         public bool Initialization(ScenarioData _scenarioData)
         {
+            aircrafts.Clear();
             //TODO: Initialize the ownship 
             Point3D startPoint = new Point3D(-119.805, 34.027, 1000.0);
             Point3D endPoint = new Point3D(-119.805, 39.027, 1000.0);

@@ -45,14 +45,12 @@ namespace StrategicFMS
 
         private double _cruiseSpeed;
         private double _cruiseAltitude;
-        private double _heading;
         private double _bearing;
         private double _groundSpeed;
         private double _verticalSpeed;
 
         public double CruiseSpeed { get => _cruiseSpeed; set => _cruiseSpeed = value; }
         public double CruiseAltitude { get => _cruiseAltitude; set => _cruiseAltitude = value; }
-        public double Heading { get => _heading; set => _heading = value; }
         public double GroundSpeed { get => _groundSpeed; set => _groundSpeed = value; }
         public double VerticalSpeed { get => _verticalSpeed; set => _verticalSpeed = value; }
 
@@ -70,12 +68,6 @@ namespace StrategicFMS
         {
             CruiseAltitude = altitude;
         }
-
-        public void SetHeading(double heading)
-        {
-            Heading = heading;
-        }
-
         public void SetGroundSpeed(double speed)
         {
             GroundSpeed = speed;
@@ -92,8 +84,7 @@ namespace StrategicFMS
             State = new AircraftState();
             State.AircraftID=AircraftId;
             Intent = new TrajectoryIntentData();
-            Route = new Route();
-            AutoPilot = new AutoPilot(Route);
+            AutoPilot = new AutoPilot(new Route());
             Asas=new AirborneSeparationAssuranceSystem(AircraftId);
             Afas=new AutoFlightAssistSystem();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
@@ -110,8 +101,7 @@ namespace StrategicFMS
             Type = type;
             State = new AircraftState();
             Intent = new TrajectoryIntentData();
-            Route = new Route();
-            AutoPilot = new AutoPilot(Route);
+            AutoPilot = new AutoPilot(new Route());
             Asas = new AirborneSeparationAssuranceSystem(AircraftId);
             Afas = new AutoFlightAssistSystem();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
@@ -127,7 +117,6 @@ namespace StrategicFMS
         public AircraftCategory AircraftCategory1 { get => _aircraftCategory; set => _aircraftCategory = value; }
       
         public double Bearing { get => _bearing; set => _bearing = value; }
-        internal Route Route { get => _route; set => _route = value; }
         public AutoPilot AutoPilot { get => _autoPilot; set => _autoPilot = value; }
         public AirborneSeparationAssuranceSystem Asas { get => _asas; set => _asas = value; }
         public AutoFlightAssistSystem Afas { get => _afas; set => _afas = value; }
@@ -171,6 +160,15 @@ namespace StrategicFMS
                         holdingTime -= period / 1000;
                     }
                 }
+                else if (AircraftId == "004" && holdingTime > 0)
+                {
+
+                    int flyPattern = AutoPilot.FlyInHoldingPattern(State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude, 1000, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Altitude, 1000);
+                    if (flyPattern == 1)
+                    {
+                        holdingTime -= period / 1000;
+                    }
+                }
                 else
                 {
                     AutoPilot.FlyToNextWaypoint(State);
@@ -178,6 +176,8 @@ namespace StrategicFMS
                 this.GroundSpeed = AutoPilot.DesiredGroundSpeed;//km/h
                 this.Bearing = AutoPilot.DesiredTrack;//degree, the north is 0
                 this.VerticalSpeed = AutoPilot.DesiredVerticalSpeed;//m/s
+                this.State.Heading = this.Bearing; //temp solution
+                this.State.DateTime = DateTime.Now;
             }
             else
             {

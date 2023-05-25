@@ -13,6 +13,9 @@ namespace StrategicFMS
             Latitude = 39.29082247362174;
             Longitude = 117.05548920282489;
             Altitude = 1500.0;
+            Heading = 0;
+            PitchAngel = 0;
+            RollAngel = 0;
         }
 
         public AircraftState(string aircraftID, string callSign, string aircraftType, double latitude, double longitude, double altitude, double speed)
@@ -24,6 +27,9 @@ namespace StrategicFMS
             Longitude = longitude;
             Altitude = altitude;
             Speed = speed;
+            Heading = 0;
+            PitchAngel = 0;
+            RollAngel = 0;
         }
 
         public string AircraftID { get; set; } //780254
@@ -41,37 +47,5 @@ namespace StrategicFMS
         public double Distance { get; set; }//12.8 nmi
         public DateTime DateTime { get; set; }//'2013-01-20T00:00:00Z'
         public string Region { get; set; } //China
-
-        public bool update()
-        {
-            Latitude = Latitude;
-            Longitude = Longitude;
-            Altitude = Altitude;
-            RollAngel = RollAngel;
-            PitchAngel = PitchAngel;
-            Heading = Heading;
-            Speed = Speed;
-            VerticalRate = VerticalRate;
-            Track = Track;
-            Distance = Distance;
-            DateTime = DateTime.Now;
-            return true;
-        }
-
-        public bool Update(Point3D targetPoint)
-        {
-            Latitude += (targetPoint.X-Latitude) *0.00001;
-            Longitude += (targetPoint.Y - Longitude) * 0.00001;
-            Altitude = Altitude;
-            RollAngel = RollAngel;
-            PitchAngel = PitchAngel;
-            Heading = Heading;
-            Speed = Speed;
-            VerticalRate = VerticalRate;
-            Track = Track;
-            Distance = Distance;
-            DateTime = DateTime.Now;
-            return true;
-        }
     }
 }

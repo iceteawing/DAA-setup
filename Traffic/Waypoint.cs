@@ -27,7 +27,7 @@ namespace StrategicFMS.Traffic
         private double _latitude;
         private double _altitude;
         private int _heightType;//TODO
-        private int _type;//TODO
+        private Type _type;//TODO
         private double _airspeed;
         private double _verticalSpeed;
         //Fly by: aircraft perform a turn where the next waypoint is at the center of the turn. Aircraft initiates the turn at a distance from the waypoint (turn distance) according to the pre-defined turn radius (depending on the bank angle). By default waypoints are flyby.
@@ -42,15 +42,24 @@ namespace StrategicFMS.Traffic
         public double Latitude { get => _latitude; set => _latitude = value; }
         public double Altitude { get => _altitude; set => _altitude = value; }
         public int HeightType { get => _heightType; set => _heightType = value; }
-        public int Type { get => _type; set => _type = value; }
         public double Airspeed { get => _airspeed; set => _airspeed = value; }
         public double VerticalSpeed { get => _verticalSpeed; set => _verticalSpeed = value; }
         public int CrossType { get => _crossType; set => _crossType = value; }
         public double Radius { get => _radius; set => _radius = value; }
+        public Type Type1 { get => _type; set => _type = value; }
 
         public void setWayPointfromRunway()
         {
 
+        }
+        public enum Type
+        {
+            IAF,
+            IF,
+            FAF,
+            MAPt,
+            Enroute,
+            Holding
         }
 
     }

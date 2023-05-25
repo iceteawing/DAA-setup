@@ -60,7 +60,9 @@ namespace MSFSConnect
             {
                 for (int i = 1; i < _flightData.aircrafts.Count; i++)//The AI aircraft start from 1, the zero aircraft is the ownship
                 {
-                    Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
+                    
+                    Aircraft aircraft = _flightData.aircrafts[i];
+                    Point3D aircraftPoint = aircraft.GetPoint3D();
                     try
                     {
                         SIMCONNECT_DATA_LATLONALT pos;
@@ -69,7 +71,12 @@ namespace MSFSConnect
                         pos.Altitude = aircraftPoint.Z;
                         uint iObjectIdRequest = _objectIDsDict[i];//TODO: I do not know how to get the object id
                         Debug.WriteLine("objectId=" + iObjectIdRequest + ",pos.Longitude=" + pos.Longitude + ",pos.Latitude=" + pos.Latitude + ",pos.Altitude=" + pos.Altitude);
-                        bool status = SetAIPlanePosition(iObjectIdRequest, pos);
+                        bool status = SetAIAircraftPosition(iObjectIdRequest, pos);
+                        SIMCONNECT_DATA_ATTITUDE attitude;
+                        attitude.heading = aircraft.State.Heading;
+                        attitude.pitch = aircraft.State.PitchAngel;
+                        attitude.bank = aircraft.State.RollAngel;
+                        status &= SetAIAircraftAttitude(iObjectIdRequest, attitude);
                         if (!status)
                         {
                             Debug.WriteLine("Setting failed.");
@@ -265,7 +272,7 @@ namespace MSFSConnect
             }
         }
 
-        public bool SetAIPlanePosition(uint objectId, SIMCONNECT_DATA_LATLONALT pos)
+        public bool SetAIAircraftPosition(uint objectId, SIMCONNECT_DATA_LATLONALT pos)
         {
             try
             {
@@ -274,11 +281,23 @@ namespace MSFSConnect
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("Error in SetAIPlanePosition: " + ex.Message);
+                Debug.WriteLine("Error in SetAIAircraftPosition: " + ex.Message);
                 return false;
             }
         }
-
+        public bool SetAIAircraftAttitude(uint objectId, SIMCONNECT_DATA_ATTITUDE attitude)
+        {
+            try
+            {
+                simConnect.SetDataOnSimObject(DEFINITIONS.ATTITUDEINFO, objectId, 0, attitude);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error in SetAIAircraftAttitude: " + ex.Message);
+                return false;
+            }
+        }
         public bool DeleteAIPlane(uint i)
         {
             try

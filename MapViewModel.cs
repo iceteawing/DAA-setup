@@ -309,7 +309,6 @@ namespace StrategicFMSDemo
                         {
                             var graphicAirplane = new Graphic(mp, symbolAirplane);
                             _aircraftPointGraphics.Add(graphicAirplane);
-
                         }
                     }
                 }
@@ -364,10 +363,36 @@ namespace StrategicFMSDemo
                     Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
                     MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
                     _aircraftPointGraphics[i].Geometry = p;
-                    if(i==0)//only update the heading of ownship here
+
+
+                    if (i==0)//only update the heading of ownship here
                     {
-                        _symbolOwnship.Angle = _flightData.aircrafts[i].Heading;
+                        _symbolOwnship.Angle = _flightData.aircrafts[i].State.Heading;
                         _aircraftPointGraphics[i].Symbol = _symbolOwnship;
+                    }
+                    else
+                    {
+                        if (_flightData.aircrafts[i].Type == "Helicopter")
+                        {
+                            var imagePath = "data/images/Helicopter.png"; // relative path to the image file
+                            var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                            symbolAircraft.Angle = _flightData.aircrafts[i].State.Heading;//this variable shall be updated period
+                            _aircraftPointGraphics[i].Symbol = symbolAircraft;
+                        }
+                        else if (_flightData.aircrafts[i].Type == "Volocity")
+                        {
+                            var imagePath = "data/images/Volocity.png"; // relative path to the image file
+                            var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                            symbolAircraft.Angle = _flightData.aircrafts[i].State.Heading;//this variable shall be updated period
+                            _aircraftPointGraphics[i].Symbol = symbolAircraft;
+                        }
+                        else
+                        {
+                            var imagePath = "data/images/Airplane.png"; // relative path to the image file
+                            var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                            symbolAircraft.Angle = _flightData.aircrafts[i].State.Heading;//this variable shall be updated period
+                            _aircraftPointGraphics[i].Symbol = symbolAircraft;
+                        }
                     }
                 }
                 catch (Exception ex)
