@@ -118,8 +118,19 @@ namespace StrategicFMSDemo
             //MapPoint mapCenterPoint = new MapPoint(_flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, SpatialReferences.Wgs84);
             //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
             //MessageBox.Show(string.Format("{0},{1},{2}", _flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, _flightData.Ownship.State.Altitude));
-            createAirspaceStructrue();
-            createRoute();
+            //createAirspaceStructrue();
+            //createRoute();
+            AircraftPerformanceDictionary apd= new AircraftPerformanceDictionary();
+            AircraftPerformance ap= new AircraftPerformance();//https://contentzone.eurocontrol.int/aircraftperformance/details.aspx?ICAO=C208&
+            ap.CruiseSpeed = 296;
+            apd.aps.Add("Cessna208", ap);
+            AircraftPerformance ap1 = new AircraftPerformance();//https://contentzone.eurocontrol.int/aircraftperformance/details.aspx?ICAO=C172
+            ap1.CruiseSpeed = 213;
+            apd.aps.Add("Cessna172", ap1);
+            AircraftPerformance ap2 = new AircraftPerformance(); //https://www.futureflight.aero/aircraft-program/volocity
+            ap2.CruiseSpeed = 111;
+            apd.aps.Add("Volocity", ap2);
+            apd.SerializeToJson("aircraftPerformance.json");
         }
 
         private void createRoute()

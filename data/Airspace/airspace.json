@@ -1,0 +1,59 @@
+{
+  "airspaceType": 0,
+  "Range": 0.0,
+  "MaxAltitude": 0.0,
+  "MinAltitude": 0.0,
+  "centerLatitude": 0.0,
+  "centerLontitude": 0.0,
+  "Airdrome": {
+    "Type": "Tianjin",
+    "Latitude": 34.0,
+    "Longitude": 118.0,
+    "Altitude": 40.0,
+    "Name": null,
+    "IATA": null,
+    "ICAO": null,
+    "City": null,
+    "Country": null,
+    "Timezone": null,
+    "DST": null,
+    "TzDatabaseTimezone": null,
+    "Runways": [
+      {
+        "Name": "34L",
+        "Length": 1500.0,
+        "Width": 100.0,
+        "Elevation": 20.0,
+        "SurfaceType": "concrete",
+        "Heading": 340.0,
+        "_star": {
+          "IAF1": {
+            "X": 117.12976889083656,
+            "Y": 39.262667330863536,
+            "Z": 600.0
+          },
+          "IAF2": {
+            "X": 117.32555771988048,
+            "Y": 39.37460577003032,
+            "Z": 600.0
+          },
+          "IF": {
+            "X": 117.22762759279414,
+            "Y": 39.3111315533505,
+            "Z": 600.0
+          },
+          "FAF": {
+            "X": 117.28257863691368,
+            "Y": 39.22176648931558,
+            "Z": 527.0
+          },
+          "Mapt": {
+            "X": 117.33825437858884,
+            "Y": 39.13730579607521,
+            "Z": 3.0
+          }
+        }
+      }
+    ]
+  }
+}

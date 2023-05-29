@@ -37,10 +37,10 @@ namespace StrategicFMS
         private double _separationRiskTolerance;
         private AircraftState _state;
         private TrajectoryIntentData _intent;
-        private Traffic.Route _route;
         private AutoPilot _autoPilot;
         private AirborneSeparationAssuranceSystem _asas;
         private AutoFlightAssistSystem _afas;
+        private AircraftPerformance _performance;
         // Add the following variables and methods to the Aircraft class:
 
         private double _cruiseSpeed;
@@ -87,6 +87,7 @@ namespace StrategicFMS
             AutoPilot = new AutoPilot(new Route());
             Asas=new AirborneSeparationAssuranceSystem(AircraftId);
             Afas=new AutoFlightAssistSystem();
+            Performance = new AircraftPerformance();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
         }
 
@@ -104,6 +105,7 @@ namespace StrategicFMS
             AutoPilot = new AutoPilot(new Route());
             Asas = new AirborneSeparationAssuranceSystem(AircraftId);
             Afas = new AutoFlightAssistSystem();
+            Performance = new AircraftPerformance();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
         }
 
@@ -121,6 +123,7 @@ namespace StrategicFMS
         public AirborneSeparationAssuranceSystem Asas { get => _asas; set => _asas = value; }
         public AutoFlightAssistSystem Afas { get => _afas; set => _afas = value; }
         public string AircraftId { get => _aircraftId; set => _aircraftId = value; }
+        public AircraftPerformance Performance { get => _performance; set => _performance = value; }
 
         private double holdingTime = 20;//seconds
         /// <summary>
@@ -154,7 +157,7 @@ namespace StrategicFMS
                 if(AircraftId=="002" && holdingTime>0)
                 {
                     
-                    int flyPattern=AutoPilot.FlyInHoldingPattern(State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude, 1000, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Altitude, 1000);
+                    int flyPattern=AutoPilot.FlyInHoldingPattern(State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude, this.Performance.CruiseSpeed, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Altitude, 1000);
                     if(flyPattern==1)
                     {
                         holdingTime -= period / 1000;
@@ -163,7 +166,7 @@ namespace StrategicFMS
                 else if (AircraftId == "004" && holdingTime > 0)
                 {
 
-                    int flyPattern = AutoPilot.FlyInHoldingPattern(State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude, 1000, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Altitude, 1000);
+                    int flyPattern = AutoPilot.FlyInHoldingPattern(State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude, this.Performance.CruiseSpeed, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Altitude, 1000);
                     if (flyPattern == 1)
                     {
                         holdingTime -= period / 1000;
@@ -171,7 +174,7 @@ namespace StrategicFMS
                 }
                 else
                 {
-                    AutoPilot.FlyToNextWaypoint(State);
+                    AutoPilot.FlyToNextWaypoint(State,this.Performance.CruiseSpeed);
                 }
                 this.GroundSpeed = AutoPilot.DesiredGroundSpeed;//km/h
                 this.Bearing = AutoPilot.DesiredTrack;//degree, the north is 0

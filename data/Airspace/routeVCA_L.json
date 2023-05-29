@@ -1,0 +1,74 @@
+{
+  "OriginAirport": {
+    "Type": "big",
+    "Latitude": 34.0,
+    "Longitude": 118.0,
+    "Altitude": 100.0,
+    "Name": null,
+    "IATA": null,
+    "ICAO": null,
+    "City": null,
+    "Country": null,
+    "Timezone": null,
+    "DST": null,
+    "TzDatabaseTimezone": null,
+    "Runways": null
+  },
+  "DestionationAirport": {
+    "Type": "big",
+    "Latitude": 35.0,
+    "Longitude": 119.0,
+    "Altitude": 100.0,
+    "Name": null,
+    "IATA": null,
+    "ICAO": null,
+    "City": null,
+    "Country": null,
+    "Timezone": null,
+    "DST": null,
+    "TzDatabaseTimezone": null,
+    "Runways": null
+  },
+  "Waypoints": [
+    {
+      "Idx": 0,
+      "Name": "wp0",
+      "Longtitude": 117.12976889083656,
+      "Latitude": 39.262667330863536,
+      "Altitude": 600.0,
+      "HeightType": 0,
+      "Type": 0,
+      "Airspeed": 0.0,
+      "VerticalSpeed": 0.0,
+      "CrossType": 0,
+      "Radius": 0.0
+    },
+    {
+      "Idx": 1,
+      "Name": "wp1",
+      "Longtitude": 117.33760252406725,
+      "Latitude": 39.13592068134847,
+      "Altitude": 24.0,
+      "HeightType": 0,
+      "Type": 0,
+      "Airspeed": 0.0,
+      "VerticalSpeed": 0.0,
+      "CrossType": 0,
+      "Radius": 0.0
+    },
+    {
+      "Idx": 2,
+      "Name": "wp2",
+      "Longtitude": 117.33760252406725,
+      "Latitude": 39.13592068134847,
+      "Altitude": 4.0,
+      "HeightType": 0,
+      "Type": 0,
+      "Airspeed": 0.0,
+      "VerticalSpeed": 0.0,
+      "CrossType": 0,
+      "Radius": 0.0
+    }
+  ],
+  "EstimatedArrivalTime": "2023-05-25T17:00:00"
+}

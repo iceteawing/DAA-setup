@@ -17,6 +17,7 @@ using StrategicFMSDemo;
 using Esri.ArcGISRuntime.Geometry;
 using StrategicFMS;
 using StrategicFMS.Traffic;
+using StrategicFMS.Aircrafts;
 
 namespace StrategicFMSDemo
 {
@@ -72,49 +73,61 @@ namespace StrategicFMSDemo
         {
             
         }
+        public void CreateAircraft(string acid,string type,Route route, double initLon, double initLat, double initAltitude)
+        {
+            if (acid == "001")
+            {
+                Ownship ownship = new(acid, type);
+                ownship.SetAircraftPosition(initLon, initLat, initAltitude);
+                ownship.AutoPilot.Route = route;
+                aircrafts.Add(ownship);
+            }
+            else
+            {
+                Aircraft aircraft = new(acid, type);
+                aircraft.SetAircraftPosition(initLon, initLat, initAltitude);
+                if (aircraft.Type == "Cessna208")
+                {
+                    aircraft.Performance.CruiseSpeed = 296;
+                }
+                else if (aircraft.Type == "Cessna172")
+                {
+                    aircraft.Performance.CruiseSpeed = 213;
+                }
+                else if (aircraft.Type == "Volocity")
+                {
+                    aircraft.Performance.CruiseSpeed = 111;
+                }
+                aircraft.AutoPilot.Route = route;
+                aircraft.AutoPilot.Actived = true;
+                aircrafts.Add(aircraft);
+            }
+        }
         public bool Initialization(ScenarioData _scenarioData)
         {
             aircrafts.Clear();
-            //TODO: Initialize the ownship 
-            Point3D startPoint = new Point3D(-119.805, 34.027, 1000.0);
-            Point3D endPoint = new Point3D(-119.805, 39.027, 1000.0);
-            ownship.Intent.GenerateTrajectory(startPoint, endPoint);
-            ownship.Intent.CurrentPointIndex = 1;
-            ownship.AutoPilot.Route = Route.DeserializeFromJson("route1.json");
-            aircrafts.Add(ownship);
-            //Initialize the AI aircrafts
-            startPoint = new Point3D(-119.805, 34.027, 1000.0);
-            endPoint = new Point3D(-119.805, 39.027, 1000.0); 
-            firstAircraft.Intent.GenerateTrajectory(startPoint,endPoint);
-            firstAircraft.Intent.CurrentPointIndex = 1;
-            firstAircraft.AutoPilot.Route = Route.DeserializeFromJson("route1.json");
-            firstAircraft.AutoPilot.Actived =true;
-            firstAircraft.SetAircraftPosition(117.04595554073023, 39.23010140637297, 1500.0);
-            aircrafts.Add(firstAircraft);
-            startPoint = new Point3D(-119.805, 34.027, 1000.0);
-            endPoint = new Point3D(-121.805, 34.027, 1000.0);
-            secondAircraft.Intent.CurrentPointIndex = 1;
-            secondAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
-            secondAircraft.AutoPilot.Route = Route.DeserializeFromJson("route1.json");
-            secondAircraft.AutoPilot.Actived = true;
-            secondAircraft.SetAircraftPosition(117.0333869301425, 39.22087741005525, 1500.0);
-            aircrafts.Add(secondAircraft);
-            startPoint = new Point3D(-119.805, 34.027, 1000.0);
-            endPoint = new Point3D(-135.805, 20.027, 1000.0);
-            thirdAircraft.Intent.CurrentPointIndex = 1;
-            thirdAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
-            thirdAircraft.AutoPilot.Route = Route.DeserializeFromJson("route2.json");
-            thirdAircraft.AutoPilot.Actived = true;
-            thirdAircraft.SetAircraftPosition(117.35299659032735, 39.38856696361833, 1500.0);
-            aircrafts.Add(thirdAircraft);
-            startPoint = new Point3D(-119.805, 34.027, 1000.0);
-            endPoint = new Point3D(-135.805, 20.027, 1000.0);
-            fourthAircraft.Intent.CurrentPointIndex = 1;
-            fourthAircraft.Intent.GenerateTrajectory(startPoint, endPoint);
-            fourthAircraft.AutoPilot.Route = Route.DeserializeFromJson("route2.json");
-            fourthAircraft.AutoPilot.Actived = true;
-            fourthAircraft.SetAircraftPosition(117.34863470475673, 39.38951966826886, 1500.0);
-            aircrafts.Add(fourthAircraft);
+
+            Route route = Route.DeserializeFromJson("data/airspace/route_L.json");
+            CreateAircraft("001", "Cessna208", route, 117.04595554073023, 39.23010140637297, 1500.0);
+
+            route = Route.DeserializeFromJson("data/airspace/route_L.json");
+            CreateAircraft("002", "Cessna208", route, 117.04595554073023, 39.23010140637297, 1500.0);
+
+            route = Route.DeserializeFromJson("data/airspace/route_L.json");
+            CreateAircraft("003", "Cessna172", route, 117.04595554073023, 39.23010140637297, 1500.0);
+
+            route = Route.DeserializeFromJson("data/airspace/routeVCA_L.json");
+            CreateAircraft("004", "Volocity", route, 117.0333869301425, 39.22087741005525, 1500.0);
+
+            route = Route.DeserializeFromJson("data/airspace/route_R.json");
+            CreateAircraft("005", "Cessna208", route, 117.35299659032735, 39.38856696361833, 1500.0);
+
+            route = Route.DeserializeFromJson("data/airspace/route_R.json");
+            CreateAircraft("006", "Cessna172", route, 117.35299659032735, 39.38856696361833, 1500.0);
+
+            route = Route.DeserializeFromJson("data/airspace/routeVCA_R.json");
+            CreateAircraft("007", "Volocity", route,117.34863470475673, 39.38951966826886, 1500.0);
+
             return false;
         }
         public void StartScenario( bool state)
@@ -125,7 +138,7 @@ namespace StrategicFMSDemo
                 {
                     int scenarioID = Guid.NewGuid().GetHashCode();
                     ScenarioData = new ScenarioData(scenarioID);
-                    Airspace = AirspaceStructure.DeserializeFromJson("airspace.json");
+                    Airspace = AirspaceStructure.DeserializeFromJson("data/airspace/airspace.json");
 
 
                     bool result=Initialization(ScenarioData);

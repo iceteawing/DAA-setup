@@ -1,0 +1,13 @@
+{
+  "aps": {
+    "Cessna208": {
+      "GroudSpeed": 296.0
+    },
+    "Cessna172": {
+      "GroudSpeed": 213.0
+    },
+    "Volocity": {
+      "GroudSpeed": 111.0
+    }
+  }
+}

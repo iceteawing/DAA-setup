@@ -127,6 +127,9 @@ namespace StrategicFMSDemo
         List<MapPoint>[] airRoutelinePoints;
 
         private PictureMarkerSymbol _symbolOwnship;
+        private PictureMarkerSymbol _symbolCessna;
+        private PictureMarkerSymbol _symbolVolocity;
+        private PictureMarkerSymbol _symbolHelicopter;
         private void SetupMap()
         {
             // Create a new map with a 'topographic vector' basemap.
@@ -370,7 +373,7 @@ namespace StrategicFMSDemo
                         _symbolOwnship.Angle = _flightData.aircrafts[i].State.Heading;
                         _aircraftPointGraphics[i].Symbol = _symbolOwnship;
                     }
-                    else
+                    else // TODO:the current solution will increase the memory peroidly.
                     {
                         if (_flightData.aircrafts[i].Type == "Helicopter")
                         {
@@ -388,10 +391,14 @@ namespace StrategicFMSDemo
                         }
                         else
                         {
-                            var imagePath = "data/images/Airplane.png"; // relative path to the image file
+                            var imagePath = "data/images/Cessna.png"; // relative path to the image file
                             var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                            symbolAircraft.Width = 50;
+                            symbolAircraft.Height = 50;
                             symbolAircraft.Angle = _flightData.aircrafts[i].State.Heading;//this variable shall be updated period
                             _aircraftPointGraphics[i].Symbol = symbolAircraft;
+                            //_symbolCessna.Angle = _flightData.aircrafts[i].State.Heading;// the reasonable solution is provide symbol per aircraft as private variable
+                            //_aircraftPointGraphics[i].Symbol = _symbolCessna;
                         }
                     }
                 }
@@ -451,6 +458,15 @@ namespace StrategicFMSDemo
             _symbolOwnship = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
             _symbolOwnship.Width = 50;
             _symbolOwnship.Height = 50;
+            imagePath = "data/images/Volocity.png";
+            _symbolVolocity = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+            _symbolVolocity.Width = 50;
+            _symbolVolocity.Height = 50;
+            imagePath = "data/images/Helicopter.png";
+            _symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+            _symbolHelicopter.Width = 50;
+            _symbolHelicopter.Height = 50;
+
         }
     }
 }

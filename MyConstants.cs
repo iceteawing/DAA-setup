@@ -26,6 +26,6 @@ namespace StrategicFMS
         //Unit convertion
         public const double MeterToFeet = 3.2808399;
         //AFAS
-        public const double SchedulingPointMargin = 3704;//unit is meter, 2nm or 3 nm
+        public const double SchedulingPointMargin = 37040;//unit is meter, 10nm or 20 nm
     }
 }

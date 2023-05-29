@@ -27,7 +27,7 @@ namespace StrategicFMS.Aircrafts
         private int _activeWaypointIndex;
         private double _distanceToActiveWaypoint;
 
-        private const double _multipleParameter = 5;
+        private const double _multipleParameter = 4;
         public AutoPilot(Traffic.Route route)
         {
             Route = route;
@@ -61,7 +61,8 @@ namespace StrategicFMS.Aircrafts
             var activeWaypoint = Route.Waypoints[ActiveWaypointIndex];
             DistanceToActiveWaypoint = CalculateDistance(activeWaypoint.Latitude, activeWaypoint.Longtitude, state.Latitude, state.Longitude);
             //Debug.WriteLine(state.AircraftID + " Distance to active waypoint = " + ActiveWaypointIndex+" is "+ DistanceToActiveWaypoint.ToString() +" meters.");
-            return DistanceToActiveWaypoint <= 10;//TODO: will stop before reach the exact point
+            bool result = (DistanceToActiveWaypoint <= 10 && ((state.Altitude - activeWaypoint.Altitude < 1) || (state.Altitude - activeWaypoint.Altitude > -1)));
+            return result;//TODO: will stop before reach the exact point
         }
 
         public double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
@@ -99,7 +100,7 @@ namespace StrategicFMS.Aircrafts
             return brng;
         }
 
-        public void FlyToNextWaypoint(AircraftState state)
+        public void FlyToNextWaypoint(AircraftState state, double cruiseSpeed)
         {
             if (state == null || Route == null || Route.Waypoints == null || Route.Waypoints.Count == 0 || ActiveWaypointIndex >= Route.Waypoints.Count)
             {
@@ -134,8 +135,8 @@ namespace StrategicFMS.Aircrafts
             //var desiredTrack = desiredHeading - state.MagneticHeading;
             var desiredTrack = CalculateBearing(state.Latitude, state.Longitude, activeWaypoint.Latitude, activeWaypoint.Longtitude);
             
-            var desiredGroundSpeed = 240*_multipleParameter;//TODO: shall match the aircraft performance and shall be calculated based on the 4D trajectory
-            var desiredTrueAirSpeed = 240 * _multipleParameter;
+            var desiredGroundSpeed = cruiseSpeed * _multipleParameter;//TODO: shall match the aircraft performance and shall be calculated based on the 4D trajectory
+            var desiredTrueAirSpeed = cruiseSpeed * _multipleParameter;
             //Vertical following
             var desiredAltitude = activeWaypoint.Altitude;
 
@@ -205,8 +206,8 @@ namespace StrategicFMS.Aircrafts
 
             // Set desired altitude and speed
             DesiredAltitude = holdingAltitude;
-            DesiredGroundSpeed = holdingSpeed;
-            DesiredTrueAirSpeed = holdingSpeed;
+            DesiredGroundSpeed = holdingSpeed * _multipleParameter;
+            DesiredTrueAirSpeed = holdingSpeed * _multipleParameter;
 
             // Calculate the distance from the holding point
             double distanceToHoldingPoint = CalculateDistance(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
