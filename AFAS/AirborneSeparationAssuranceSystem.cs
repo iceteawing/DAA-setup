@@ -53,10 +53,10 @@ namespace StrategicFMS.AFAS
         //Detected conflicts are returned to the detection.py class
         public bool ConflictDetection(List<Aircraft> aircrafts) 
         {
-            foreach(Aircraft aircraft in aircrafts)
+            foreach (Aircraft aircraft in aircrafts)
             {
-                if (aircraft != null && aircraft.AircraftId != this.Acid) 
-                { 
+                if (aircraft != null && aircraft.AircraftId != this.Acid)
+                {
                     //TODO: 
                 }
             }

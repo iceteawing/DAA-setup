@@ -22,18 +22,6 @@ namespace StrategicFMS
         public string DST { get; set; } // Daylight Saving Time information
         public string TzDatabaseTimezone { get; set; } // Timezone in the tz database format
 
-        public List<Runway> Runways { get; set; }
-
-
-        public Airdrome(string type, double latitude, double longitude, double altitude, List<Runway> runways)
-        {
-            Type = type ?? throw new ArgumentNullException(nameof(type));
-            Latitude = latitude;
-            Longitude = longitude;
-            Altitude = altitude;
-            Runways= runways;
-        }
-
         public Airdrome(string type, double latitude, double longitude, double altitude)
         {
             Type = type ?? throw new ArgumentNullException(nameof(type));

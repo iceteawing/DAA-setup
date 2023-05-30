@@ -29,7 +29,7 @@ namespace StrategicFMS
         private string _aircraftId;
         private string _type; //A320, B737, Cessna208,Volocity etc
 
-        private AircraftCategory _aircraftCategory;
+        private AircraftCategory _aircraftCategory;//multicopter,evtol,helicopter,airplane etc
        
         private double _lateralPerformance;
         private double _verticalPerformance;
@@ -38,8 +38,7 @@ namespace StrategicFMS
         private AircraftState _state;
         private TrajectoryIntentData _intent;
         private AutoPilot _autoPilot;
-        private AirborneSeparationAssuranceSystem _asas;
-        private AutoFlightAssistSystem _afas;
+        private AutonomousFlightAssistSystem _afas;
         private AircraftPerformance _performance;
         // Add the following variables and methods to the Aircraft class:
 
@@ -85,8 +84,7 @@ namespace StrategicFMS
             State.AircraftID=AircraftId;
             Intent = new TrajectoryIntentData();
             AutoPilot = new AutoPilot(new Route());
-            Asas=new AirborneSeparationAssuranceSystem(AircraftId);
-            Afas=new AutoFlightAssistSystem();
+            Afas = new AutonomousFlightAssistSystem(AircraftId);
             Performance = new AircraftPerformance();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
         }
@@ -103,8 +101,7 @@ namespace StrategicFMS
             State = new AircraftState();
             Intent = new TrajectoryIntentData();
             AutoPilot = new AutoPilot(new Route());
-            Asas = new AirborneSeparationAssuranceSystem(AircraftId);
-            Afas = new AutoFlightAssistSystem();
+            Afas = new AutonomousFlightAssistSystem(AircraftId);
             Performance = new AircraftPerformance();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
         }
@@ -120,10 +117,10 @@ namespace StrategicFMS
       
         public double Bearing { get => _bearing; set => _bearing = value; }
         public AutoPilot AutoPilot { get => _autoPilot; set => _autoPilot = value; }
-        public AirborneSeparationAssuranceSystem Asas { get => _asas; set => _asas = value; }
-        public AutoFlightAssistSystem Afas { get => _afas; set => _afas = value; }
+
         public string AircraftId { get => _aircraftId; set => _aircraftId = value; }
         public AircraftPerformance Performance { get => _performance; set => _performance = value; }
+        public AutonomousFlightAssistSystem Afas { get => _afas; set => _afas = value; }
 
         private double holdingTime = 20;//seconds
         /// <summary>
@@ -132,27 +129,40 @@ namespace StrategicFMS
         /// <param name="period">The update period. (in ms)</param>
         public bool Update( double period)
         {
-
-            //TODO: add the ASAS logic here to impact the aircraft's behavior
-            FlightData flightData = FlightData.GetInstance();
-            if(Afas.IsConfirming==false && AutoPilot.CalculateDistance(State.Latitude,State.Longitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude,AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude) <MyConstants.SchedulingPointMargin)
-            {
-                Afas.IsConfirming = true;
-                Afas.SequenceOperations(flightData.aircrafts);
-                Debug.WriteLine(State.AircraftID + " Afas.IsConfirming！");
-            }
-
             if (this.AircraftId == "001")
             {
                 return true;
             }
-            bool isconflict = Asas.ConflictDetection(flightData.aircrafts); //asas_dt=1.0 sec
-            //TODO: add the AFAS logic here to impact the aircraft's behavior
-            if (isconflict)
-            {
+            ////TODO: add the AFAS logic here to impact the aircraft's behavior
+            //FlightData flightData = FlightData.GetInstance();
 
+            ////TODO: add the DAA logic here to impact the aircraft's behavior
+
+            //if (Afas.Daas.ConflictDetection())
+            //{
+            //    Afas.Daas.ConflictResolution();
+            //}
+            ////TODO: add the ASAS logic here to impact the aircraft's behavior
+            //bool isconflict = Afas.Asas.ConflictDetection(flightData.aircrafts); //asas_dt=1.0 sec
+            
+            //if (isconflict)
+            //{
+
+            //}
+            ////TODO: add the acdas logic here to impact the aircraft's behavior
+            //if (Afas.Acdas.IsConfirming==false && AutoPilot.CalculateDistance(State.Latitude,State.Longitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude,AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude) <MyConstants.SchedulingPointMargin)
+            //{
+            //    Afas.Acdas.IsConfirming = true;
+            //    Afas.Acdas.SequenceOperations(flightData.aircrafts);
+            //    Debug.WriteLine(State.AircraftID + " Afas.IsConfirming！");
+            //}
+            if(Afas.Acdas.IsConfirming==false)
+            {
+                Afas.run(this.State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex]);
             }
-            else if(AutoPilot!= null & AutoPilot.Actived) //TODO: add the autopilot logic here 
+            
+            //TODO: add the autopilot logic here
+            if(AutoPilot!= null & AutoPilot.Actived)  
             {
                 if(AircraftId=="002" && holdingTime>0)
                 {

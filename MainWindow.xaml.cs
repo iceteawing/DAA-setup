@@ -192,8 +192,8 @@ namespace StrategicFMSDemo
             Runway runway = new("34L", 1500, 100, 20, "concrete", 340, star);
             List<Runway> runways = new List<Runway>();
             runways.Add(runway);
-            Airdrome airdrome = new("Tianjin", 34, 118, 40,runways);
-            AirspaceStructure structure = new(airdrome);
+            Airport airport = new("Tianjin", 34, 118, 40,runways);
+            AirspaceStructure structure = new(airport);
             structure.SerializeToJson("airspace.json");
         }
 

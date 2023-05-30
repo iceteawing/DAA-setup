@@ -5,7 +5,7 @@
   "MinAltitude": 0.0,
   "centerLatitude": 0.0,
   "centerLontitude": 0.0,
-  "Airdrome": {
+  "Airport": {
     "Type": "Tianjin",
     "Latitude": 34.0,
     "Longitude": 118.0,

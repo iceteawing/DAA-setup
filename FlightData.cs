@@ -196,7 +196,7 @@ namespace StrategicFMSDemo
             {
                 aircraft.Update(20);// TODO: The period is fixed here
                 stopSign &= !aircraft.AutoPilot.Actived;
-                _isAFASConfirmingLockTrigger |= aircraft.Afas.ConfirmLock();
+                _isAFASConfirmingLockTrigger |= aircraft.Afas.Acdas.ConfirmLock();
             }
             if(!_isAFASConfirmingLockTriggerPre && _isAFASConfirmingLockTrigger)
             {

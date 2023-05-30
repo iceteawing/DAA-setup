@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using StrategicFMS.Airspace;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,10 +20,10 @@ namespace StrategicFMS
         public double centerLatitude { get; set; } //The latitude of the center point of the airspace entity
         public double centerLontitude { get; set; }//The lontitude of the center point of the airspace entity
 
-        public Airdrome Airdrome { get; set; }
-        public AirspaceStructure(Airdrome airdrome)
+        public Airport Airport { get; set; }
+        public AirspaceStructure(Airport airport)
         {
-            Airdrome = airdrome;
+            Airport = airport;
         }
         public AirspaceStructure()
         {

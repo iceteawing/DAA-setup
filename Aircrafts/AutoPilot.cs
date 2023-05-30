@@ -65,7 +65,7 @@ namespace StrategicFMS.Aircrafts
             return result;//TODO: will stop before reach the exact point
         }
 
-        public double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
         {
             var R = 6371e3; // metres
 
