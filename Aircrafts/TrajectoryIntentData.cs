@@ -7,9 +7,9 @@ using System.Windows.Media.Media3D;
 
 namespace StrategicFMS
 {
-    public class TrajectoryIntentData // ARINC 702 page 97
+    public class TrajectoryIntentData // TODO:ARINC 702 page 97
     {
-        public TrajectoryIntentData(string name, string destinationIntent, string nearTermIntent, string intermediateTermIntent, string nonDFRIntentSharing)
+        public TrajectoryIntentData(string destinationIntent, string nearTermIntent, string intermediateTermIntent, string nonDFRIntentSharing)
         {
             DestinationIntent = destinationIntent;
             NearTermIntent = nearTermIntent;
@@ -50,7 +50,7 @@ namespace StrategicFMS
         }
         public void SetWaypoints(List<Point3D> waypoints)
         {
-            //TODO: Set the way points
+            //TODO: Set the way points, may be the intent is the 4dt
         }
         // Function to generate a list of points representing a flight trajectory with its start point and destination
         public bool GenerateTrajectory(Point3D startPoint, Point3D endPoint)

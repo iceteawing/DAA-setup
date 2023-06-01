@@ -28,16 +28,14 @@ namespace StrategicFMSDemo
 
     class MapViewModel : INotifyPropertyChanged
     {
-        FlightData _flightData;
-        private const int _frequency = 50; // determin the refresh hz required, it is better to match the visual system
-        private const int _period = 20; // ms
-
+        readonly FlightData _flightData;
+        
+        private const int _period = 20; // unit is ms
 
         public MapViewModel()
         {
             _flightData = FlightData.GetInstance();
 
-            airRoutelinePoints = new List<MapPoint>[100];
 
             SetupMap();
 
@@ -124,7 +122,7 @@ namespace StrategicFMSDemo
 
         private Graphic airPolylineRouteGraphic;
 
-        List<MapPoint>[] airRoutelinePoints;
+        private readonly List<MapPoint>[] _airRoutelinePoints;
 
         private PictureMarkerSymbol _symbolOwnship;
         private PictureMarkerSymbol _symbolCessna;
@@ -172,19 +170,20 @@ namespace StrategicFMSDemo
             _airspaceGraphicsOverlay.Graphics.Add(pointGraphic);
 
             //draw star points
-            var p = new MapPoint(_flightData.Airspace.Airport.Runways[0]._star.IAF1.X, _flightData.Airspace.Airport.Runways[0]._star.IAF1.Y, SpatialReferences.Wgs84); ;
+            //TODO: shall be implemented dynamically
+            var p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.IAF1.X, _flightData.Airspace.Airport.Runways[0].Star.IAF1.Y, SpatialReferences.Wgs84); ;
             var pG = new Graphic(p, pointSymbol);
             _airspaceGraphicsOverlay.Graphics.Add(pG);
-            p = new MapPoint(_flightData.Airspace.Airport.Runways[0]._star.IAF2.X, _flightData.Airspace.Airport.Runways[0]._star.IAF2.Y, SpatialReferences.Wgs84); ;
+            p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.IAF2.X, _flightData.Airspace.Airport.Runways[0].Star.IAF2.Y, SpatialReferences.Wgs84); ;
              pG = new Graphic(p, pointSymbol);
             _airspaceGraphicsOverlay.Graphics.Add(pG);
-             p = new MapPoint(_flightData.Airspace.Airport.Runways[0]._star.IF.X, _flightData.Airspace.Airport.Runways[0]._star.IF.Y, SpatialReferences.Wgs84); ;
+             p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.IF.X, _flightData.Airspace.Airport.Runways[0].Star.IF.Y, SpatialReferences.Wgs84); ;
              pG = new Graphic(p, pointSymbol);
             _airspaceGraphicsOverlay.Graphics.Add(pG);
-             p = new MapPoint(_flightData.Airspace.Airport.Runways[0]._star.FAF.X, _flightData.Airspace.Airport.Runways[0]._star.FAF.Y, SpatialReferences.Wgs84); ;
+             p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.FAF.X, _flightData.Airspace.Airport.Runways[0].Star.FAF.Y, SpatialReferences.Wgs84); ;
              pG = new Graphic(p, pointSymbol);
             _airspaceGraphicsOverlay.Graphics.Add(pG);
-             p = new MapPoint(_flightData.Airspace.Airport.Runways[0]._star.Mapt.X, _flightData.Airspace.Airport.Runways[0]._star.Mapt.Y, SpatialReferences.Wgs84); ;
+             p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.Mapt.X, _flightData.Airspace.Airport.Runways[0].Star.Mapt.Y, SpatialReferences.Wgs84); ;
              pG = new Graphic(p, pointSymbol);
             _airspaceGraphicsOverlay.Graphics.Add(pG);
 
@@ -373,7 +372,7 @@ namespace StrategicFMSDemo
                             _symbolOwnship.Angle = _flightData.aircrafts[i].State.Heading;
                             _aircraftPointGraphics[i].Symbol = _symbolOwnship;
                         }
-                        else // TODO:the current solution will increase the memory peroidly.
+                        else // TODO:the current solution will increase the memory peroidly, the symbol shall be init per aircraft during initialization
                         {
                             if (_flightData.aircrafts[i].Type == "Helicopter")
                             {
@@ -404,7 +403,7 @@ namespace StrategicFMSDemo
                     }
                     catch (ArgumentOutOfRangeException e)
                     {
-                        Debug.WriteLine("Error in AnimateOverlay: " + e.Message); //TODO:will triggered when scenario stopped
+                        Debug.WriteLine("Error in AnimateOverlay: " + e.Message); //TODO:will triggered when scenario stopped, this is a multiple threads issue
                     }
                     catch (Exception ex)
                     {
@@ -414,7 +413,7 @@ namespace StrategicFMSDemo
                 }
             }
 
-            //TODO: update the flight path on the map ,Need to find a way to update the polylinegraphic dynamicly
+            //TODO: update the flight path on the map ,Need to find a way to update the polylinegraphic dynamicly, the following solution is not proper
             //MapPoint mapPoint = new MapPoint(x, y, SpatialReferences.Wgs84);
             //linePoints.Add(mapPoint);
             //Polyline BeachPolyline = new Polyline(linePoints);//may trigger System.InvalidOperationException:“Collection was modified; enumeration operation may not execute.”
@@ -428,7 +427,7 @@ namespace StrategicFMSDemo
 
         private Polygon DrawCircle(MapPoint center, double radius, int pointsCount = 360)
         {
-            //TODO: need to computer the position in wgs84
+            //TODO: need to computer the position in wgs84, the circle is not a perfect circle
             List<MapPoint> plist = new List<MapPoint>();
             //PointCollection pcol = new PointCollection();
             double slice = 2 * Math.PI / pointsCount;

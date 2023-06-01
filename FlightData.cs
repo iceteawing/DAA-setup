@@ -27,14 +27,10 @@ namespace StrategicFMSDemo
         private ScenarioData _scenarioData;
         private AirspaceStructure _airspace;
         private Ownship ownship = new("001", "Cessna208");
-        private Aircraft firstAircraft =new ("002", "Volocity"); //AI agent
-        private Aircraft secondAircraft = new ("003", "Volocity");//AI agent
-        private Aircraft thirdAircraft = new ("004", "Volocity");//AI agent
-        private Aircraft fourthAircraft = new ("005", "Helicopter");//AI agent
         
         // Timer for update flight data.
-        private Timer _timer;
-        public List<Aircraft> aircrafts = new List<Aircraft>
+        private Timer _timer;//TODO: a more accurate timer may be needed here if required
+        public List<Aircraft> aircrafts = new()
         {
 
         };
@@ -103,7 +99,7 @@ namespace StrategicFMSDemo
                 aircrafts.Add(aircraft);
             }
         }
-        public bool Initialization(ScenarioData _scenarioData)
+        public bool Initialization(ScenarioData scenarioData)
         {
             aircrafts.Clear();
 
@@ -128,6 +124,7 @@ namespace StrategicFMSDemo
             route = Route.DeserializeFromJson("data/airspace/routeVCA_R.json");
             CreateAircraft("007", "Volocity", route,117.34863470475673, 39.38951966826886, 1500.0);
 
+            ScenarioData = scenarioData;
             return false;
         }
         public void StartScenario( bool state)
@@ -154,10 +151,7 @@ namespace StrategicFMSDemo
             }
             else
             {
-                if(_timer!=null)
-                {
-                    _timer.Dispose();
-                }
+                _timer?.Dispose();
                 ScenarioData = null;
             }
         }

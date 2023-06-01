@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS.AFAS
 {
-    public class AirborneSeparationAssuranceSystem
+    public class AirborneSeparationAssuranceSystem//TODO: shall be implemented according to the Bluesky/state-based conflict dection and martin's paper
     {
         private string _acid;
 
@@ -57,7 +57,7 @@ namespace StrategicFMS.AFAS
             {
                 if (aircraft != null && aircraft.AircraftId != this.Acid)
                 {
-                    //TODO: 
+                    //TODO: state-based conflict dection
                 }
             }
             return false;

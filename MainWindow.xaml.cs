@@ -47,7 +47,7 @@ namespace StrategicFMSDemo
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
 
-        public MainWindow()
+        public MainWindow() //TODO: UI shall be defined and refined
         {
             InitializeComponent();
             this.DataContext = this;

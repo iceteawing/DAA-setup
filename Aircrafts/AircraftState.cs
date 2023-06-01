@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS
 {
-    public class AircraftState //refer to DFR shared traffic awareness, ADS-B, ARINC 702A page 106
+    public class AircraftState //TODO:refer to DFR shared traffic awareness, ADS-B, ARINC 702A page 106
     {
         public AircraftState()
         {

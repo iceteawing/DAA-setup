@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS.AFAS
 {
-    public class AutonomousCollaborativeDecisionAssistanceSystem
+    public class AutonomousCollaborativeDecisionAssistanceSystem//TODO: refer to martin's paper
     {
         public AutonomousCollaborativeDecisionAssistanceSystem() { IsConfirmed = false; IsConfirming = false; }
 
@@ -16,7 +16,7 @@ namespace StrategicFMS.AFAS
         public bool IsConfirmed { get => _isConfirmed; set => _isConfirmed = value; }
         public bool IsConfirming { get => _isConfirming; set => _isConfirming = value; }
 
-        public List<string> LandingSequence = new List<string>();
+        public List<string> LandingSequence = new();
         public void SequenceOperations(List<Aircraft> aircrafts)
         {
             // 使用LINQ根据EstimatedArrivalTime对飞机列表进行排序

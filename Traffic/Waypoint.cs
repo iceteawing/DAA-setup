@@ -26,8 +26,8 @@ namespace StrategicFMS.Traffic
         private double _longtitude;
         private double _latitude;
         private double _altitude;
-        private int _heightType;//TODO
-        private Type _type;//TODO
+        private int _heightType;//TODO: not defined yet
+        private Type _type;//TODO: not defined yet
         private double _airspeed;
         private double _verticalSpeed;
         //Fly by: aircraft perform a turn where the next waypoint is at the center of the turn. Aircraft initiates the turn at a distance from the waypoint (turn distance) according to the pre-defined turn radius (depending on the bank angle). By default waypoints are flyby.

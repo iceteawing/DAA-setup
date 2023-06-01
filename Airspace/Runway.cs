@@ -28,7 +28,7 @@ namespace StrategicFMS
         public string SurfaceType { get => _surfaceType; set => _surfaceType = value; }
         public double Heading { get => _heading; set => _heading = value; }
 
-        public StandardTerminalArrivalRoute  _star { get; set; } //TODO: add arrival and departure precedure here
+        public StandardTerminalArrivalRoute  Star { get; set; } //TODO: add arrival and departure precedure here
 
         public Runway(string name, double length, double width, double elevation, string surfaceType, double heading, StandardTerminalArrivalRoute star)
         {
@@ -44,7 +44,7 @@ namespace StrategicFMS
             Elevation = elevation;
             SurfaceType = surfaceType;
             Heading = heading;
-            _star = star;
+            Star = star;
         }
     }
 }

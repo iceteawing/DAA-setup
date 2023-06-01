@@ -62,7 +62,7 @@ namespace StrategicFMS.Aircrafts
             DistanceToActiveWaypoint = CalculateDistance(activeWaypoint.Latitude, activeWaypoint.Longtitude, state.Latitude, state.Longitude);
             //Debug.WriteLine(state.AircraftID + " Distance to active waypoint = " + ActiveWaypointIndex+" is "+ DistanceToActiveWaypoint.ToString() +" meters.");
             bool result = (DistanceToActiveWaypoint <= 10 && ((state.Altitude - activeWaypoint.Altitude < 1) || (state.Altitude - activeWaypoint.Altitude > -1)));
-            return result;//TODO: will stop before reach the exact point
+            return result;//TODO: will stop before reach the exact point,need to improved as needed
         }
 
         public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
@@ -100,7 +100,7 @@ namespace StrategicFMS.Aircrafts
             return brng;
         }
 
-        public void FlyToNextWaypoint(AircraftState state, double cruiseSpeed)
+        public void FlyToNextWaypoint(AircraftState state, double cruiseSpeed)//TODO: the whole logic shall be optimized
         {
             if (state == null || Route == null || Route.Waypoints == null || Route.Waypoints.Count == 0 || ActiveWaypointIndex >= Route.Waypoints.Count)
             {

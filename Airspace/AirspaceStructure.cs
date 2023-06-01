@@ -21,6 +21,8 @@ namespace StrategicFMS
         public double centerLontitude { get; set; }//The lontitude of the center point of the airspace entity
 
         public Airport Airport { get; set; }
+
+        //TODO: corridor shall be defined to constraint the route
         public AirspaceStructure(Airport airport)
         {
             Airport = airport;
@@ -57,8 +59,6 @@ namespace StrategicFMS
         /// <param name="altitude">The altitude in feet.</param>
         /// <returns>A string representing the airspace type.</returns>
         public AirspaceType DetermineAirspaceType(double altitude)
-
-
         {
             //TODO: define the airspace type
             if (altitude > 60000)
@@ -101,7 +101,6 @@ namespace StrategicFMS
         /// <param name="filePath">The path of the XML file.</param>
         public void ReadFromXml(string filePath)
         {
-            //TODO: read from XML file and populate the Airspace object
             XmlSerializer serializer = new XmlSerializer(typeof(AirspaceStructure));
             using (FileStream fileStream = new FileStream(filePath, FileMode.Open))
             {
@@ -122,7 +121,6 @@ namespace StrategicFMS
         /// <param name="filePath">The path of the XML file.</param>
         public void WriteToXml(string filePath)
         {
-            //TODO: write the Airspace object to an XML file
             XmlSerializer serializer = new XmlSerializer(typeof(AirspaceStructure));
             using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
             {

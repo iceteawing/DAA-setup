@@ -50,7 +50,7 @@ namespace MSFSConnect
             //simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
 
             simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_ATTITUDE, DEFINITIONS.ATTITUDEINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
-            GetAIAircraftInformation();
+            GetAIAircraftInformation();//TODO: it seems that the aircraft has updating performance issue
         }
 
         private void GetAIAircraftInformation()//Get the aircraft position and set the corresponding AI plane position
@@ -69,7 +69,7 @@ namespace MSFSConnect
                         pos.Latitude = aircraftPoint.Y;
                         pos.Longitude = aircraftPoint.X;
                         pos.Altitude = aircraftPoint.Z;
-                        uint iObjectIdRequest = _objectIDsDict[i];//TODO: I do not know how to get the object id
+                        uint iObjectIdRequest = _objectIDsDict[i];
                         Debug.WriteLine("objectId=" + iObjectIdRequest + ",pos.Longitude=" + pos.Longitude + ",pos.Latitude=" + pos.Latitude + ",pos.Altitude=" + pos.Altitude);
                         bool status = SetAIAircraftPosition(iObjectIdRequest, pos);
                         SIMCONNECT_DATA_ATTITUDE attitude;
@@ -136,6 +136,7 @@ namespace MSFSConnect
                 initpos.Airspeed = 0;
                 initpos.OnGround = 0;
                 bool status = false;
+                //TODO: shall create the AI plane according the scenario definition
                 status = CreateAIPlane("Volocity Microsoft", "001", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_1);
                 status = CreateAIPlane("Volocity Microsoft", "002", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_2);
                 status = CreateAIPlane("Volocity Microsoft", "003", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_3);

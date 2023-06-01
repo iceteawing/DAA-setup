@@ -80,8 +80,10 @@ namespace StrategicFMS
         {
             AircraftId = acid;
             Type = type;
-            State = new AircraftState();
-            State.AircraftID=AircraftId;
+            State = new AircraftState
+            {
+                AircraftID = AircraftId
+            };
             Intent = new TrajectoryIntentData();
             AutoPilot = new AutoPilot(new Route());
             Afas = new AutonomousFlightAssistSystem(AircraftId);
@@ -133,32 +135,10 @@ namespace StrategicFMS
             {
                 return true;
             }
-            ////TODO: add the AFAS logic here to impact the aircraft's behavior
-            //FlightData flightData = FlightData.GetInstance();
-
-            ////TODO: add the DAA logic here to impact the aircraft's behavior
-
-            //if (Afas.Daas.ConflictDetection())
-            //{
-            //    Afas.Daas.ConflictResolution();
-            //}
-            ////TODO: add the ASAS logic here to impact the aircraft's behavior
-            //bool isconflict = Afas.Asas.ConflictDetection(flightData.aircrafts); //asas_dt=1.0 sec
-            
-            //if (isconflict)
-            //{
-
-            //}
-            ////TODO: add the acdas logic here to impact the aircraft's behavior
-            //if (Afas.Acdas.IsConfirming==false && AutoPilot.CalculateDistance(State.Latitude,State.Longitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude,AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude) <MyConstants.SchedulingPointMargin)
-            //{
-            //    Afas.Acdas.IsConfirming = true;
-            //    Afas.Acdas.SequenceOperations(flightData.aircrafts);
-            //    Debug.WriteLine(State.AircraftID + " Afas.IsConfirming！");
-            //}
-            if(Afas.Acdas.IsConfirming==false)
+            //the period of AFAS may not as same as autopilot or the dynamic of the aircraft 
+            if(Afas.Acdas.IsConfirming==false)//TODO: this is a temp solution, shall implement the real logic and ensure the inputs and outputs of AFAS
             {
-                Afas.run(this.State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex]);
+                Afas.Run(this.State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex]);
             }
             
             //TODO: add the autopilot logic here
@@ -200,11 +180,12 @@ namespace StrategicFMS
                 this.VerticalSpeed = 0;//m/s
             }
             //TODO: move the aircraft one step by invoke the move function here, which update the aircraft state and intent
+            //Only the position loop is considered here, may be the transition speed loop shall be considered to improve the fidelity
             double distance = this.GroundSpeed * period / 3600.0 / 1000.0;//convert to km
             Move(distance, this.Bearing);
             double verticalDistance = this.VerticalSpeed * period / 1000;
             MoveVertically(verticalDistance);
-            //TODO: update the state and intent accordingly
+            //TODO: update the state and intent accordingly, it is supposed that the state and intent of the cooperated aircraft is neccessary to DFR
             //bool resultOfState = State.Update(Intent.GetCurrentTargetPoint());
             //bool resultOfIntent = Intent.Update();
             //return resultOfState & resultOfIntent;
@@ -218,10 +199,13 @@ namespace StrategicFMS
 
         public void Move(string fligtRules)
         {
-            //TODO: move the aircraft one step according to the flight rules
-            double distance = 0.0;
-            double bearing = 0.0;
-            Move(distance, bearing);
+            //TODO: move the aircraft one step according to the flight rules， may be VFR/IFR/DFR shall be supported
+            if("VFR"==fligtRules)
+            {
+                double distance = 0.0;
+                double bearing = 0.0;
+                Move(distance, bearing);
+            }
         }
         /// <summary>
         /// Moves the aircraft based on the input distance and bearing.
@@ -274,7 +258,7 @@ namespace StrategicFMS
         /// <returns>An integer representing the flight level.</returns>
         public int DetermineFlightLevel(AircraftCategory aircraftCategory)
         {
-            //TODO: define the flight level
+            //TODO: define the flight level, shall depend on the airspace structure
             if (aircraftCategory == AircraftCategory.GA)
                 return MyConstants.HIGH_ALTITUDE;
             else if (aircraftCategory == AircraftCategory.eVTOL || aircraftCategory == AircraftCategory.helicopter || aircraftCategory == AircraftCategory.BigUAV)

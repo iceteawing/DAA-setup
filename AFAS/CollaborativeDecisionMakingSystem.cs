@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS.AFAS
 {
-    internal class CollaborativeDecisionMakingSystem
+    internal class CollaborativeDecisionMakingSystem//TODO : not yet, may be send the proposed decision to ATC for negotiation
     {
+    
     }
 }

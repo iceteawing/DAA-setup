@@ -11,7 +11,7 @@ using static System.Windows.Forms.AxHost;
 
 namespace StrategicFMS.AFAS
 {
-    public class AutonomousFlightAssistSystem
+    public class AutonomousFlightAssistSystem//TODO: it is the combination of several systems, and send out the 3dt to downstream system such as FMGC
     {
         private string _aircraftId;
 
@@ -40,7 +40,7 @@ namespace StrategicFMS.AFAS
             Daas = new DetectAndAvoidanceSystem();
         }
 
-        public void run(AircraftState state,Waypoint active_waypoint)
+        public void Run(AircraftState state,Waypoint active_waypoint)
         {
             //TODO: add the AFAS logic here to impact the aircraft's behavior
             FlightData flightData = FlightData.GetInstance();
@@ -58,7 +58,7 @@ namespace StrategicFMS.AFAS
             {
 
             }
-            //TODO: add the acdas logic here to impact the aircraft's behavior
+            //TODO: add the ACDAS logic here to impact the aircraft's behavior
             if (Acdas.IsConfirming == false && (AutoPilot.CalculateDistance(state.Latitude, state.Longitude, active_waypoint.Latitude, active_waypoint.Longtitude) < MyConstants.SchedulingPointMargin))
             {
                 Acdas.IsConfirming = true;
