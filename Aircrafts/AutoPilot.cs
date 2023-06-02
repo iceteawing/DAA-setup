@@ -120,10 +120,12 @@ namespace StrategicFMS.Aircrafts
             {
                 if(Actived == true)
                 {
-                    //MyEventArgs args = new MyEventArgs();//notify the aircraft to show message
-                    //args.done = true;
-                    //PutOutinformation(this, args);
-                    Debug.WriteLine(state.AircraftID + " reach the destination"); 
+                    //notify the aircraft to show message
+                    MyEventArgs args = new()
+                    {
+                        acid = state.AircraftID
+                    };
+                    PutOutinformation(this, args);     
                 }
                 Actived = false;
                 return;
@@ -251,7 +253,7 @@ namespace StrategicFMS.Aircrafts
         public event Autopilot_CallBack PutOutinformation;
         public class MyEventArgs : System.EventArgs
         {
-            public bool done;
+            public string acid;
         }
     }
 }

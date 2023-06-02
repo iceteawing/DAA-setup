@@ -122,7 +122,7 @@ namespace StrategicFMSDemo
 
         private Graphic airPolylineRouteGraphic;
 
-        private readonly List<MapPoint>[] _airRoutelinePoints;
+        //private readonly List<MapPoint>[] _airRoutelinePoints;
 
         private PictureMarkerSymbol _symbolOwnship;
         private PictureMarkerSymbol _symbolCessna;

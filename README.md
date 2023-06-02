@@ -1,6 +1,7 @@
 # Strategic FMS Demo from albatross.ai
 It is a demo software for AFAS demostration with predicted airspace structure and flight rules,
 and it will be incrementally updated to provide the lab environment and simulation environment for verification and validation of AFAS
+and eventually, it may be updated as a Multi-Vehicle Supervisor Workstations
 Assumption:
 1. Only position loop is implemented within the autopilot
 2. highly structured airspace will be leverage firstly to ensure the safety margin

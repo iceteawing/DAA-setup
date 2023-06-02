@@ -55,7 +55,7 @@ namespace StrategicFMS
 
         public void SetFlightPlan(List<Point3D> waypoints)
         {
-            Intent.SetWaypoints(waypoints);
+            //Intent.SetWaypoints(waypoints);
         }
 
         public void SetCruiseSpeed(double speed)
@@ -93,7 +93,7 @@ namespace StrategicFMS
 
         private void ProcessInformation(object sender, AutoPilot.MyEventArgs e)
         {
-            MessageBox.Show("Reach the destination");
+            Debug.WriteLine(e.acid + " reach the destination");
         }
 
         public Aircraft(string acid, string callSign, string type, double latitude, double longitude, double altitude, double speed)

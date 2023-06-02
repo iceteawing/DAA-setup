@@ -15,13 +15,13 @@ namespace StrategicFMS.AFAS
     {
         private string _aircraftId;
 
-        private _4DTrajectory _trajectory;
-
-        public _4DTrajectory Trajectory { get => _trajectory; set => _trajectory = value; }
+        private TrajectoryIntentData _trajectory;
+        public string AircraftId { get => _aircraftId; set => _aircraftId = value; }
+        public TrajectoryIntentData Trajectory { get => _trajectory; set => _trajectory = value; }
 
         private AirborneSeparationAssuranceSystem _asas;
         private AutonomousCollaborativeDecisionAssistanceSystem _acdas;
-        private CollaborativeDecisionMakingSystem _cdms;
+        private CollaborativeDecisionMakingSystem _cdms; // a station may needed
         private DetectAndAvoidanceSystem _daas;
 
         public AirborneSeparationAssuranceSystem Asas { get => _asas; set => _asas = value; }
@@ -29,7 +29,6 @@ namespace StrategicFMS.AFAS
 
         internal CollaborativeDecisionMakingSystem Cdms { get => _cdms; set => _cdms = value; }
         internal DetectAndAvoidanceSystem Daas { get => _daas; set => _daas = value; }
-        public string AircraftId { get => _aircraftId; set => _aircraftId = value; }
 
         public AutonomousFlightAssistSystem(string acid)
         {
@@ -63,7 +62,22 @@ namespace StrategicFMS.AFAS
             {
                 Acdas.IsConfirming = true;
                 Acdas.SequenceOperations(flightData.aircrafts);
-                Debug.WriteLine(state.AircraftID + " Afas.IsConfirming！");
+                Debug.WriteLine(state.AircraftID + " Acdas.Sequencing.IsConfirming！");
+            }
+            //Trajectory = UpdateTrajectoryIntent();
+        }
+
+        public bool UpdateTrajectoryIntent()
+        {
+            if(Trajectory.Update())
+            {
+                Debug.WriteLine("Trajectory Intent updated successful");
+                return true;
+            }
+            else
+            {
+                Debug.WriteLine("Trajectory Intent updating - Failed");
+                return false;
             }
         }
     }
