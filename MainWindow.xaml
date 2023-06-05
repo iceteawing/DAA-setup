@@ -5,37 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StrategicFMSDemo"
         xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" xmlns:StrategicFMSDemo="clr-namespace:StrategicFMSDemo" x:Class="StrategicFMSDemo.MainWindow"
-
-    
         mc:Ignorable="d"
-        Title="StrategicFMSDemo" Height="900" Width="1600" >
+        Title="SuperFMSDemo" Height="900" Width="1600" >
 
     <Window.Resources>
         <local:MapViewModel x:Key="MapViewModel" />
     </Window.Resources>
 
     <Grid>
-        <TabControl Margin="0,0,0,0" Grid.ColumnSpan="3" IsSynchronizedWithCurrentItem="True">
+        <TabControl Grid.ColumnSpan="2" IsSynchronizedWithCurrentItem="True">
             <TabItem x:Name="FlightTrackerTabItem" Header="Scenario" AutomationProperties.Name="Flight">
                 <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="58*"/>
-                        <ColumnDefinition Width="23*"/>
-                        <ColumnDefinition Width="16*"/>
-                        <ColumnDefinition Width="36*"/>
-                        <ColumnDefinition Width="382*"/>
-                        <ColumnDefinition Width="28*"/>
-                        <ColumnDefinition Width="24*"/>
-                        <ColumnDefinition Width="867*"/>
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="TestButton" Content="Test" HorizontalAlignment="Left" Margin="104,1,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.361,0.169" Click="Button_Click" Grid.Column="7"/>
+                    <Button x:Name="TestButton" Content="Test" Margin="1527,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="17.32,0.157" Click="Button_Click" />
                     <esri:MapView x:Name="MainMapView"
                       Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="8" />
-                    <TextBox x:Name="lat" HorizontalAlignment="Left" Margin="2,4,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="270" Grid.ColumnSpan="5"/>
-                    <TextBox x:Name="Lon" HorizontalAlignment="Left" Margin="161,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176" Grid.Column="4"/>
-                    <TextBox x:Name="alt" HorizontalAlignment="Left" Margin="341,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158" Grid.Column="4" Grid.ColumnSpan="4"/>
-                    <Button x:Name="VisibilityButton" Content="Visibility" Grid.Column="7" Margin="536,792,198,10" Click="Start_Click" />
-                    <ToggleButton x:Name="ToggleButtonScenarioControl" Margin="712,792,10,10" Grid.Column="7" IsChecked="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}">
+                    <TextBox x:Name="LatitudeLongitude" HorizontalAlignment="Left" Margin="10,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="270" />
+                    <TextBox x:Name="Longitude" HorizontalAlignment="Left" Margin="317,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176"/>
+                    <TextBox x:Name="Latitude" HorizontalAlignment="Left" Margin="523,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158"/>
+                    <Button x:Name="VisibilityButton" Content="Visibility" Click="Start_Click" Margin="1306,791,168,16"  />
+                    <ToggleButton x:Name="ToggleButtonScenarioControl"  IsChecked="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}" Margin="1431,787,0,1">
                         <ToggleButton.Style>
                             <Style TargetType="{x:Type ToggleButton}">
                                 <Setter Property="Template">
@@ -98,8 +86,8 @@
 
                 </Grid>
             </TabItem>
-            <TabItem x:Name="other" Header="Primary Display" >
-                <StrategicFMSDemo:SceneUserControl Height="708" Margin="4,0,24,0"/>
+            <TabItem x:Name="OTWTabItem" Header="Primary Display" >
+                <StrategicFMSDemo:SceneUserControl Height="800" />
             </TabItem>
             <TabItem x:Name="AFASTabItem" Header="AFAS" Background="{Binding Background_AFASTabItem}">
                 <Grid>
@@ -107,14 +95,13 @@
                     <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="357,213,304,301" ItemsSource="{Binding LandingSequence}"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Digital Traffic Manager">
+            <TabItem Header="MVS Station">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="8*"/>
-                        <ColumnDefinition Width="9*"/>
-                        <ColumnDefinition Width="1375*"/>
+                        <ColumnDefinition Width="381*"/>
+                        <ColumnDefinition Width="1213*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Confirm" Height="137" Margin="0,592,29,29" HorizontalAlignment="Right" Width="412" Grid.Column="2"  />
+                    <Button Content="Confirm" Height="137" Margin="0,670,635,51" HorizontalAlignment="Right" Width="412" Grid.Column="1"  />
                 </Grid>
             </TabItem>
             <TabItem Header="Airspace Structure"/>
@@ -138,8 +125,6 @@
                     <RadioButton Content="Level" HorizontalAlignment="Left" Margin="284,78,0,0" VerticalAlignment="Top" GroupName="vertical flightpath" Grid.Column="2"/>
                     <RadioButton Content="Descending" HorizontalAlignment="Left" Margin="284,46,0,0" VerticalAlignment="Top" GroupName="vertical flightpath" Grid.Column="2"/>
                     <RadioButton Content="Climbing" HorizontalAlignment="Left" Margin="284,119,0,0" VerticalAlignment="Top" GroupName="vertical flightpath" Grid.Column="2"/>
-
-
                     <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="440,46,0,0" VerticalAlignment="Top" GroupName="Scenario" Grid.Column="2"/>
                     <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="440,85,0,0" VerticalAlignment="Top" GroupName="Scenario" Grid.Column="2"/>
                     <RadioButton Content="RadioButton" HorizontalAlignment="Left" Margin="440,119,0,0" VerticalAlignment="Top" GroupName="Scenario" Grid.Column="2"/>
@@ -148,8 +133,6 @@
                     <Viewbox Height="50" Grid.ColumnSpan="3" Margin="0,350,0,351">
                         <RadioButton Content="Traffic Advisory Only (Single Threat)"  GroupName="Scenario"/>
                     </Viewbox>
-
-
                     <CheckBox Content="Altitude Reporting" IsChecked="{Binding IsCheck1, Mode=TwoWay}" HorizontalAlignment="Left" Margin="54,202,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
                     <CheckBox Content="ADS-B Reporting" IsChecked="{Binding IsChecked2, Mode=TwoWay}" HorizontalAlignment="Left" Margin="38,202,0,0" VerticalAlignment="Top" Grid.Column="2"/>
                     <CheckBox Content="No Braring Data Measured" IsChecked="{Binding IsChecked3, Mode=TwoWay}" HorizontalAlignment="Left" Margin="54,247,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
@@ -217,7 +200,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="SimConnect">
-                <Button x:Name="SimconnectBution" Content="SimconnectBution" Click="SimconnectButton_Click" Height="291" Margin="474,0,405,0"/>
+                <Button x:Name="SimconnectButton" Content="SimconnectButton" Click="SimconnectButton_Click" Height="300" Width="500"/>
             </TabItem>
         </TabControl>
     </Grid>

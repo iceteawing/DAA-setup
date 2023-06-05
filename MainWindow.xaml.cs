@@ -201,18 +201,18 @@ namespace StrategicFMSDemo
         {
             MapPoint mp=(MapPoint)e.Location;
             // Update textbox values.
-            lat.Text = CoordinateFormatter.ToLatitudeLongitude(mp, LatitudeLongitudeFormat.DecimalDegrees, 4);
+            LatitudeLongitude.Text = CoordinateFormatter.ToLatitudeLongitude(mp, LatitudeLongitudeFormat.DecimalDegrees, 4);
             
             if(mp.SpatialReference != SpatialReferences.Wgs84)
             {
                 MapPoint LatLong = GeometryEngine.Project(mp, SpatialReferences.Wgs84) as MapPoint;
-                Lon.Text = LatLong.X.ToString();
-                alt.Text = LatLong.Y.ToString();
+                Longitude.Text = LatLong.X.ToString();
+                Latitude.Text = LatLong.Y.ToString();
             }
             else
             {
-                Lon.Text = mp.X.ToString();
-                alt.Text = mp.Y.ToString();
+                Longitude.Text = mp.X.ToString();
+                Latitude.Text = mp.Y.ToString();
             }
         }
 
@@ -234,7 +234,7 @@ namespace StrategicFMSDemo
         }
         private void SimconnectButton_Click(object sender, RoutedEventArgs e)
         {
-            MSFSControlApp.MainWindow window = new MSFSControlApp.MainWindow();
+            MSFSControlApp.MainWindow window = new();
             window.Show();
         }
     }
