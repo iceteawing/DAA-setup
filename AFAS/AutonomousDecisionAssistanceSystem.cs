@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS.AFAS
 {
-    public class AutonomousCollaborativeDecisionAssistanceSystem//TODO: refer to martin's paper
+    public class AutonomousDecisionAssistanceSystem//TODO: refer to martin's paper
     {
-        public AutonomousCollaborativeDecisionAssistanceSystem() { IsConfirmed = false; IsConfirming = false; }
+        public AutonomousDecisionAssistanceSystem() { IsConfirmed = false; IsConfirming = false; }
 
         private bool _isConfirmed;
         private bool _isConfirming;
@@ -24,7 +24,7 @@ namespace StrategicFMS.AFAS
 
             foreach (Aircraft aircraft in sortedAircrafts)
             {
-                aircraft.Afas.Acdas.IsConfirming = true;
+                aircraft.Afas.Adas.IsConfirming = true;
                 DateTime dt = aircraft.AutoPilot.Route.EstimatedArrivalTime;
                 LandingSequence.Add(aircraft.AircraftId);
             }

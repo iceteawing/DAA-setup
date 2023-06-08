@@ -136,7 +136,7 @@ namespace StrategicFMS
                 return true;
             }
             //the period of AFAS may not as same as autopilot or the dynamic of the aircraft 
-            if(Afas.Acdas.IsConfirming==false)//TODO: this is a temp solution, shall implement the real logic and ensure the inputs and outputs of AFAS
+            if(Afas.Adas.IsConfirming==false)//TODO: this is a temp solution, shall implement the real logic and ensure the inputs and outputs of AFAS
             {
                 Afas.Run(this.State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex]);
             }
