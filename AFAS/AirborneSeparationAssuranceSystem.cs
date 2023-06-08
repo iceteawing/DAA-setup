@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS.AFAS
 {
+    /// <summary>
+    /// RTCA DO-361 Interval Management
+    /// </summary>
     public class AirborneSeparationAssuranceSystem//TODO: shall be implemented according to the Bluesky/state-based conflict dection and martin's paper
     {
         private string _acid;

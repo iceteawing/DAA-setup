@@ -8,13 +8,15 @@ using System.Windows.Media.Media3D;
 
 namespace StrategicFMS.AFAS
 {
-    public class TrajectoryIntentData // TODO:shall be implemented according to the 4dt definition in ARINC advanced FMS， 702A-5 page 97
+    /// <summary>
+    /// refer to RTCA DO-361 Interval Management and definition in ARINC advanced FMS， 702A-5 page 97
+    /// </summary>
+    public class TrajectoryIntentData // TODO:shall be implemented according to the summary
     {
         public TrajectoryIntentData()
         {
             CurrentPointIndex = 0;
         }
-
 
         private int _flightPlanType;
         private int _trajectorySequenceNumber;

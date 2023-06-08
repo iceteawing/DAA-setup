@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace StrategicFMS.AFAS
 {
+    /// <summary>
+    /// TSO-c211/DO-365b and TSO-c212
+    /// </summary>
     internal class DetectAndAvoidanceSystem//TODO: it shall implemented according to TSO-c211/DO-365b and TSO-212
     {
         public bool ConflictDetection()
