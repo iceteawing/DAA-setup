@@ -137,10 +137,12 @@ namespace MSFSConnect
                 initpos.OnGround = 0;
                 bool status = false;
                 //TODO: shall create the AI plane according the scenario definition
-                status = CreateAIPlane("Volocity Microsoft", "001", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_1);
-                status = CreateAIPlane("Volocity Microsoft", "002", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_2);
+                status = CreateAIPlane("Cessna 208B Grand Caravan EX", "001", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_1);
+                status = CreateAIPlane("Cessna Skyhawk 172Sp G1000 01 Livery", "002", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_2);
                 status = CreateAIPlane("Volocity Microsoft", "003", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_3);
-                status = CreateAIPlane("Volocity Microsoft", "004", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_4);
+                status = CreateAIPlane("Cessna 208B Grand Caravan EX", "004", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_4);
+                status = CreateAIPlane("Cessna Skyhawk 172Sp G1000 01 Livery", "005", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_5);
+                status = CreateAIPlane("Volocity Microsoft", "006", initpos, TYPE_REQUESTS.REQUEST_ADDINTRUDER_6);
                 if (status)
                 {
                     Debug.WriteLine("Creation successfully.");

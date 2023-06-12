@@ -26,7 +26,7 @@ namespace StrategicFMSDemo
         private static readonly FlightData instance = new FlightData();
         private ScenarioData _scenarioData;
         private AirspaceStructure _airspace;
-        private Ownship ownship = new("001", "Cessna208");
+        private Ownship ownship = new("000", "Cessna208");
         
         // Timer for update flight data.
         private Timer _timer;//TODO: a more accurate timer may be needed here if required
@@ -71,7 +71,7 @@ namespace StrategicFMSDemo
         }
         public void CreateAircraft(string acid,string type,Route route, double initLon, double initLat, double initAltitude)
         {
-            if (acid == "001")
+            if (acid == "000")
             {
                 Ownship ownship = new(acid, type);
                 ownship.SetAircraftPosition(initLon, initLat, initAltitude);
@@ -104,25 +104,25 @@ namespace StrategicFMSDemo
             aircrafts.Clear();
 
             Route route = Route.DeserializeFromJson("data/airspace/route_L.json");
+            CreateAircraft("000", "Cessna208", route, 117.04595554073023, 39.23010140637297, 1500.0);
+
+            route = Route.DeserializeFromJson("data/airspace/route_L.json");
             CreateAircraft("001", "Cessna208", route, 117.04595554073023, 39.23010140637297, 1500.0);
 
             route = Route.DeserializeFromJson("data/airspace/route_L.json");
-            CreateAircraft("002", "Cessna208", route, 117.04595554073023, 39.23010140637297, 1500.0);
-
-            route = Route.DeserializeFromJson("data/airspace/route_L.json");
-            CreateAircraft("003", "Cessna172", route, 117.04595554073023, 39.23010140637297, 1500.0);
+            CreateAircraft("002", "Cessna172", route, 117.04595554073023, 39.23010140637297, 1500.0);
 
             route = Route.DeserializeFromJson("data/airspace/routeVCA_L.json");
-            CreateAircraft("004", "Volocity", route, 117.0333869301425, 39.22087741005525, 1500.0);
+            CreateAircraft("003", "Volocity", route, 117.0333869301425, 39.22087741005525, 1500.0);
 
             route = Route.DeserializeFromJson("data/airspace/route_R.json");
-            CreateAircraft("005", "Cessna208", route, 117.35299659032735, 39.38856696361833, 1500.0);
+            CreateAircraft("004", "Cessna208", route, 117.35299659032735, 39.38856696361833, 1500.0);
 
             route = Route.DeserializeFromJson("data/airspace/route_R.json");
-            CreateAircraft("006", "Cessna172", route, 117.35299659032735, 39.38856696361833, 1500.0);
+            CreateAircraft("005", "Cessna172", route, 117.35299659032735, 39.38856696361833, 1500.0);
 
             route = Route.DeserializeFromJson("data/airspace/routeVCA_R.json");
-            CreateAircraft("007", "Volocity", route,117.34863470475673, 39.38951966826886, 1500.0);
+            CreateAircraft("006", "Volocity", route,117.34863470475673, 39.38951966826886, 1500.0);
 
             ScenarioData = scenarioData;
             return false;

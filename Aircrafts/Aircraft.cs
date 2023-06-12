@@ -131,7 +131,7 @@ namespace StrategicFMS
         /// <param name="period">The update period. (in ms)</param>
         public bool Update( double period)
         {
-            if (this.AircraftId == "001")
+            if (this.AircraftId == "000")
             {
                 return true;
             }

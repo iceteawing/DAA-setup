@@ -27,11 +27,21 @@ namespace StrategicFMS.Traffic
         private Airdrome _originAirport;
         private Airdrome _destionationAirport;
         private List<Waypoint> _waypoints;
+        private Waypoint _originWaypoint;
+        private Waypoint IAF;
+        private Waypoint IF;
+        private Waypoint FAF;
+        private Waypoint TouchDown;
+
         private DateTime _estimatedArrivalTime;
+        private DateTime _latestArrivalTime;
+        private DateTime _earliestArrivalTime;
         public Airdrome OriginAirport { get => _originAirport; set => _originAirport = value; }
         public Airdrome DestionationAirport { get => _destionationAirport; set => _destionationAirport = value; }
         public List<Waypoint> Waypoints { get => _waypoints; set => _waypoints = value; }
         public DateTime EstimatedArrivalTime { get => _estimatedArrivalTime; set => _estimatedArrivalTime = value; }
+        public DateTime LatestArrivalTime { get => _latestArrivalTime; set => _latestArrivalTime = value; }
+        public DateTime EarliestArrivalTime { get => _earliestArrivalTime; set => _earliestArrivalTime = value; }
 
         public void AddWaypoint(Waypoint waypoint)
         {

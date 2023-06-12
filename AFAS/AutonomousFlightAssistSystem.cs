@@ -61,7 +61,9 @@ namespace StrategicFMS.AFAS
             if (Adas.IsConfirming == false && (AutoPilot.CalculateDistance(state.Latitude, state.Longitude, active_waypoint.Latitude, active_waypoint.Longtitude) < MyConstants.SchedulingPointMargin))
             {
                 Adas.IsConfirming = true;
-                Adas.SequenceOperations(flightData.aircrafts);
+                //Adas.SequenceOperations(flightData.aircrafts);
+                Cdms.LandingScheduling(flightData.aircrafts, 0);
+
                 Debug.WriteLine(state.AircraftID + " Acdas.Sequencing.IsConfirming！");
             }
             //Trajectory = UpdateTrajectoryIntent();

@@ -27,5 +27,6 @@ namespace StrategicFMS
         public const double MeterToFeet = 3.2808399;
         //AFAS
         public const double SchedulingPointMargin = 37040;//unit is meter, 10nm or 20 nm
+        public const double LandingSeparationTime = 60;//second
     }
 }

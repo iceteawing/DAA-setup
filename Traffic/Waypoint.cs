@@ -59,7 +59,8 @@ namespace StrategicFMS.Traffic
             FAF,
             MAPt,
             Enroute,
-            Holding
+            Holding,
+            TLOF
         }
 
     }

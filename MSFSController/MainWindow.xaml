@@ -84,8 +84,8 @@
             <Label Content="radians" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="8" VerticalAlignment="Top"/>
             <Button Content="Add" Command="{Binding cmdAddIntruder}" HorizontalAlignment="Left" Margin="165,7,0,0" Grid.Row="9" VerticalAlignment="Top" Width="75"/>
             <Label Content="Object ID" HorizontalAlignment="Left" Margin="6,4,0,0" Grid.Row="10" VerticalAlignment="Top"/>
-            <ComboBox ItemsSource="{Binding lObjectIDs}" SelectedValue="{Binding iObjectIdRequest, Mode=OneWayToSource}" SelectedIndex="0" HorizontalAlignment="Left" Margin="71,4,0,0" Grid.Row="10" VerticalAlignment="Top" Width="169" Height="26"/>
-
+            <ComboBox ItemsSource="{Binding lObjectIDs}" SelectedValue="{Binding iObjectIdRequest, Mode=OneWayToSource}" SelectedIndex="0" HorizontalAlignment="Left" Margin="50,10,0,0" Grid.Row="16" VerticalAlignment="Top" Width="169" Height="26"/>
+            <TextBox x:Name="tbuObjectId" Text="{Binding uSetObjectId, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="22" Margin="89,0,0,0" Grid.Row="10" TextWrapping="Wrap" VerticalAlignment="Center" Width="120"/>
             <Label Content="Latitude" HorizontalAlignment="Left" Margin="10,4,0,0" Grid.Row="11" VerticalAlignment="Top"/>
             <TextBox x:Name="tbuLatitude" Text="{Binding uSetLatitude, Mode=OneWayToSource}" HorizontalAlignment="Left" Height="23" Margin="70,6,0,0" Grid.Row="11" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
             <Label Content="degrees" HorizontalAlignment="Left" Margin="193,4,0,0" Grid.Row="11" VerticalAlignment="Top"/>

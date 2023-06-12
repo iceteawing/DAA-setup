@@ -128,7 +128,8 @@ namespace MSFSControlApp
         }
         private string m_vMessage = "";
 
-        public ObservableCollection<uint> lObjectIDs { get; set; }
+        private ObservableCollection<uint> lObjectIDs;
+
         public uint iObjectIdRequest
         {
             get { return m_iObjectIdRequest; }
@@ -138,6 +139,13 @@ namespace MSFSControlApp
             }
         }
         private uint m_iObjectIdRequest = 0;
+
+        public string uSetObjectId
+        {
+            get { return m_uSetObjectId; }
+            set { this.SetProperty(ref m_uSetObjectId, value); }
+        }
+        private string m_uSetObjectId = "0";
 
         public string uSetLatitude
         {
@@ -173,6 +181,10 @@ namespace MSFSControlApp
         public BaseCommand cmdGetPosition { get; private set; }
         public BaseCommand cmdRemoveSelectedRequest { get; private set; }
         public BaseCommand cmdRemoveIntruderRequests { get; private set; }
+        public ObservableCollection<uint> LObjectIDs {
+            get { return lObjectIDs; }
+            set { this.SetProperty(ref lObjectIDs, value); }
+        }
 
         public void SetWindowHandle(IntPtr _hWnd)
         {
@@ -180,8 +192,8 @@ namespace MSFSControlApp
         }
         public ControlViewModel()
         {
-            lObjectIDs = new ObservableCollection<uint>();
-            lObjectIDs.Add(1);
+            LObjectIDs = new ObservableCollection<uint>();
+            LObjectIDs.Add(1);
 
             cmdToggleConnect = new BaseCommand((p) => { ToggleConnect(); });
             cmdAddIntruder = new BaseCommand((p) => { AddIntruder(); });
@@ -194,7 +206,7 @@ namespace MSFSControlApp
         private void RemoveIntruderRequests()
         {
             uint objectId = oSelectedSimObjectRequest.sObjectId;
-            lObjectIDs.Remove(objectId);
+            LObjectIDs.Remove(objectId);
             connect.dicData.Remove(objectId);
             connect.DeleteAIPlane(objectId);
             lSimObjectRequests.Remove(oSelectedSimObjectRequest);
@@ -208,8 +220,9 @@ namespace MSFSControlApp
                 pos.Latitude = double.Parse(uSetLatitude);
                 pos.Longitude = double.Parse(uSetLongitude);
                 pos.Altitude = double.Parse(uSetAltitude);
-
-                bool status = connect.SetAIAircraftPosition(m_iObjectIdRequest, pos);
+                uint objectId = uint.Parse(uSetObjectId);
+                bool status = connect.SetAIAircraftPosition(objectId, pos);
+                //bool status = connect.SetAIAircraftPosition(m_iObjectIdRequest, pos);
                 if (status)
                 {
                     m_vMessage = "Setting successfully.";
@@ -271,7 +284,7 @@ namespace MSFSControlApp
         {
             Console.WriteLine("OnTick");
 
-            lObjectIDs = connect.objectIDs;
+            LObjectIDs = connect.objectIDs;
             bOddTick = connect.bOddTick;
             bConnected = connect.bConnected;
             if (bConnected)
