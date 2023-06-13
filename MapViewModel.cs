@@ -16,10 +16,13 @@ using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
 using StrategicFMS;
+using StrategicFMS.Airspaces;
+using SuperFMS.Airspaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -39,7 +42,7 @@ namespace StrategicFMSDemo
 
             SetupMap();
 
-            CreateGraphics();
+            CreateGraphicsOverlay();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -96,8 +99,7 @@ namespace StrategicFMSDemo
                     _aircraftPointGraphics.Clear();
                     _airspaceGraphicsOverlay.Graphics.Clear();
                     FlightData flightData = FlightData.GetInstance();
-                    flightData.StartScenario(false);
-                    
+                    flightData.StartScenario(false);     
                 }
                 OnPropertyChanged();
             }
@@ -142,8 +144,9 @@ namespace StrategicFMSDemo
             AddAirspaceGraphics();
             AddAircraftPointGraphics();
         }
-        private void AddAirspaceGraphics()
+        private void TestGraphics() 
         {
+
             // Create a point geometry.
             var dumeBeachPoint = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
 
@@ -168,38 +171,6 @@ namespace StrategicFMSDemo
 
             // Add the point graphic to graphics overlay.
             _airspaceGraphicsOverlay.Graphics.Add(pointGraphic);
-
-            //draw star points
-            //TODO: shall be implemented dynamically
-            var p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.IAF1.X, _flightData.Airspace.Airport.Runways[0].Star.IAF1.Y, SpatialReferences.Wgs84); ;
-            var pG = new Graphic(p, pointSymbol);
-            _airspaceGraphicsOverlay.Graphics.Add(pG);
-            p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.IAF2.X, _flightData.Airspace.Airport.Runways[0].Star.IAF2.Y, SpatialReferences.Wgs84); ;
-             pG = new Graphic(p, pointSymbol);
-            _airspaceGraphicsOverlay.Graphics.Add(pG);
-             p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.IF.X, _flightData.Airspace.Airport.Runways[0].Star.IF.Y, SpatialReferences.Wgs84); ;
-             pG = new Graphic(p, pointSymbol);
-            _airspaceGraphicsOverlay.Graphics.Add(pG);
-             p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.FAF.X, _flightData.Airspace.Airport.Runways[0].Star.FAF.Y, SpatialReferences.Wgs84); ;
-             pG = new Graphic(p, pointSymbol);
-            _airspaceGraphicsOverlay.Graphics.Add(pG);
-             p = new MapPoint(_flightData.Airspace.Airport.Runways[0].Star.Mapt.X, _flightData.Airspace.Airport.Runways[0].Star.Mapt.Y, SpatialReferences.Wgs84); ;
-             pG = new Graphic(p, pointSymbol);
-            _airspaceGraphicsOverlay.Graphics.Add(pG);
-
-            //add airspace type representation such Class B 
-            //create a symbol to define how the circle is displayed.
-            var circle = DrawCircle(new MapPoint(117.354909531352, 39.125833959383186, SpatialReferences.Wgs84), 0.5, 360);
-
-            // Create a fill symbol to display the polygon.
-            var circleSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
-
-            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(50, 0, 255, 100), circleSymbolOutline); //color from argb
-            // Create a polygon graphic with the geometry and fill symbol.
-            var circleGraphic = new Graphic(circle, circleFillSymbol);
-
-            // Add the polygon graphic to the graphics overlay.
-            _airspaceGraphicsOverlay.Graphics.Add(circleGraphic);
 
             // Create a list of points that define a polyline.
             List<MapPoint> linePoints = new List<MapPoint>
@@ -244,12 +215,75 @@ namespace StrategicFMSDemo
 
             // Add the polygon graphic to the graphics overlay.
             _airspaceGraphicsOverlay.Graphics.Add(polygonGraphic);
-        }
-        private void AddAircraftPointGraphics()
-        {
-            // Create a point geometry.
-            var dumeBeachPoint = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);
 
+            // Create new Timer and set the timeout interval to approximately 15 image frames per second.
+            // Create polyline geometry from the points.
+            _westwardBeachPolyline = new Polyline(linePoints);
+
+            // Create a symbol for displaying the line.
+            //var polylineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 3.0);
+
+            // Create a polyline graphic with geometry and symbol.
+            PolylineGraphic = new Graphic(_westwardBeachPolyline, polylineSymbol);
+
+            _aircraftGraphicsOverlay.Graphics.Add(polylineGraphic);
+        }
+        private void CreateAreaGraphics()
+        {
+            FlightData flightData = FlightData.GetInstance();
+            //add airspace type representation such Class B 
+            List<Airspace> airspaces = flightData.Airspace.LsAirspace;
+            //create a symbol to define how the circle is displayed.
+            MapPoint centerPoint = new MapPoint(airspaces[0].centerLontitude, airspaces[0].centerLatitude, SpatialReferences.Wgs84);
+            var circle = DrawCircle(centerPoint, 0.5, 360);
+
+            // Create a fill symbol to display the polygon.
+            var circleSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
+
+            var circleFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(50, 0, 255, 100), circleSymbolOutline); //color from argb
+            // Create a polygon graphic with the geometry and fill symbol.
+            var circleGraphic = new Graphic(circle, circleFillSymbol);
+
+            // Add the polygon graphic to the graphics overlay.
+            _airspaceGraphicsOverlay.Graphics.Add(circleGraphic);
+        }
+        private void CreateCorridorGraphics() 
+        {
+            FlightData flightData = FlightData.GetInstance();
+            Dictionary<int, Corridor> corridors = flightData.Airspace.DicCorridors;
+
+            foreach(KeyValuePair<int, Corridor> pair in corridors)
+            {
+                // Create a list of points that define a polygon boundary.
+                List<MapPoint> polygonPoints = new List<MapPoint>();
+                foreach(Point3D p in pair.Value.Points)
+                {
+                    polygonPoints.Add(new MapPoint(p.X, p.Y, SpatialReferences.Wgs84));
+                };
+                //TODO: encapsulate the graphics represent the region on the map, the parameter shall at last include area and color
+                // Create polygon geometry.
+                var mahouRivieraPolygon = new Polygon(polygonPoints);
+
+                // Create a fill symbol to display the polygon.
+                var polygonSymbolOutline = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 2.0);
+
+                //var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.Orange, polygonSymbolOutline);
+                var polygonFillSymbol = new SimpleFillSymbol(SimpleFillSymbolStyle.Solid, System.Drawing.Color.FromArgb(100, 255, 100, 100), polygonSymbolOutline); //color from argb
+                                                                                                                                                                    // Create a polygon graphic with the geometry and fill symbol.
+                var polygonGraphic = new Graphic(mahouRivieraPolygon, polygonFillSymbol);
+
+                // Add the polygon graphic to the graphics overlay.
+                _airspaceGraphicsOverlay.Graphics.Add(polygonGraphic);
+            }
+
+
+
+        }
+        private void AddAirspaceGraphics()
+        {
+            CreateAreaGraphics();
+            //draw star points
+            //TODO: shall be implemented dynamically
             // Create a symbol to define how the point is displayed.
             var pointSymbol = new SimpleMarkerSymbol
             {
@@ -265,53 +299,63 @@ namespace StrategicFMSDemo
                 Color = System.Drawing.Color.Blue,
                 Width = 2.0
             };
+            var p = new MapPoint(_flightData.Airspace.Airport.Stars[0].IAF.Longtitude, _flightData.Airspace.Airport.Stars[0].IAF.Latitude, SpatialReferences.Wgs84); ;
+            var pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
+            p = new MapPoint(_flightData.Airspace.Airport.Stars[1].IAF.Longtitude, _flightData.Airspace.Airport.Stars[1].IAF.Latitude, SpatialReferences.Wgs84); ;
+             pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
+             p = new MapPoint(_flightData.Airspace.Airport.Stars[0].IF.Longtitude, _flightData.Airspace.Airport.Stars[0].IF.Latitude, SpatialReferences.Wgs84); ;
+             pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
+             p = new MapPoint(_flightData.Airspace.Airport.Stars[0].FAF.Longtitude, _flightData.Airspace.Airport.Stars[0].FAF.Latitude, SpatialReferences.Wgs84); ;
+             pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
+             p = new MapPoint(_flightData.Airspace.Airport.Stars[0].Mapt.Longtitude, _flightData.Airspace.Airport.Stars[0].Mapt.Latitude, SpatialReferences.Wgs84); ;
+             pG = new Graphic(p, pointSymbol);
+            _airspaceGraphicsOverlay.Graphics.Add(pG);
 
-            //for( int i=0; i<100;i++)// the max number here is for testing
-            //{
-            //    var p = new MapPoint(-118.8066, 34.0006, SpatialReferences.Wgs84);// the geometry here is for testing
-            //    // Create a point graphic with the geometry and symbol.
-            //    var graphic = new Graphic(p, pointSymbol);
-            //    aircraftPointGraphics.Add(graphic);
-            //}
+
+            CreateCorridorGraphics();
+
+        }
+        private void AddAircraftPointGraphics()
+        {
+            FlightData flightData = FlightData.GetInstance();
+            
+            var imagePath = "data/images/Cessna.png";
+
             //Initializes a new instance of the Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol class from an image URI.
             try
             {
-                var imagePath = "data/images/Airplane.png"; // relative path to the image file
-                var symbolAirplane = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-                symbolAirplane.Angle = -45;//this variable shall be updated period
-                symbolAirplane.Opacity = 0.5;
-
-                imagePath = "data/images/Helicopter.png";
-                var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-
-                imagePath = "data/images/Volocity.png";
-                var symbolVolocity = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-
-                foreach (Aircraft a in _flightData.aircrafts)
+                foreach (KeyValuePair<string, Aircraft> pair in _flightData.aircrafts)
                 {
-                    var mp = new MapPoint(a.State.Longitude, a.State.Latitude, SpatialReferences.Wgs84);
-                    if (a.AircraftId == "001")
+                    var mp = new MapPoint(pair.Value.State.Longitude, pair.Value.State.Latitude, SpatialReferences.Wgs84);
+                    if (pair.Value.Type == "Helicopter")
                     {
-                        var graphicOwnship = new Graphic(mp, _symbolOwnship);
-                        _aircraftPointGraphics.Add(graphicOwnship);
+                        imagePath = "data/images/Helicopter.png";
+                        var symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                        AircraftsPictureMarkerSymbol.Add(symbolHelicopter);
+                        var graphicHelicopter = new Graphic(mp, symbolHelicopter);
+                        _aircraftPointGraphics.Add(graphicHelicopter);
+                    }
+                    else if (pair.Value.Type == "Volocity")
+                    {
+                        imagePath = "data/images/Volocity.png";
+                        var symbolVolocity = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                        AircraftsPictureMarkerSymbol.Add(symbolVolocity);
+                        var graphicVolocity = new Graphic(mp, symbolVolocity);
+                        _aircraftPointGraphics.Add(graphicVolocity);
                     }
                     else
                     {
-                        if (a.Type == "Helicopter")
-                        {
-                            var graphicHelicopter = new Graphic(mp, symbolHelicopter);
-                            _aircraftPointGraphics.Add(graphicHelicopter);
-                        }
-                        else if (a.Type == "Volocity")
-                        {
-                            var graphicVolocity = new Graphic(mp, symbolVolocity);
-                            _aircraftPointGraphics.Add(graphicVolocity);
-                        }
-                        else
-                        {
-                            var graphicAirplane = new Graphic(mp, symbolAirplane);
-                            _aircraftPointGraphics.Add(graphicAirplane);
-                        }
+                        imagePath = "data/images/Cessna.png";
+                        var symbolCessna = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                        symbolCessna.Width = 50;
+                        symbolCessna.Height = 50;
+                        AircraftsPictureMarkerSymbol.Add(symbolCessna);
+                        var graphicCessna = new Graphic(mp, symbolCessna);
+                        _aircraftPointGraphics.Add(graphicCessna);
                     }
                 }
             }
@@ -329,23 +373,11 @@ namespace StrategicFMSDemo
                 // Add the graphic to graphics overlay.
                 _aircraftGraphicsOverlay.Graphics.Add(g);
             }
-
-            // Create new Timer and set the timeout interval to approximately 15 image frames per second.
-            // Create polyline geometry from the points.
-            _westwardBeachPolyline = new Polyline(linePoints);
-
-            // Create a symbol for displaying the line.
-            var polylineSymbol = new SimpleLineSymbol(SimpleLineSymbolStyle.Solid, System.Drawing.Color.Blue, 3.0);
-
-            // Create a polyline graphic with geometry and symbol.
-            PolylineGraphic = new Graphic(_westwardBeachPolyline, polylineSymbol);
-
-            _aircraftGraphicsOverlay.Graphics.Add(polylineGraphic);
         }
 
         private Polyline _westwardBeachPolyline;
 
-        private readonly List<MapPoint> linePoints = new()
+        private List<PictureMarkerSymbol> AircraftsPictureMarkerSymbol = new()
         {
 
         };
@@ -362,43 +394,40 @@ namespace StrategicFMSDemo
                 //update the aircrafts' position on the map
                 for (int i = 0; i < _aircraftPointGraphics.Count; i++)
                 {
+                    Aircraft aircraft = _flightData.aircrafts.ElementAt(i).Value;
                     try
                     {
-                        Point3D aircraftPoint = _flightData.aircrafts[i].GetPoint3D();
+                        Point3D aircraftPoint = aircraft.GetPoint3D();
                         MapPoint p = new MapPoint(aircraftPoint.X, aircraftPoint.Y, SpatialReferences.Wgs84);
                         _aircraftPointGraphics[i].Geometry = p;
-                        if (i == 0)//only update the heading of ownship here
+
+                        if (aircraft.Type == "Helicopter")
                         {
-                            _symbolOwnship.Angle = _flightData.aircrafts[i].State.Heading;
-                            _aircraftPointGraphics[i].Symbol = _symbolOwnship;
+                            //var imagePath = "data/images/Helicopter.png"; // relative path to the image file
+                            //var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                            //symbolAircraft.Angle = aircraft.State.Heading;//this variable shall be updated period
+                            AircraftsPictureMarkerSymbol[i].Angle = aircraft.State.Heading;
+                            _aircraftPointGraphics[i].Symbol = AircraftsPictureMarkerSymbol[i];
                         }
-                        else // TODO:the current solution will increase the memory peroidly, the symbol shall be init per aircraft during initialization
+                        else if (aircraft.Type == "Volocity")
                         {
-                            if (_flightData.aircrafts[i].Type == "Helicopter")
-                            {
-                                var imagePath = "data/images/Helicopter.png"; // relative path to the image file
-                                var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-                                symbolAircraft.Angle = _flightData.aircrafts[i].State.Heading;//this variable shall be updated period
-                                _aircraftPointGraphics[i].Symbol = symbolAircraft;
-                            }
-                            else if (_flightData.aircrafts[i].Type == "Volocity")
-                            {
-                                var imagePath = "data/images/Volocity.png"; // relative path to the image file
-                                var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-                                symbolAircraft.Angle = _flightData.aircrafts[i].State.Heading;//this variable shall be updated period
-                                _aircraftPointGraphics[i].Symbol = symbolAircraft;
-                            }
-                            else
-                            {
-                                var imagePath = "data/images/Cessna.png"; // relative path to the image file
-                                var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-                                symbolAircraft.Width = 50;
-                                symbolAircraft.Height = 50;
-                                symbolAircraft.Angle = _flightData.aircrafts[i].State.Heading;//this variable shall be updated period
-                                _aircraftPointGraphics[i].Symbol = symbolAircraft;
-                                //_symbolCessna.Angle = _flightData.aircrafts[i].State.Heading;// the reasonable solution is provide symbol per aircraft as private variable
-                                //_aircraftPointGraphics[i].Symbol = _symbolCessna;
-                            }
+                            //var imagePath = "data/images/Volocity.png"; // relative path to the image file
+                            //var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                            //symbolAircraft.Angle = aircraft.State.Heading;//this variable shall be updated period
+                            AircraftsPictureMarkerSymbol[i].Angle = aircraft.State.Heading;
+                            _aircraftPointGraphics[i].Symbol = AircraftsPictureMarkerSymbol[i];
+                        }
+                        else
+                        {
+                            //var imagePath = "data/images/Cessna.png"; // relative path to the image file
+                            //var symbolAircraft = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
+                            //symbolAircraft.Width = 50;
+                            //symbolAircraft.Height = 50;
+                            //symbolAircraft.Angle = aircraft.State.Heading;//this variable shall be updated period
+                            AircraftsPictureMarkerSymbol[i].Angle = aircraft.State.Heading;
+                            _aircraftPointGraphics[i].Symbol = AircraftsPictureMarkerSymbol[i];
+                            //_symbolCessna.Angle = _flightData.aircrafts[i].State.Heading;// the reasonable solution is provide symbol per aircraft as private variable
+                            //_aircraftPointGraphics[i].Symbol = _symbolCessna;
                         }
                     }
                     catch (ArgumentOutOfRangeException e)
@@ -442,7 +471,7 @@ namespace StrategicFMSDemo
             return p;
         }
 
-        private void CreateGraphics()
+        private void CreateGraphicsOverlay()
         {
             // Create a new graphics overlay to contain a variety of graphics.
             _airspaceGraphicsOverlay = new GraphicsOverlay();
@@ -457,22 +486,7 @@ namespace StrategicFMSDemo
             };
             // Set the view model's "GraphicsOverlays" property (will be consumed by the map view).
             this.GraphicsOverlays = overlays;
-            //set the symbol for ownship
-            var imagePath = "data/images/Cessna.png";
-            _symbolOwnship = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-            _symbolOwnship.Width = 50;
-            _symbolOwnship.Height = 50;
-            _symbolCessna = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-            _symbolCessna.Width = 50;
-            _symbolCessna.Height = 50;
-            imagePath = "data/images/Volocity.png";
-            _symbolVolocity = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-            _symbolVolocity.Width = 50;
-            _symbolVolocity.Height = 50;
-            imagePath = "data/images/Helicopter.png";
-            _symbolHelicopter = new Esri.ArcGISRuntime.Symbology.PictureMarkerSymbol(new Uri(imagePath, UriKind.Relative));
-            _symbolHelicopter.Width = 50;
-            _symbolHelicopter.Height = 50;
+
 
         }
     }

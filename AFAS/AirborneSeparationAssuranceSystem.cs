@@ -54,11 +54,11 @@ namespace StrategicFMS.AFAS
         //Horizontal conflicts are detected when distance at CPA<minimum separation (rpz)
         //Checks for altitude differences between aircraft. In situations where aircraft are at a vertical distance > minimum vertical separation (hpz) these are removed from the vertical conflicts
         //Detected conflicts are returned to the detection.py class
-        public bool ConflictDetection(List<Aircraft> aircrafts) 
+        public bool ConflictDetection(Dictionary<string,Aircraft> aircrafts) 
         {
-            foreach (Aircraft aircraft in aircrafts)
+            foreach (KeyValuePair<string, Aircraft> pair in aircrafts)
             {
-                if (aircraft != null && aircraft.AircraftId != this.Acid)
+                if (pair.Value != null && pair.Value.AircraftId != this.Acid)
                 {
                     //TODO: state-based conflict dection
                 }

@@ -1,6 +1,8 @@
 ﻿using StrategicFMSDemo;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +12,7 @@ namespace StrategicFMS.AFAS
     internal class CollaborativeDecisionMakingSystem//TODO : not yet, may be a landing squence calculated in the ATM automation system
     {
         public List<string> LandingSequence = new();
-        public void LandingScheduling(List<Aircraft> aircrafts, int algorithm)
+        public void LandingScheduling(Dictionary<string,Aircraft> aircrafts, int algorithm)
         {
             switch (algorithm)
             {
@@ -18,6 +20,9 @@ namespace StrategicFMS.AFAS
                     FirstComeFirstServeSchedulingAlgorithm(aircrafts);
                     break;
                 case 1:
+                    ManualAlgorithm(aircrafts);
+                    break;
+                case 2:
                     Initialzation(aircrafts);
                     SimplexAlgorithm();
                     break;
@@ -25,22 +30,68 @@ namespace StrategicFMS.AFAS
                     break;
             }
         }
-
-        
-        public void FirstComeFirstServeSchedulingAlgorithm(List<Aircraft> aircrafts)
+        public void ManualAlgorithm(Dictionary<string, Aircraft> aircrafts)
         {
-            // 使用LINQ根据EstimatedArrivalTime对飞机列表进行排序
-            var sortedAircrafts = aircrafts.OrderBy(aircraft => aircraft.AutoPilot.Route.EstimatedArrivalTime).ToList();
-
-            foreach (Aircraft aircraft in sortedAircrafts)
+            // 使用LINQ根据CruiseSpeed对飞机列表进行排序
+            var sortedAircrafts = aircrafts.OrderByDescending(p => p.Value.Performance.CruiseSpeed);
+            foreach (KeyValuePair<string, Aircraft> pair in sortedAircrafts)
             {
-                aircraft.Afas.Adas.IsConfirming = true;
-                DateTime dt = aircraft.AutoPilot.Route.EstimatedArrivalTime;
-                LandingSequence.Add(aircraft.AircraftId);
+
+                pair.Value.Afas.Adas.IsConfirming = true;
+                DateTime dt = pair.Value.AutoPilot.ActiveFlightPlan.EstimatedArrivalTime;
+                LandingSequence.Add(pair.Value.AircraftId);
             }
             FlightData flightData = FlightData.GetInstance();
             flightData.LandingSequence = LandingSequence;
+            int index = 0;
+            double calculatedETA = 0.0;
+            foreach (string aircraftId in LandingSequence)
+            {
+                // Do something with the aircraftId
+                if (index == 0)
+                {
+                    calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].Performance.TimeBasedLandingSeparation;
+                }
+                else
+                {
+                    aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA = calculatedETA;
+                    calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].Performance.TimeBasedLandingSeparation;
+                }
+                index++;
+            }
+            Debug.WriteLine("Generated the 4DT within FirstComeFirstServeSchedulingAlgorithm");
+        }
 
+        public void FirstComeFirstServeSchedulingAlgorithm(Dictionary<string, Aircraft> aircrafts)
+        {
+            // 使用LINQ根据EstimatedArrivalTime对飞机列表进行排序
+            var sortedAircrafts = aircrafts.OrderBy(p => p.Value.AutoPilot.ActiveFlightPlan.HoldingPoint.ETA);
+            foreach (KeyValuePair<string, Aircraft> pair  in sortedAircrafts)
+            {
+
+                pair.Value.Afas.Adas.IsConfirming = true;
+                DateTime dt = pair.Value.AutoPilot.ActiveFlightPlan.EstimatedArrivalTime;
+                LandingSequence.Add(pair.Value.AircraftId);
+            }
+            FlightData flightData = FlightData.GetInstance();
+            flightData.LandingSequence = LandingSequence;
+            int index = 0;
+            double calculatedETA=0.0;
+            foreach (string aircraftId in LandingSequence)
+            {
+                // Do something with the aircraftId
+                if(index==0)
+                {
+                    calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.LandingDurationInSeconds;
+                }
+                else
+                {
+                    aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA= calculatedETA;
+                    calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.LandingDurationInSeconds;
+                }
+                index++;
+            }
+            Debug.WriteLine("Generated the 4DT within FirstComeFirstServeSchedulingAlgorithm");
         }
         public bool[,] SimplexAlgorithm()
         {
@@ -104,43 +155,43 @@ namespace StrategicFMS.AFAS
         private double [] f_penaltyCost;
         private double [] g_penaltyCost;
         private double [] preferredLandingTime;
-        public void Initialzation(List<Aircraft> aircrafts)
+        public void Initialzation(Dictionary<string, Aircraft> aircrafts)
         {
-            N = aircrafts.Count;
-            earliestLandingTime = new double[N];
-            for (int i = 0; i < N; i++)
-            {
-                earliestLandingTime[i] = aircrafts[i].AutoPilot.Route.EstimatedArrivalTime.Minute;
+            //N = aircrafts.Count;
+            //earliestLandingTime = new double[N];
+            //for (int i = 0; i < N; i++)
+            //{
+            //    earliestLandingTime[i] = aircrafts[i].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime.Minute;
  
-                latestLandingTime[i] = aircrafts[i].AutoPilot.Route.EstimatedArrivalTime.Minute + 30;
-                f_penaltyCost[i] = 1.0;
-                g_penaltyCost[i] = 0.5;
-                preferredLandingTime[i] = aircrafts[i].AutoPilot.Route.EstimatedArrivalTime.Minute + 15;
-            }
-            double[,] separationTime = new double[N, N];
-            for (int i = 0; i < N; i++)
-            {
-                for (int j = 0; j < N; j++)
-                {
-                    separationTime[i,j]=60;
-                }
-            }
+            //    latestLandingTime[i] = aircrafts[i].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime.Minute + 30;
+            //    f_penaltyCost[i] = 1.0;
+            //    g_penaltyCost[i] = 0.5;
+            //    preferredLandingTime[i] = aircrafts[i].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime.Minute + 15;
+            //}
+            //double[,] separationTime = new double[N, N];
+            //for (int i = 0; i < N; i++)
+            //{
+            //    for (int j = 0; j < N; j++)
+            //    {
+            //        separationTime[i,j]=60;
+            //    }
+            //}
  
-            bool[,] squence = new bool[N, N];
-            for (int i = 0; i < N; i++)
-            {
-                for (int j = 0; j < N; j++)
-                {
-                    if (aircrafts[i].AutoPilot.Route.EstimatedArrivalTime < aircrafts[j].AutoPilot.Route.EstimatedArrivalTime)
-                    {
-                        squence[i, j] = true;
-                    }
-                    else
-                    {
-                        squence[i, j] = false;   // TODO: Implement the rest of the Collaborative Decision Making System
-                    }
-                }
-            }
+            //bool[,] squence = new bool[N, N];
+            //for (int i = 0; i < N; i++)
+            //{
+            //    for (int j = 0; j < N; j++)
+            //    {
+            //        if (aircrafts[i].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime < aircrafts[j].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime)
+            //        {
+            //            squence[i, j] = true;
+            //        }
+            //        else
+            //        {
+            //            squence[i, j] = false;   // TODO: Implement the rest of the Collaborative Decision Making System
+            //        }
+            //    }
+            //}
             
         }
     }

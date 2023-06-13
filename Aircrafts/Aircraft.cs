@@ -93,7 +93,7 @@ namespace StrategicFMS
 
         private void ProcessInformation(object sender, AutoPilot.MyEventArgs e)
         {
-            Debug.WriteLine(e.acid + " reach the destination");
+            Debug.WriteLine(e.acid + " reach the destination on time:" + _tick.ToString()+ "seconds!");
         }
 
         public Aircraft(string acid, string callSign, string type, double latitude, double longitude, double altitude, double speed)
@@ -124,13 +124,14 @@ namespace StrategicFMS
         public AircraftPerformance Performance { get => _performance; set => _performance = value; }
         public AutonomousFlightAssistSystem Afas { get => _afas; set => _afas = value; }
 
-        private double holdingTime = 20;//seconds
+        private double _tick = 0;//seconds
         /// <summary>
         /// update the state of the aircraft according to the period
         /// </summary>
         /// <param name="period">The update period. (in ms)</param>
         public bool Update( double period)
         {
+            _tick += period/1000;
             if (this.AircraftId == "000")
             {
                 return true;
@@ -138,29 +139,16 @@ namespace StrategicFMS
             //the period of AFAS may not as same as autopilot or the dynamic of the aircraft 
             if(Afas.Adas.IsConfirming==false)//TODO: this is a temp solution, shall implement the real logic and ensure the inputs and outputs of AFAS
             {
-                Afas.Run(this.State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex]);
+                Afas.Run(this.State, AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex]);
             }
             
             //TODO: add the autopilot logic here
             if(AutoPilot!= null & AutoPilot.Actived)  
             {
-                if(AircraftId=="002" && holdingTime>0)
+                if(_tick < AutoPilot.ActiveFlightPlan.HoldingPoint.ETA)
                 {
-                    
-                    int flyPattern=AutoPilot.FlyInHoldingPattern(State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude, this.Performance.CruiseSpeed, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Altitude, 1000);
-                    if(flyPattern==1)
-                    {
-                        holdingTime -= period / 1000;
-                    }
-                }
-                else if (AircraftId == "004" && holdingTime > 0)
-                {
-
-                    int flyPattern = AutoPilot.FlyInHoldingPattern(State, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Latitude, this.Performance.CruiseSpeed, AutoPilot.Route.Waypoints[AutoPilot.ActiveWaypointIndex].Altitude, 1000);
-                    if (flyPattern == 1)
-                    {
-                        holdingTime -= period / 1000;
-                    }
+                    double radius = Performance.CruiseSpeed * 1000 / 30 / 2 / 3.1415926; // the radius of holding pattern depends on the speed since 2 mins per holding circle required
+                    int flyPattern=AutoPilot.FlyInHoldingPattern(State, AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Latitude, this.Performance.CruiseSpeed, AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Altitude, radius);   
                 }
                 else
                 {

@@ -62,7 +62,7 @@ namespace StrategicFMS.AFAS
             {
                 Adas.IsConfirming = true;
                 //Adas.SequenceOperations(flightData.aircrafts);
-                Cdms.LandingScheduling(flightData.aircrafts, 0);
+                Cdms.LandingScheduling(flightData.aircrafts, 1);
 
                 Debug.WriteLine(state.AircraftID + " Acdas.Sequencing.IsConfirming！");
             }

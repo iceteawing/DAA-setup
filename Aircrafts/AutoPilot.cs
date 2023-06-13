@@ -1,4 +1,5 @@
 ﻿using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
+using SuperFMS.Aircrafts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,13 +25,14 @@ namespace StrategicFMS.Aircrafts
         private double _vnavvs;//Vertical speed used by VNAV, m/s
 
         private Traffic.Route _route;
+        private FlightPlan _activeFlightPlan;
         private int _activeWaypointIndex;
         private double _distanceToActiveWaypoint;
 
-        private const double _multipleParameter = 4;
+        private const double _multipleParameter = MyConstants.MultipleParameter;
         public AutoPilot(Traffic.Route route)
         {
-            Route = route;
+            //Route = route;
             Actived = false;
             ActiveWaypointIndex = 0;
             Swvnavvs = false;
@@ -47,18 +49,21 @@ namespace StrategicFMS.Aircrafts
         public double Dist2vs { get => _dist2vs; set => _dist2vs = value; }
         public bool Swvnavvs { get => _swvnavvs; set => _swvnavvs = value; }
         public double Vnavvs { get => _vnavvs; set => _vnavvs = value; }
-        public Traffic.Route Route { get => _route; set => _route = value; }
+        //public Traffic.Route Route { get => _route; set => _route = value; }
+
         public int ActiveWaypointIndex { get => _activeWaypointIndex; set => _activeWaypointIndex = value; }
         public double DistanceToActiveWaypoint { get => _distanceToActiveWaypoint; set => _distanceToActiveWaypoint = value; }
+        internal FlightPlan ActiveFlightPlan { get => _activeFlightPlan; set => _activeFlightPlan = value; }
 
         public bool VerifyActiveWaypointReached(AircraftState state)
         {
-            if (state == null || Route == null || Route.Waypoints == null || Route.Waypoints.Count == 0 || ActiveWaypointIndex >= Route.Waypoints.Count)
+
+            if (state == null || ActiveFlightPlan == null || ActiveFlightPlan.Tid == null || ActiveFlightPlan.Tid.TrajectoryPoints.Count == 0 || ActiveWaypointIndex >= ActiveFlightPlan.Tid.TrajectoryPoints.Count)
             {
                 return false;
             }
 
-            var activeWaypoint = Route.Waypoints[ActiveWaypointIndex];
+            var activeWaypoint = ActiveFlightPlan.Tid.TrajectoryPoints[ActiveWaypointIndex];
             DistanceToActiveWaypoint = CalculateDistance(activeWaypoint.Latitude, activeWaypoint.Longtitude, state.Latitude, state.Longitude);
             //Debug.WriteLine(state.AircraftID + " Distance to active waypoint = " + ActiveWaypointIndex+" is "+ DistanceToActiveWaypoint.ToString() +" meters.");
             bool result = (DistanceToActiveWaypoint <= 10 && ((state.Altitude - activeWaypoint.Altitude < 1) || (state.Altitude - activeWaypoint.Altitude > -1)));
@@ -102,9 +107,9 @@ namespace StrategicFMS.Aircrafts
 
         public void FlyToNextWaypoint(AircraftState state, double cruiseSpeed)//TODO: the whole logic shall be optimized
         {
-            if (state == null || Route == null || Route.Waypoints == null || Route.Waypoints.Count == 0 || ActiveWaypointIndex >= Route.Waypoints.Count)
+            if (state == null || ActiveFlightPlan == null || ActiveFlightPlan.Tid == null || ActiveFlightPlan.Tid.TrajectoryPoints.Count == 0 || ActiveWaypointIndex >= ActiveFlightPlan.Tid.TrajectoryPoints.Count)
             {
-                return;
+                return ;
             }
             lock (this)
             {
@@ -116,7 +121,7 @@ namespace StrategicFMS.Aircrafts
                 }
             }
 
-            if (ActiveWaypointIndex >= Route.Waypoints.Count)
+            if (ActiveWaypointIndex >= ActiveFlightPlan.Tid.TrajectoryPoints.Count)
             {
                 if(Actived == true)
                 {
@@ -131,7 +136,7 @@ namespace StrategicFMS.Aircrafts
                 return;
             }
 
-            var activeWaypoint = Route.Waypoints[ActiveWaypointIndex];
+            var activeWaypoint = ActiveFlightPlan.Tid.TrajectoryPoints[ActiveWaypointIndex];
             //Lateral following
             //var desiredHeading = activeWaypoint.Position.BearingTo(Route.Waypoints[ActiveWaypointIndex + 1].Position);
             //var desiredTrack = desiredHeading - state.MagneticHeading;

@@ -12,6 +12,14 @@ namespace StrategicFMS.Traffic
     {
         public Waypoint() { }
 
+        public Waypoint(Type type, double longtitude, double latitude, double altitude)
+        {
+            PointType = type;
+            Longtitude = longtitude;
+            Latitude = latitude;
+            Altitude = altitude;
+        }
+
         public Waypoint(int idx, string name, double longtitude, double latitude, double altitude)
         {
             Idx = idx;
@@ -27,7 +35,7 @@ namespace StrategicFMS.Traffic
         private double _latitude;
         private double _altitude;
         private int _heightType;//TODO: not defined yet
-        private Type _type;//TODO: not defined yet
+        private Type _pointType;//TODO: not defined yet
         private double _airspeed;
         private double _verticalSpeed;
         //Fly by: aircraft perform a turn where the next waypoint is at the center of the turn. Aircraft initiates the turn at a distance from the waypoint (turn distance) according to the pre-defined turn radius (depending on the bank angle). By default waypoints are flyby.
@@ -35,7 +43,7 @@ namespace StrategicFMS.Traffic
         //Fly turn: a flyby where the user may specify turn radius and optionally turn speed(mostly for drones)
         private int _crossType;// 0 - fly by, 1-fly over,2-fly turn
         private double _radius;//Turn radius to use at next ADDWPTs that insert fly-turn waypoints
-
+        private double _holdingTime;
         public int Idx { get => _idx; set => _idx = value; }
         public string Name { get => _name; set => _name = value; }
         public double Longtitude { get => _longtitude; set => _longtitude = value; }
@@ -46,7 +54,8 @@ namespace StrategicFMS.Traffic
         public double VerticalSpeed { get => _verticalSpeed; set => _verticalSpeed = value; }
         public int CrossType { get => _crossType; set => _crossType = value; }
         public double Radius { get => _radius; set => _radius = value; }
-        public Type Type1 { get => _type; set => _type = value; }
+        public Type PointType { get => _pointType; set => _pointType = value; }
+        public double HoldingTime { get => _holdingTime; set => _holdingTime = value; }
 
         public void setWayPointfromRunway()
         {

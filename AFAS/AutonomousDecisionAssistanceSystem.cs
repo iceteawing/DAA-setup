@@ -20,12 +20,12 @@ namespace StrategicFMS.AFAS
         public void SequenceOperations(List<Aircraft> aircrafts)
         {
             // 使用LINQ根据EstimatedArrivalTime对飞机列表进行排序
-            var sortedAircrafts = aircrafts.OrderBy(aircraft => aircraft.AutoPilot.Route.EstimatedArrivalTime).ToList();
+            var sortedAircrafts = aircrafts.OrderBy(aircraft => aircraft.AutoPilot.ActiveFlightPlan.EstimatedArrivalTime).ToList();
 
             foreach (Aircraft aircraft in sortedAircrafts)
             {
                 aircraft.Afas.Adas.IsConfirming = true;
-                DateTime dt = aircraft.AutoPilot.Route.EstimatedArrivalTime;
+                DateTime dt = aircraft.AutoPilot.ActiveFlightPlan.EstimatedArrivalTime;
                 LandingSequence.Add(aircraft.AircraftId);
             }
             FlightData flightData = FlightData.GetInstance();

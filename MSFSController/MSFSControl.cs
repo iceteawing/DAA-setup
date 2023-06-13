@@ -26,6 +26,7 @@ namespace MSFSConnect
         private Timer timer = new Timer();
         public ObservableCollection<uint> objectIDs = new ObservableCollection<uint>();
         public Dictionary<int, uint> _objectIDsDict = new Dictionary<int, uint>();
+        public Dictionary<string, int> requestID2TailNum = new Dictionary<string, int>();
         public Dictionary<uint, SIMCONNECT_DATA_LATLONALT> dicData = new Dictionary<uint, SIMCONNECT_DATA_LATLONALT>();
         public bool bStart = true;
         public bool bConnected = true;
@@ -58,33 +59,38 @@ namespace MSFSConnect
             FlightData _flightData = FlightData.GetInstance();
             if (_flightData != null)
             {
-                for (int i = 1; i < _flightData.aircrafts.Count; i++)//The AI aircraft start from 1, the zero aircraft is the ownship
+                foreach (KeyValuePair<string, Aircraft> pair in _flightData.aircrafts)//The AI aircraft start from 1, the zero aircraft is the ownship
                 {
-                    
-                    Aircraft aircraft = _flightData.aircrafts[i];
-                    Point3D aircraftPoint = aircraft.GetPoint3D();
-                    try
+                    if(pair.Value.AircraftId!="000")
                     {
-                        SIMCONNECT_DATA_LATLONALT pos;
-                        pos.Latitude = aircraftPoint.Y;
-                        pos.Longitude = aircraftPoint.X;
-                        pos.Altitude = aircraftPoint.Z;
-                        uint iObjectIdRequest = _objectIDsDict[i];
-                        Debug.WriteLine("objectId=" + iObjectIdRequest + ",pos.Longitude=" + pos.Longitude + ",pos.Latitude=" + pos.Latitude + ",pos.Altitude=" + pos.Altitude);
-                        bool status = SetAIAircraftPosition(iObjectIdRequest, pos);
-                        SIMCONNECT_DATA_ATTITUDE attitude;
-                        attitude.heading = aircraft.State.Heading;
-                        attitude.pitch = aircraft.State.PitchAngel;
-                        attitude.bank = aircraft.State.RollAngel;
-                        status &= SetAIAircraftAttitude(iObjectIdRequest, attitude);
-                        if (!status)
+                        Aircraft aircraft = pair.Value;
+                        Point3D aircraftPoint = aircraft.GetPoint3D();
+                        try
                         {
-                            Debug.WriteLine("Setting failed.");
+                            SIMCONNECT_DATA_LATLONALT pos;
+                            pos.Latitude = aircraftPoint.Y;
+                            pos.Longitude = aircraftPoint.X;
+                            pos.Altitude = aircraftPoint.Z;
+
+                            int RequestId = requestID2TailNum[aircraft.AircraftId];
+
+                            uint iObjectIdRequest = _objectIDsDict[RequestId];
+                            Debug.WriteLine("objectId=" + iObjectIdRequest + ",pos.Longitude=" + pos.Longitude + ",pos.Latitude=" + pos.Latitude + ",pos.Altitude=" + pos.Altitude);
+                            bool status = SetAIAircraftPosition(iObjectIdRequest, pos);
+                            SIMCONNECT_DATA_ATTITUDE attitude;
+                            attitude.heading = aircraft.State.Heading;
+                            attitude.pitch = aircraft.State.PitchAngel;
+                            attitude.bank = aircraft.State.RollAngel;
+                            status &= SetAIAircraftAttitude(iObjectIdRequest, attitude);
+                            if (!status)
+                            {
+                                Debug.WriteLine("Setting failed.");
+                            }
                         }
-                    }
-                    catch
-                    {
-                        Debug.WriteLine("Setting failed, it may be that the content is incorrect.");
+                        catch
+                        {
+                            Debug.WriteLine("Setting failed, it may be that the content is incorrect.");
+                        }
                     }
                 }
             }
@@ -164,7 +170,6 @@ namespace MSFSConnect
         {
             int iRequest = (int)data.dwRequestID;
             uint iObject = data.dwObjectID;
-
             if (!objectIDs.Contains(iObject))
             {
                 objectIDs.Add(iObject);
@@ -266,6 +271,7 @@ namespace MSFSConnect
             try
             {
                 simConnect.AICreateNonATCAircraft(containerTitle, tailNumber, InitPos, RequestID);
+                requestID2TailNum.Add(tailNumber,(int)(object)RequestID);
                 return true;
             }
             catch (Exception ex)

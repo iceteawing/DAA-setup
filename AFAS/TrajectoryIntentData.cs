@@ -20,7 +20,7 @@ namespace StrategicFMS.AFAS
 
         private int _flightPlanType;
         private int _trajectorySequenceNumber;
-        private List<PredictedTrajectoryPoint> _trajectoryPoints = new();
+        private List<Waypoint4D> _trajectoryPoints = new();
         private int _currentPointIndex;
         public string DestinationIntent { get; set; }
         public string NearTermIntent { get; set; }
@@ -28,7 +28,7 @@ namespace StrategicFMS.AFAS
         public string NonDFRIntentSharing { get; set; }
         public int FlightPlanType { get => _flightPlanType; set => _flightPlanType = value; }
         public int TrajectorySequenceNumber { get => _trajectorySequenceNumber; set => _trajectorySequenceNumber = value; }
-        public List<PredictedTrajectoryPoint> TrajectoryPoints { get => _trajectoryPoints; set => _trajectoryPoints = value; }
+        public List<Waypoint4D> TrajectoryPoints { get => _trajectoryPoints; set => _trajectoryPoints = value; }
         public int CurrentPointIndex { get => _currentPointIndex; set => _currentPointIndex = value; }
         /*
         this data should be updated on the following events:
@@ -42,7 +42,7 @@ namespace StrategicFMS.AFAS
             return true;
         }
 
-        public PredictedTrajectoryPoint GetCurrentTargetPoint()
+        public Waypoint4D GetCurrentTargetPoint()
         {
             return TrajectoryPoints[_currentPointIndex];
         }
@@ -52,7 +52,7 @@ namespace StrategicFMS.AFAS
 
         }
         // Function to generate a list of points representing a flight trajectory with its start point and destination
-        public bool GenerateTrajectory(PredictedTrajectoryPoint startPoint, PredictedTrajectoryPoint endPoint)
+        public bool GenerateTrajectory(Waypoint4D startPoint, Waypoint4D endPoint)
         {
             // Clear any existing trajectory points
             TrajectoryPoints.Clear();

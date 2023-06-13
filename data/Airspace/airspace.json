@@ -1,11 +1,187 @@
 {
-  "airspaceType": 0,
-  "Range": 0.0,
-  "MaxAltitude": 0.0,
-  "MinAltitude": 0.0,
-  "centerLatitude": 0.0,
-  "centerLontitude": 0.0,
   "Airport": {
+    "Stars": [
+      {
+        "IAF": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.12976889083656,
+          "Latitude": 39.262667330863536,
+          "Altitude": 1200.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 0,
+          "HoldingTime": 0.0
+        },
+        "IF": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.22762759279414,
+          "Latitude": 39.3111315533505,
+          "Altitude": 1200.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 1,
+          "HoldingTime": 0.0
+        },
+        "FAF": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.28257863691368,
+          "Latitude": 39.22176648931558,
+          "Altitude": 527.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 2,
+          "HoldingTime": 0.0
+        },
+        "Mapt": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.33825437858884,
+          "Latitude": 39.13730579607521,
+          "Altitude": 3.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 3,
+          "HoldingTime": 0.0
+        }
+      },
+      {
+        "IAF": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.332,
+          "Latitude": 39.3679,
+          "Altitude": 1200.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 0,
+          "HoldingTime": 0.0
+        },
+        "IF": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.22762759279414,
+          "Latitude": 39.3111315533505,
+          "Altitude": 1200.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 1,
+          "HoldingTime": 0.0
+        },
+        "FAF": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.28257863691368,
+          "Latitude": 39.22176648931558,
+          "Altitude": 527.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 2,
+          "HoldingTime": 0.0
+        },
+        "Mapt": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.33825437858884,
+          "Latitude": 39.13730579607521,
+          "Altitude": 3.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 3,
+          "HoldingTime": 0.0
+        }
+      },
+      {
+        "IAF": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.12976889083656,
+          "Latitude": 39.262667330863536,
+          "Altitude": 600.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 0,
+          "HoldingTime": 0.0
+        },
+        "IF": null,
+        "FAF": null,
+        "Mapt": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.33825437858884,
+          "Latitude": 39.13730579607521,
+          "Altitude": 3.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 3,
+          "HoldingTime": 0.0
+        }
+      },
+      {
+        "IAF": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.332,
+          "Latitude": 39.3679,
+          "Altitude": 600.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 0,
+          "HoldingTime": 0.0
+        },
+        "IF": null,
+        "FAF": null,
+        "Mapt": {
+          "Idx": 0,
+          "Name": null,
+          "Longtitude": 117.33825437858884,
+          "Latitude": 39.13730579607521,
+          "Altitude": 3.0,
+          "HeightType": 0,
+          "Airspeed": 0.0,
+          "VerticalSpeed": 0.0,
+          "CrossType": 0,
+          "Radius": 0.0,
+          "PointType": 3,
+          "HoldingTime": 0.0
+        }
+      }
+    ],
     "Type": "Tianjin",
     "Latitude": 34.0,
     "Longitude": 118.0,
@@ -17,43 +193,68 @@
     "Country": null,
     "Timezone": null,
     "DST": null,
-    "TzDatabaseTimezone": null,
-    "Runways": [
-      {
-        "Name": "34L",
-        "Length": 1500.0,
-        "Width": 100.0,
-        "Elevation": 20.0,
-        "SurfaceType": "concrete",
-        "Heading": 340.0,
-        "Star": {
-          "IAF1": {
-            "X": 117.12976889083656,
-            "Y": 39.262667330863536,
-            "Z": 600.0
-          },
-          "IAF2": {
-            "X": 117.32555771988048,
-            "Y": 39.37460577003032,
-            "Z": 600.0
-          },
-          "IF": {
-            "X": 117.22762759279414,
-            "Y": 39.3111315533505,
-            "Z": 600.0
-          },
-          "FAF": {
-            "X": 117.28257863691368,
-            "Y": 39.22176648931558,
-            "Z": 527.0
-          },
-          "Mapt": {
-            "X": 117.33825437858884,
-            "Y": 39.13730579607521,
-            "Z": 3.0
-          }
+    "TzDatabaseTimezone": null
+  },
+  "LsAirspace": [
+    {
+      "airspaceType": 1,
+      "Range": 100.0,
+      "MaxAltitude": 2000.0,
+      "MinAltitude": 1000.0,
+      "centerLatitude": 39.125833959383186,
+      "centerLontitude": 117.354909531352
+    }
+  ],
+  "DicCorridors": {
+    "1": {
+      "Points": [
+        {
+          "X": 117.1201,
+          "Y": 39.2731,
+          "Z": 1200.0
+        },
+        {
+          "X": 117.1408,
+          "Y": 39.2456,
+          "Z": 1200.0
+        },
+        {
+          "X": 116.8775,
+          "Y": 39.1691,
+          "Z": 1200.0
+        },
+        {
+          "X": 116.8598,
+          "Y": 39.2027,
+          "Z": 1200.0
         }
-      }
-    ]
+      ],
+      "Name": "c1"
+    },
+    "2": {
+      "Points": [
+        {
+          "X": 117.3187,
+          "Y": 39.378,
+          "Z": 1200.0
+        },
+        {
+          "X": 117.3378,
+          "Y": 39.3627,
+          "Z": 1200.0
+        },
+        {
+          "X": 117.651,
+          "Y": 39.5078,
+          "Z": 1200.0
+        },
+        {
+          "X": 117.6049,
+          "Y": 39.5357,
+          "Z": 1200.0
+        }
+      ],
+      "Name": "c2"
+    }
   }
 }

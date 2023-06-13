@@ -18,6 +18,8 @@ using Esri.ArcGISRuntime.Geometry;
 using StrategicFMS;
 using StrategicFMS.Traffic;
 using StrategicFMS.Aircrafts;
+using SuperFMS.Aircrafts;
+using StrategicFMS.Airspaces;
 
 namespace StrategicFMSDemo
 {
@@ -30,11 +32,11 @@ namespace StrategicFMSDemo
         
         // Timer for update flight data.
         private Timer _timer;//TODO: a more accurate timer may be needed here if required
-        public List<Aircraft> aircrafts = new()
-        {
-
-        };
-
+        //public List<Aircraft> aircrafts = new()
+        //{
+//
+        //};
+        public Dictionary<string, Aircraft> aircrafts = new Dictionary<string, Aircraft>();
         private FlightData()
         {
         //Initialization(_scenarioData);
@@ -69,60 +71,68 @@ namespace StrategicFMSDemo
         {
             
         }
-        public void CreateAircraft(string acid,string type,Route route, double initLon, double initLat, double initAltitude)
+        public void CreateAircraft(string acid,string type,FlightPlan fp, double initLon, double initLat, double initAltitude)
         {
+           
             if (acid == "000")
             {
                 Ownship ownship = new(acid, type);
                 ownship.SetAircraftPosition(initLon, initLat, initAltitude);
-                ownship.AutoPilot.Route = route;
-                aircrafts.Add(ownship);
+                ownship.AutoPilot.ActiveFlightPlan = fp;
+                aircrafts.Add(acid,ownship);
             }
             else
             {
                 Aircraft aircraft = new(acid, type);
                 aircraft.SetAircraftPosition(initLon, initLat, initAltitude);
-                if (aircraft.Type == "Cessna208")
-                {
-                    aircraft.Performance.CruiseSpeed = 296;
-                }
-                else if (aircraft.Type == "Cessna172")
-                {
-                    aircraft.Performance.CruiseSpeed = 213;
-                }
-                else if (aircraft.Type == "Volocity")
-                {
-                    aircraft.Performance.CruiseSpeed = 111;
-                }
-                aircraft.AutoPilot.Route = route;
+                aircraft.Performance.SetPerformance(type);
+                fp.LandingDurationInSeconds = 30 / aircraft.Performance.CruiseSpeed * 3600/MyConstants.MultipleParameter;
+                aircraft.AutoPilot.ActiveFlightPlan = fp;
                 aircraft.AutoPilot.Actived = true;
-                aircrafts.Add(aircraft);
+                aircrafts.Add(acid,aircraft);
             }
         }
         public bool Initialization(ScenarioData scenarioData)
         {
             aircrafts.Clear();
 
-            Route route = Route.DeserializeFromJson("data/airspace/route_L.json");
-            CreateAircraft("000", "Cessna208", route, 117.04595554073023, 39.23010140637297, 1500.0);
+            //Route route = Route.DeserializeFromJson("data/airspace/route_L.json");
+            AirspaceStructure airspace = AirspaceStructure.DeserializeFromJson("data/Airspace/airspace.json");
+            
+            FlightPlan fp1 = new FlightPlan(airspace.Airport.Stars[0]);
+            fp1.HoldingPoint.ETA = 20;
+            fp1.HoldingPoint.HoldingTime = 20;
+            CreateAircraft("000", "Cessna208", fp1, 117.04595554073023, 39.23010140637297, 1500.0);
 
-            route = Route.DeserializeFromJson("data/airspace/route_L.json");
-            CreateAircraft("001", "Cessna208", route, 117.04595554073023, 39.23010140637297, 1500.0);
+            FlightPlan fp2 = new FlightPlan(airspace.Airport.Stars[0]);
+            fp2.HoldingPoint.ETA = 10;
+            fp2.HoldingPoint.HoldingTime = 20;
+            CreateAircraft("001", "Cessna208", fp2, 117.04595554073023, 39.23010140637297, 1500.0);
 
-            route = Route.DeserializeFromJson("data/airspace/route_L.json");
-            CreateAircraft("002", "Cessna172", route, 117.04595554073023, 39.23010140637297, 1500.0);
+            FlightPlan fp3 = new FlightPlan(airspace.Airport.Stars[0]);
+            fp3.HoldingPoint.ETA = 20;
+            fp3.HoldingPoint.HoldingTime = 20;
+            CreateAircraft("002", "Cessna172", fp3, 117.04595554073023, 39.23010140637297, 1500.0);
 
-            route = Route.DeserializeFromJson("data/airspace/routeVCA_L.json");
-            CreateAircraft("003", "Volocity", route, 117.0333869301425, 39.22087741005525, 1500.0);
+            FlightPlan fp4 = new FlightPlan(airspace.Airport.Stars[2]);
+            fp4.HoldingPoint.ETA = 30;
+            fp4.HoldingPoint.HoldingTime = 20;
+            CreateAircraft("003", "Volocity", fp4, 117.0333869301425, 39.22087741005525, 1500.0);
 
-            route = Route.DeserializeFromJson("data/airspace/route_R.json");
-            CreateAircraft("004", "Cessna208", route, 117.35299659032735, 39.38856696361833, 1500.0);
+            FlightPlan fp5 = new FlightPlan(airspace.Airport.Stars[1]);
+            fp5.HoldingPoint.ETA = 40;
+            fp5.HoldingPoint.HoldingTime = 20;
+            CreateAircraft("004", "Cessna208", fp5, 117.35299659032735, 39.38856696361833, 1500.0);
 
-            route = Route.DeserializeFromJson("data/airspace/route_R.json");
-            CreateAircraft("005", "Cessna172", route, 117.35299659032735, 39.38856696361833, 1500.0);
+            FlightPlan fp6 = new FlightPlan(airspace.Airport.Stars[1]);
+            fp6.HoldingPoint.ETA = 50;
+            fp6.HoldingPoint.HoldingTime = 20;
+            CreateAircraft("005", "Cessna172", fp6, 117.35299659032735, 39.38856696361833, 1500.0);
 
-            route = Route.DeserializeFromJson("data/airspace/routeVCA_R.json");
-            CreateAircraft("006", "Volocity", route,117.34863470475673, 39.38951966826886, 1500.0);
+            FlightPlan fp7 = new FlightPlan(airspace.Airport.Stars[3]);
+            fp7.HoldingPoint.ETA = 60;
+            fp7.HoldingPoint.HoldingTime = 20;
+            CreateAircraft("006", "Volocity", fp7, 117.34863470475673, 39.38951966826886, 1500.0);
 
             ScenarioData = scenarioData;
             return false;
@@ -135,9 +145,7 @@ namespace StrategicFMSDemo
                 {
                     int scenarioID = Guid.NewGuid().GetHashCode();
                     ScenarioData = new ScenarioData(scenarioID);
-                    Airspace = AirspaceStructure.DeserializeFromJson("data/airspace/airspace.json");
-
-
+                    Airspace = AirspaceStructure.DeserializeFromJson("data/Airspace/airspace.json");
                     bool result=Initialization(ScenarioData);
                     // create a timer to update the flight data
                     _timer = new Timer(UpdateFlightData);
@@ -186,11 +194,12 @@ namespace StrategicFMSDemo
             }
             bool stopSign=true;
             _isAFASConfirmingLockTrigger = false;
-            foreach (Aircraft aircraft in aircrafts)
+            foreach (KeyValuePair<string, Aircraft> pair in aircrafts)
             {
-                aircraft.Update(20);// TODO: The period is fixed here
-                stopSign &= !aircraft.AutoPilot.Actived;
-                _isAFASConfirmingLockTrigger |= aircraft.Afas.Adas.ConfirmLock();
+                pair.Value.Update(20);
+                //aircraft.Update(20);// TODO: The period is fixed here
+                stopSign &= !pair.Value.AutoPilot.Actived;
+                _isAFASConfirmingLockTrigger |= pair.Value.Afas.Adas.ConfirmLock();
             }
             if(!_isAFASConfirmingLockTriggerPre && _isAFASConfirmingLockTrigger)
             {

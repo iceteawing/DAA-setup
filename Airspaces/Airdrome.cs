@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategicFMS
+namespace StrategicFMS.Airspaces
 {
     public class Airdrome
     {
