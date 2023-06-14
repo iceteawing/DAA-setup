@@ -1,6 +1,6 @@
-﻿using StrategicFMS.AFAS;
-using StrategicFMS.Aircrafts;
-using StrategicFMS.Traffic;
+﻿using SuperFMS.AFAS;
+using SuperFMS.Aircrafts;
+using SuperFMS.Traffic;
 using StrategicFMSDemo;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using static System.Windows.Forms.AxHost;
 
-namespace StrategicFMS
+namespace SuperFMS
 {
     public class Aircraft
     {
@@ -137,7 +137,7 @@ namespace StrategicFMS
                 return true;
             }
             //the period of AFAS may not as same as autopilot or the dynamic of the aircraft 
-            if(Afas.Adas.IsConfirming==false)//TODO: this is a temp solution, shall implement the real logic and ensure the inputs and outputs of AFAS
+            if (Afas.Adas.IsConfirming==false)//TODO: this is a temp solution, shall implement the real logic and ensure the inputs and outputs of AFAS
             {
                 Afas.Run(this.State, AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex]);
             }
@@ -148,7 +148,11 @@ namespace StrategicFMS
                 if(_tick < AutoPilot.ActiveFlightPlan.HoldingPoint.ETA)
                 {
                     double radius = Performance.CruiseSpeed * 1000 / 30 / 2 / 3.1415926; // the radius of holding pattern depends on the speed since 2 mins per holding circle required
-                    int flyPattern=AutoPilot.FlyInHoldingPattern(State, AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Longtitude, AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Latitude, this.Performance.CruiseSpeed, AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Altitude, radius);   
+                    double holdingCenterLongitude = AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Longtitude;
+                    double holdingCenterLatitude = AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Latitude;
+                    double holdingAltitude = AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Altitude;
+                    double holdingSpeed = Performance.CruiseSpeed;
+                    int flyPattern=AutoPilot.FlyInHoldingPattern(State, holdingCenterLongitude, holdingCenterLatitude, holdingSpeed, holdingAltitude, radius);   
                 }
                 else
                 {

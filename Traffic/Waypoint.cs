@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Windows.Devices.Radios;
 
-namespace StrategicFMS.Traffic
+namespace SuperFMS.Traffic
 {
     public class Waypoint
     {

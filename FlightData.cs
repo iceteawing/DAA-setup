@@ -15,28 +15,22 @@ using Newtonsoft.Json;
 using System.Diagnostics;
 using StrategicFMSDemo;
 using Esri.ArcGISRuntime.Geometry;
-using StrategicFMS;
-using StrategicFMS.Traffic;
-using StrategicFMS.Aircrafts;
+using SuperFMS;
+using SuperFMS.Traffic;
 using SuperFMS.Aircrafts;
-using StrategicFMS.Airspaces;
+using SuperFMS.Aircrafts;
+using SuperFMS.Airspaces;
 
 namespace StrategicFMSDemo
 {
     public class FlightData
     {
-        private static readonly FlightData instance = new FlightData();
+        private static readonly FlightData instance = new();
         private ScenarioData _scenarioData;
         private AirspaceStructure _airspace;
-        private Ownship ownship = new("000", "Cessna208");
-        
         // Timer for update flight data.
         private Timer _timer;//TODO: a more accurate timer may be needed here if required
-        //public List<Aircraft> aircrafts = new()
-        //{
-//
-        //};
-        public Dictionary<string, Aircraft> aircrafts = new Dictionary<string, Aircraft>();
+        public Dictionary<string, Aircraft> aircrafts = new();
         private FlightData()
         {
         //Initialization(_scenarioData);
@@ -92,8 +86,12 @@ namespace StrategicFMSDemo
                 aircrafts.Add(acid,aircraft);
             }
         }
-        public bool Initialization(ScenarioData scenarioData)
+        public bool Initialization()
         {
+            int scenarioID = Guid.NewGuid().GetHashCode();
+            ScenarioData = new ScenarioData(scenarioID);
+            Airspace = AirspaceStructure.DeserializeFromJson("data/Airspace/airspace.json");
+
             aircrafts.Clear();
 
             //Route route = Route.DeserializeFromJson("data/airspace/route_L.json");
@@ -133,36 +131,36 @@ namespace StrategicFMSDemo
             fp7.HoldingPoint.ETA = 60;
             fp7.HoldingPoint.HoldingTime = 20;
             CreateAircraft("006", "Volocity", fp7, 117.34863470475673, 39.38951966826886, 1500.0);
-
-            ScenarioData = scenarioData;
-            return false;
+            ScenarioData.Status = true;
+            return true;
         }
-        public void StartScenario( bool state)
+        public void StartScenario(bool state)
         {
             if (state)
             {
                 if (instance != null)
                 {
-                    int scenarioID = Guid.NewGuid().GetHashCode();
-                    ScenarioData = new ScenarioData(scenarioID);
-                    Airspace = AirspaceStructure.DeserializeFromJson("data/Airspace/airspace.json");
-                    bool result=Initialization(ScenarioData);
-                    // create a timer to update the flight data
-                    _timer = new Timer(UpdateFlightData);
-                    _timer.Change(0, 20); //the period is 20ms
+                    bool result = Initialization();
+                    
+                    if(result) 
+                    {
+                        _timer = new Timer(UpdateFlightData, null, 0, _period);// create a timer to update the flight data
+                    }
                 }
 
-                if (instance != null)
-                {
-                    //StartUdpCommunication(); //reserved
-                }
+                //if (instance != null) //reserved
+                //{
+                //    StartUdpCommunication(); 
+                //}
             }
             else
             {
                 _timer?.Dispose();
                 ScenarioData = null;
+                _isAFASConfirmingLockTriggerPre = false;
             }
         }
+        private const int _period = 20;//The time interval between invocations of callback, in milliseconds.
         public void StartUdpCommunication()
         {
             UdpClient udpClient = new UdpClient();
@@ -186,18 +184,18 @@ namespace StrategicFMSDemo
         public List<string> LandingSequence =new List<string>();
         private bool _isAFASConfirmingLockTrigger=false;
         private bool _isAFASConfirmingLockTriggerPre = false;
+        public int AlgorithmSelection = 0;
         private void UpdateFlightData(object state)
         {
             if(ScenarioData != null)
             {
-                ScenarioData.ScenarioDuration += 0.02;
+                ScenarioData.ScenarioDuration += _period/1000.0;
             }
             bool stopSign=true;
             _isAFASConfirmingLockTrigger = false;
             foreach (KeyValuePair<string, Aircraft> pair in aircrafts)
             {
-                pair.Value.Update(20);
-                //aircraft.Update(20);// TODO: The period is fixed here
+                pair.Value.Update(_period);
                 stopSign &= !pair.Value.AutoPilot.Actived;
                 _isAFASConfirmingLockTrigger |= pair.Value.Afas.Adas.ConfirmLock();
             }
@@ -212,6 +210,7 @@ namespace StrategicFMSDemo
             if (stopSign)
             {
                 _timer.Dispose();
+                _isAFASConfirmingLockTriggerPre = false;
             }
         }
         public struct UdpState
@@ -222,7 +221,6 @@ namespace StrategicFMSDemo
 
         public static bool messageReceived = false;
 
-        internal Ownship Ownship { get => ownship; set => ownship = value; }
         public ScenarioData ScenarioData { get => _scenarioData; set => _scenarioData = value; }
         public AirspaceStructure Airspace { get => _airspace; set => _airspace = value; }
 
@@ -288,17 +286,12 @@ namespace StrategicFMSDemo
         public IList<string> Roles { get; set; }
     }
 
-    public  class CommMessage
-    {
-        public bool Active = false;
-    }
-
     public class ScenarioData
     {
-        public bool Status { get; set; } // Playing or Stopped
+        public bool Status { get; set; } // true for Playing , false for Stopped
         public int ScenarioID { get; set; } //001
         private double _scenarioDuration; //unit is second
-        public string formattedDuration {get; set;}
+        public string FormattedDuration {get; set;}
         public double Density { get; set; } //range from 0 to 100
         public double Capacity { get; set; } //air vehicles within 1 km*km or one airline
         public double Throughput { get; set; } // aircrafts landed per hour?
@@ -313,7 +306,7 @@ namespace StrategicFMSDemo
                 _scenarioDuration = value;
                 double durationInSeconds = _scenarioDuration;
                 TimeSpan duration = TimeSpan.FromSeconds(durationInSeconds);
-                formattedDuration = $"{duration.Hours} hours, {duration.Minutes} minutes, {duration.Seconds} seconds";
+                FormattedDuration = $"{duration.Hours} hours, {duration.Minutes} minutes, {duration.Seconds} seconds";
             }
         }
         public ScenarioData(int scenarioID)

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategicFMS.AFAS
+namespace SuperFMS.AFAS
 {
     /// <summary>
     /// TSO-c211/DO-365b and TSO-c212

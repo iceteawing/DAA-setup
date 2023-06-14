@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using Windows.ApplicationModel.UserDataTasks;
 
-namespace StrategicFMS.Aircrafts
+namespace SuperFMS.Aircrafts
 {
     public class AutoPilot
     {
@@ -55,6 +55,13 @@ namespace StrategicFMS.Aircrafts
         public double DistanceToActiveWaypoint { get => _distanceToActiveWaypoint; set => _distanceToActiveWaypoint = value; }
         internal FlightPlan ActiveFlightPlan { get => _activeFlightPlan; set => _activeFlightPlan = value; }
 
+        public void Run()
+        {
+            if (_activeFlightPlan == null)
+            {
+                return;
+            }
+        }
         public bool VerifyActiveWaypointReached(AircraftState state)
         {
 
@@ -64,46 +71,13 @@ namespace StrategicFMS.Aircrafts
             }
 
             var activeWaypoint = ActiveFlightPlan.Tid.TrajectoryPoints[ActiveWaypointIndex];
-            DistanceToActiveWaypoint = CalculateDistance(activeWaypoint.Latitude, activeWaypoint.Longtitude, state.Latitude, state.Longitude);
+            
+            DistanceToActiveWaypoint = MyUtilityFunctions.CalculateDistance(activeWaypoint.Latitude, activeWaypoint.Longtitude, state.Latitude, state.Longitude);
             //Debug.WriteLine(state.AircraftID + " Distance to active waypoint = " + ActiveWaypointIndex+" is "+ DistanceToActiveWaypoint.ToString() +" meters.");
             bool result = (DistanceToActiveWaypoint <= 10 && ((state.Altitude - activeWaypoint.Altitude < 1) || (state.Altitude - activeWaypoint.Altitude > -1)));
             return result;//TODO: will stop before reach the exact point,need to improved as needed
         }
 
-        public static double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
-        {
-            var R = 6371e3; // metres
-
-            var φ1 = lat1 * Math.PI / 180; // φ, λ in radians
-
-            var φ2 = lat2 * Math.PI / 180;
-
-            var Δφ = (lat2 - lat1) * Math.PI / 180;
-
-            var Δλ = (lon2 - lon1) * Math.PI / 180;
-
-            var a = Math.Sin(Δφ / 2) * Math.Sin(Δφ / 2) +
-
-                    Math.Cos(φ1) * Math.Cos(φ2) *
-
-                    Math.Sin(Δλ / 2) * Math.Sin(Δλ / 2);
-
-            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            var d = R * c; // in metres
-            return d;
-
-        }
-        public double CalculateBearing(double lat1, double lon1, double lat2, double lon2)
-        {
-
-            var φ1 = lat1 * Math.PI / 180; // φ, λ in radians
-            var φ2 = lat2 * Math.PI / 180;
-            var Δλ = (lon2 - lon1) * Math.PI / 180;
-            var y = Math.Sin(Δλ) * Math.Cos(φ2);
-            var x = Math.Cos(φ1) * Math.Sin(φ2) - Math.Sin(φ1) * Math.Cos(φ2) * Math.Cos(Δλ);
-            var brng = Math.Atan2(y, x) * 180 / Math.PI;
-            return brng;
-        }
 
         public void FlyToNextWaypoint(AircraftState state, double cruiseSpeed)//TODO: the whole logic shall be optimized
         {
@@ -140,7 +114,7 @@ namespace StrategicFMS.Aircrafts
             //Lateral following
             //var desiredHeading = activeWaypoint.Position.BearingTo(Route.Waypoints[ActiveWaypointIndex + 1].Position);
             //var desiredTrack = desiredHeading - state.MagneticHeading;
-            var desiredTrack = CalculateBearing(state.Latitude, state.Longitude, activeWaypoint.Latitude, activeWaypoint.Longtitude);
+            var desiredTrack = MyUtilityFunctions.CalculateBearing(state.Latitude, state.Longitude, activeWaypoint.Latitude, activeWaypoint.Longtitude);
             
             var desiredGroundSpeed = cruiseSpeed * _multipleParameter;//TODO: shall match the aircraft performance and shall be calculated based on the 4D trajectory
             var desiredTrueAirSpeed = cruiseSpeed * _multipleParameter;
@@ -217,13 +191,13 @@ namespace StrategicFMS.Aircrafts
             DesiredTrueAirSpeed = holdingSpeed * _multipleParameter;
 
             // Calculate the distance from the holding point
-            double distanceToHoldingPoint = CalculateDistance(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
+            double distanceToHoldingPoint = MyUtilityFunctions.CalculateDistance(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
 
             // Check if the aircraft is within the holding radius
             if (distanceToHoldingPoint <= holdingRadius)
             {
                 // Calculate the bearing to the holding point
-                double bearingToHoldingPoint = CalculateBearing(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
+                double bearingToHoldingPoint = MyUtilityFunctions.CalculateBearing(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
 
                 // Set the desired track to maintain the holding pattern
                 DesiredTrack = bearingToHoldingPoint - 90;
@@ -233,7 +207,7 @@ namespace StrategicFMS.Aircrafts
             else
             {
                 // Fly towards the holding point
-                DesiredTrack = CalculateBearing(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
+                DesiredTrack = MyUtilityFunctions.CalculateBearing(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
                 flyPattern = 2;
             }
 

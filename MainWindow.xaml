@@ -4,14 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StrategicFMSDemo"
-        xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" xmlns:StrategicFMSDemo="clr-namespace:StrategicFMSDemo" x:Class="StrategicFMSDemo.MainWindow"
+        xmlns:esri="http://schemas.esri.com/arcgis/runtime/2013" xmlns:StrategicFMSDemo="clr-namespace:StrategicFMSDemo" xmlns:Specialized="clr-namespace:System.Collections.Specialized;assembly=System.Collections.Specialized" d:DataContext="{d:DesignInstance Type=local:MainWindow}" x:Class="StrategicFMSDemo.MainWindow"
         mc:Ignorable="d"
         Title="SuperFMSDemo" Height="900" Width="1600" >
 
     <Window.Resources>
-        <local:MapViewModel x:Key="MapViewModel" />
+        <StrategicFMSDemo:MapViewModel x:Key="MapViewModel" />
     </Window.Resources>
-
     <Grid>
         <TabControl Grid.ColumnSpan="2" IsSynchronizedWithCurrentItem="True">
             <TabItem x:Name="FlightTrackerTabItem" Header="Scenario" AutomationProperties.Name="Flight">
@@ -19,10 +18,10 @@
                     <Button x:Name="TestButton" Content="Test" Margin="1527,2,0,0" VerticalAlignment="Top" RenderTransformOrigin="17.32,0.157" Click="Button_Click" />
                     <esri:MapView x:Name="MainMapView"
                       Map="{Binding Map, Source={StaticResource MapViewModel}}" GraphicsOverlays="{Binding GraphicsOverlays, Source={StaticResource MapViewModel}}"  Margin="-141,24,0,75" GeoViewDoubleTapped="MainMapView_GeoViewDoubleTapped" Grid.ColumnSpan="8" />
-                    <TextBox x:Name="LatitudeLongitude" HorizontalAlignment="Left" Margin="10,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="270" />
-                    <TextBox x:Name="Longitude" HorizontalAlignment="Left" Margin="317,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="176"/>
-                    <TextBox x:Name="Latitude" HorizontalAlignment="Left" Margin="523,2,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="158"/>
-                    <Button x:Name="VisibilityButton" Content="Visibility" Click="Start_Click" Margin="1306,791,168,16"  />
+                    <TextBox x:Name="LatitudeLongitude" HorizontalAlignment="Left" Margin="10,2,0,0" TextWrapping="Wrap" Text="Latitude Longitude" VerticalAlignment="Top" Width="270" />
+                    <TextBox x:Name="Longitude" HorizontalAlignment="Left" Margin="317,2,0,0" TextWrapping="Wrap" Text="Longitude" VerticalAlignment="Top" Width="176"/>
+                    <TextBox x:Name="Latitude" HorizontalAlignment="Left" Margin="523,2,0,0" TextWrapping="Wrap" Text="Latitude" VerticalAlignment="Top" Width="158"/>
+                    <Button x:Name="VisibilityButton" Content="Visibility" Click="Start_Click" Margin="10,788,1464,19"  />
                     <ToggleButton x:Name="ToggleButtonScenarioControl"  IsChecked="{Binding StartScenario, Mode=TwoWay, Source={StaticResource MapViewModel}}" Margin="1431,787,0,1">
                         <ToggleButton.Style>
                             <Style TargetType="{x:Type ToggleButton}">
@@ -30,16 +29,11 @@
                                     <Setter.Value>
                                         <ControlTemplate TargetType="{x:Type ToggleButton}">
                                             <Viewbox>
-                                                <Border x:Name="Border" CornerRadius="10"
-                            Background="#FFFFFFFF"
-                            Width="40" Height="20">
+                                                <Border x:Name="Border" CornerRadius="10" Background="#FFFFFFFF" Width="40" Height="20">
                                                     <Border.Effect>
                                                         <DropShadowEffect ShadowDepth="0.5" Direction="0" Opacity="0.3" />
                                                     </Border.Effect>
-                                                    <Ellipse x:Name="Ellipse" Fill="#FFFFFFFF" Stretch="Uniform"
-                                 Margin="2 1 2 1"
-                                 Stroke="Gray" StrokeThickness="0.2"
-                                 HorizontalAlignment="Stretch">
+                                                    <Ellipse x:Name="Ellipse" Fill="#FFFFFFFF" Stretch="Uniform" Margin="2 1 2 1" Stroke="Gray" StrokeThickness="0.2" HorizontalAlignment="Stretch">
                                                         <Ellipse.Effect>
                                                             <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.3" Direction="260" />
                                                         </Ellipse.Effect>
@@ -50,28 +44,16 @@
                                                 <EventTrigger RoutedEvent="ToggleButton.Checked">
                                                     <BeginStoryboard>
                                                         <Storyboard>
-                                                            <ColorAnimation Storyboard.TargetName="Border"
-                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                    To="#FF4CD661"
-                                                    Duration="0:0:0.1" />
-                                                            <ThicknessAnimation Storyboard.TargetName="Ellipse"
-                                                        Storyboard.TargetProperty="Margin"
-                                                        To="20 1 2 1"
-                                                        Duration="0:0:0.1" />
+                                                            <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="#FF4CD661" Duration="0:0:0.1" />
+                                                            <ThicknessAnimation Storyboard.TargetName="Ellipse" Storyboard.TargetProperty="Margin" To="20 1 2 1" Duration="0:0:0.1" />
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
                                                 <EventTrigger RoutedEvent="ToggleButton.Unchecked">
                                                     <BeginStoryboard>
                                                         <Storyboard>
-                                                            <ColorAnimation Storyboard.TargetName="Border"
-                                                    Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                    To="White"
-                                                    Duration="0:0:0.1" />
-                                                            <ThicknessAnimation Storyboard.TargetName="Ellipse"
-                                                        Storyboard.TargetProperty="Margin"
-                                                        To="2 1 2 1"
-                                                        Duration="0:0:0.1" />
+                                                            <ColorAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" To="White" Duration="0:0:0.1" />
+                                                            <ThicknessAnimation Storyboard.TargetName="Ellipse" Storyboard.TargetProperty="Margin" To="2 1 2 1" Duration="0:0:0.1" />
                                                         </Storyboard>
                                                     </BeginStoryboard>
                                                 </EventTrigger>
@@ -83,7 +65,8 @@
                         </ToggleButton.Style>
                     </ToggleButton>
                     <TextBlock x:Name="DurationTextBlock" Grid.Column="4" HorizontalAlignment="Left" Margin="238,806,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding ScenarioDuration, Mode=TwoWay, Source={StaticResource MapViewModel}}"/>
-
+                    <ComboBox x:Name="AlgorithmComboBox" HorizontalAlignment="Left" Margin="896,790,0,0" VerticalAlignment="Top" Width="511" Height="45" ItemsSource="{Binding AlgorithmsCollection, Source={StaticResource MapViewModel}}" SelectedIndex="0" SelectionChanged="AlgorithmComboBox_SelectionChanged" RenderTransformOrigin="0.563,0.524" FontSize="24">
+                    </ComboBox>
                 </Grid>
             </TabItem>
             <TabItem x:Name="OTWTabItem" Header="Primary Display" >

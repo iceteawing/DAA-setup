@@ -1,7 +1,7 @@
 ﻿using Esri.ArcGISRuntime.Tasks.NetworkAnalysis;
-using StrategicFMS.AFAS;
-using StrategicFMS.Airspaces;
-using StrategicFMS.Traffic;
+using SuperFMS.AFAS;
+using SuperFMS.Airspaces;
+using SuperFMS.Traffic;
 using System;
 using System.Collections.Generic;
 using System.Linq;

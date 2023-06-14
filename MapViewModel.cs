@@ -15,11 +15,12 @@ using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
-using StrategicFMS;
-using StrategicFMS.Airspaces;
+using SuperFMS;
+using SuperFMS.Airspaces;
 using SuperFMS.Airspaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -38,10 +39,13 @@ namespace StrategicFMSDemo
         public MapViewModel()
         {
             _flightData = FlightData.GetInstance();
-
-
+            AlgorithmsCollection = new Collection<string>
+            {
+                "FirstComeFirstServeSchedulingAlgorithm",
+                "ManualAlgorithm",
+                "SimplexAlgorithm"
+            };
             SetupMap();
-
             CreateGraphicsOverlay();
         }
 
@@ -104,7 +108,19 @@ namespace StrategicFMSDemo
                 OnPropertyChanged();
             }
         }
-
+        private Collection<string> _algorithmsCollection;
+        public Collection<string> AlgorithmsCollection 
+        {
+            get
+            {
+                return _algorithmsCollection;
+            }
+            set
+            {
+                _algorithmsCollection = value;
+                OnPropertyChanged();
+            }
+        }
         public double ScenarioDuration
         {
             get

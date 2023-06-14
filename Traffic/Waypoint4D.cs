@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategicFMS.Traffic
+namespace SuperFMS.Traffic
 {
     public class Waypoint4D:Waypoint
     {

@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using StrategicFMS.Airspaces;
+using SuperFMS.Airspaces;
 using SuperFMS.Airspaces;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace StrategicFMS.Airspaces
+namespace SuperFMS.Airspaces
 {
     public class AirspaceStructure //TODO: need to define the structure of airspace and the class structure as well
     {

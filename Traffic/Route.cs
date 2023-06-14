@@ -1,11 +1,11 @@
-﻿using StrategicFMS.Airspaces;
+﻿using SuperFMS.Airspaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategicFMS.Traffic
+namespace SuperFMS.Traffic
 {
     public class Route
     {

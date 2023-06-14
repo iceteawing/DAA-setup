@@ -1,4 +1,4 @@
-﻿namespace StrategicFMS
+﻿namespace SuperFMS
 {
     public class Point3D
     {

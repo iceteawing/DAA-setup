@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategicFMS.AFAS
+namespace SuperFMS.AFAS
 {
     internal class CollaborativeDecisionMakingSystem//TODO : not yet, may be a landing squence calculated in the ATM automation system
     {
@@ -17,14 +17,63 @@ namespace StrategicFMS.AFAS
             switch (algorithm)
             {
                 case 0:
+                    Debug.WriteLine("Generated the 4DT within FirstComeFirstServeSchedulingAlgorithm");
                     FirstComeFirstServeSchedulingAlgorithm(aircrafts);
+                    Generate4DT(0, aircrafts);
                     break;
                 case 1:
+                    Debug.WriteLine("Generated the 4DT within ManualAlgorithm");
                     ManualAlgorithm(aircrafts);
+                    Generate4DT(1, aircrafts);
                     break;
                 case 2:
+                    Debug.WriteLine("Generated the 4DT within SimplexAlgorithm");
                     Initialzation(aircrafts);
                     SimplexAlgorithm();
+                    Generate4DT(1, aircrafts);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void Generate4DT(int separationMethod, Dictionary<string, Aircraft> aircrafts)
+        {
+            int index = 0;
+            double calculatedETA = 0.0;
+            switch (separationMethod) 
+            {
+                case 0:
+                    foreach (string aircraftId in LandingSequence)
+                    {
+                        // Do something with the aircraftId
+                        if (index == 0)
+                        {
+                            calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.LandingDurationInSeconds;
+                        }
+                        else
+                        {
+                            aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA = calculatedETA;
+                            calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.LandingDurationInSeconds;
+                        }
+                        index++;
+                    }
+                    break;
+                case 1:
+                    foreach (string aircraftId in LandingSequence)
+                    {
+                        // Do something with the aircraftId
+                        if (index == 0)
+                        {
+                            calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].Performance.TimeBasedLandingSeparation;
+                        }
+                        else
+                        {
+                            aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA = calculatedETA;
+                            calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].Performance.TimeBasedLandingSeparation;
+                        }
+                        index++;
+                    }
                     break;
                 default:
                     break;
@@ -43,23 +92,6 @@ namespace StrategicFMS.AFAS
             }
             FlightData flightData = FlightData.GetInstance();
             flightData.LandingSequence = LandingSequence;
-            int index = 0;
-            double calculatedETA = 0.0;
-            foreach (string aircraftId in LandingSequence)
-            {
-                // Do something with the aircraftId
-                if (index == 0)
-                {
-                    calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].Performance.TimeBasedLandingSeparation;
-                }
-                else
-                {
-                    aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA = calculatedETA;
-                    calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].Performance.TimeBasedLandingSeparation;
-                }
-                index++;
-            }
-            Debug.WriteLine("Generated the 4DT within FirstComeFirstServeSchedulingAlgorithm");
         }
 
         public void FirstComeFirstServeSchedulingAlgorithm(Dictionary<string, Aircraft> aircrafts)
@@ -74,24 +106,7 @@ namespace StrategicFMS.AFAS
                 LandingSequence.Add(pair.Value.AircraftId);
             }
             FlightData flightData = FlightData.GetInstance();
-            flightData.LandingSequence = LandingSequence;
-            int index = 0;
-            double calculatedETA=0.0;
-            foreach (string aircraftId in LandingSequence)
-            {
-                // Do something with the aircraftId
-                if(index==0)
-                {
-                    calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.LandingDurationInSeconds;
-                }
-                else
-                {
-                    aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA= calculatedETA;
-                    calculatedETA = aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA + aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.LandingDurationInSeconds;
-                }
-                index++;
-            }
-            Debug.WriteLine("Generated the 4DT within FirstComeFirstServeSchedulingAlgorithm");
+            flightData.LandingSequence = LandingSequence;      
         }
         public bool[,] SimplexAlgorithm()
         {

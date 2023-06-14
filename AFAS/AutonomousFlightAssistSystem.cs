@@ -1,5 +1,5 @@
-﻿using StrategicFMS.Aircrafts;
-using StrategicFMS.Traffic;
+﻿using SuperFMS.Aircrafts;
+using SuperFMS.Traffic;
 using StrategicFMSDemo;
 using System;
 using System.Collections.Generic;
@@ -9,15 +9,17 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.AxHost;
 
-namespace StrategicFMS.AFAS
+namespace SuperFMS.AFAS
 {
     public class AutonomousFlightAssistSystem//TODO: it is the combination of several systems, and send out the 3dt to downstream system such as FMGC
     {
         private string _aircraftId;
 
-        private TrajectoryIntentData _trajectory;
+        private List<TrajectoryIntentData> _trajectories;
         public string AircraftId { get => _aircraftId; set => _aircraftId = value; }
-        public TrajectoryIntentData Trajectory { get => _trajectory; set => _trajectory = value; }
+        public List<TrajectoryIntentData> Trajectories { get => _trajectories; set => _trajectories = value; }
+
+        private TrajectoryIntentData _selfTid;
 
         private AirborneSeparationAssuranceSystem _asas;
         private AutonomousDecisionAssistanceSystem _adas;
@@ -29,6 +31,7 @@ namespace StrategicFMS.AFAS
 
         internal CollaborativeDecisionMakingSystem Cdms { get => _cdms; set => _cdms = value; }
         internal DetectAndAvoidanceSystem Daas { get => _daas; set => _daas = value; }
+        public TrajectoryIntentData SelfTid { get => _selfTid; set => _selfTid = value; }
 
         public AutonomousFlightAssistSystem(string acid)
         {
@@ -58,20 +61,24 @@ namespace StrategicFMS.AFAS
 
             }
             //TODO: add the ACDAS logic here to impact the aircraft's behavior
-            if (Adas.IsConfirming == false && (AutoPilot.CalculateDistance(state.Latitude, state.Longitude, active_waypoint.Latitude, active_waypoint.Longtitude) < MyConstants.SchedulingPointMargin))
+            bool triggerEvent = MyUtilityFunctions.VerifyDistanceSmallThan(state.Latitude, state.Longitude, active_waypoint.Latitude, active_waypoint.Longtitude, MyConstants.SchedulingPointMargin);
+            if (Adas.IsConfirming == false && triggerEvent)
             {
+                
                 Adas.IsConfirming = true;
                 //Adas.SequenceOperations(flightData.aircrafts);
-                Cdms.LandingScheduling(flightData.aircrafts, 1);
+                Cdms.LandingScheduling(flightData.aircrafts, flightData.AlgorithmSelection);
 
-                Debug.WriteLine(state.AircraftID + " Acdas.Sequencing.IsConfirming！");
+                Debug.WriteLine(state.AircraftID + " Sequencing is Confirming！");
             }
-            //Trajectory = UpdateTrajectoryIntent();
+            //UpdateTrajectoryIntent();
+            return ;
         }
 
-        public bool UpdateTrajectoryIntent()
+        public bool UpdateTrajectoryIntent(TrajectoryIntentData tid)
         {
-            if(Trajectory.Update())
+            SelfTid = tid;
+            if (SelfTid != null)
             {
                 Debug.WriteLine("Trajectory Intent updated successful");
                 return true;

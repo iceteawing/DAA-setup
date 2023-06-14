@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategicFMS.AFAS
+namespace SuperFMS.AFAS
 {
     public class AutonomousDecisionAssistanceSystem//TODO: refer to martin's paper
     {

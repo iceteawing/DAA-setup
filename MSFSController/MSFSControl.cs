@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Collections.ObjectModel;
 using StrategicFMSDemo;
 using Esri.ArcGISRuntime.Geometry;
-using StrategicFMS;
+using SuperFMS;
 using Windows.ApplicationModel.Contacts;
 using System.Diagnostics;
 using System.Windows.Markup;
@@ -46,12 +46,14 @@ namespace MSFSConnect
         private void OnTimer(object sender, ElapsedEventArgs e)
         {
             bOddTick = !bOddTick;
-            simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
-
-            //simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
-
-            simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_ATTITUDE, DEFINITIONS.ATTITUDEINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
-            GetAIAircraftInformation();//TODO: it seems that the aircraft has updating performance issue
+            FlightData _flightData = FlightData.GetInstance();
+            if (_flightData != null && _flightData.ScenarioData!=null && _flightData.ScenarioData.Status)
+            {
+                simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
+                //simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_POSITION, DEFINITIONS.POSITIONINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.AIRCRAFT);
+                simConnect.RequestDataOnSimObjectType(TYPE_REQUESTS.REQUEST_ATTITUDE, DEFINITIONS.ATTITUDEINFO, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
+                GetAIAircraftInformation();//TODO: it seems that the aircraft has updating performance issue
+            }
         }
 
         private void GetAIAircraftInformation()//Get the aircraft position and set the corresponding AI plane position
@@ -250,11 +252,13 @@ namespace MSFSConnect
 
         private static void SetOwnshipPosition(SIMCONNECT_DATA_LATLONALT pos, uint iObject)//Get the ownship information from MSFS
         {
-
             if (iObject == 1)
             {
                 FlightData _flightData = FlightData.GetInstance();
-                _flightData.Ownship.SetAircraftPosition(pos.Longitude, pos.Latitude, pos.Altitude);
+                if(_flightData != null && _flightData.aircrafts.ContainsKey("000"))
+                {
+                    _flightData.aircrafts["000"].SetAircraftPosition(pos.Longitude, pos.Latitude, pos.Altitude);
+                }
             }
         }
         private static void SetOwnshipAttitude(SIMCONNECT_DATA_ATTITUDE attitude, uint iObject)//Get the ownship information from MSFS

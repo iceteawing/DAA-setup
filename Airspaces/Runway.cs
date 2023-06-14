@@ -1,5 +1,5 @@
 ﻿using Microsoft.FlightSimulator.SimConnect;
-using StrategicFMS.Airspaces;
+using SuperFMS.Airspaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
-namespace StrategicFMS.Airspaces
+namespace SuperFMS.Airspaces
 {
     public class Runway
     {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategicFMS.AFAS
+namespace SuperFMS.AFAS
 {
     /// <summary>
     /// RTCA DO-361 Interval Management

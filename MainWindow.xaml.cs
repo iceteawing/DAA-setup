@@ -13,6 +13,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -34,10 +35,10 @@ using System.Windows.Shapes;
 using Esri.ArcGISRuntime.Geometry;
 using Esri.ArcGISRuntime.Mapping;
 using Esri.ArcGISRuntime.UI.Controls;
-using StrategicFMS;
-using StrategicFMS.Aircrafts;
-using StrategicFMS.Airspaces;
-using StrategicFMS.Traffic;
+using SuperFMS;
+using SuperFMS.Aircrafts;
+using SuperFMS.Airspaces;
+using SuperFMS.Traffic;
 using SuperFMS.Airspaces;
 
 namespace StrategicFMSDemo
@@ -64,6 +65,8 @@ namespace StrategicFMSDemo
             IsConfirming = false;
 
             _flightData.PutOutinformation += new FlightData.FlightData_CallBack(this.ProcessInformation);
+
+
         }
         private void ProcessInformation(object sender, FlightData.FlightData_EventArgs e)
         {
@@ -80,6 +83,7 @@ namespace StrategicFMSDemo
         private Brush _background_AFASTabItem;
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -138,7 +142,7 @@ namespace StrategicFMSDemo
         {
             Airdrome originAirdrom = new Airdrome("big", 34, 118, 100);
             Airdrome desAirdrom = new Airdrome("big", 35, 119, 100);
-            Route route = new StrategicFMS.Traffic.Route(originAirdrom, desAirdrom);
+            Route route = new SuperFMS.Traffic.Route(originAirdrom, desAirdrom);
             DateTime now = DateTime.Now;
             DateTime targetDateTime = new DateTime(now.Year, now.Month, now.Day, 17, 0, 0);
             route.EstimatedArrivalTime = targetDateTime;
@@ -168,7 +172,7 @@ namespace StrategicFMSDemo
 
             originAirdrom = new Airdrome("big", 34, 118, 100);
             desAirdrom = new Airdrome("big", 35, 119, 100);
-            route = new StrategicFMS.Traffic.Route(originAirdrom, desAirdrom);
+            route = new SuperFMS.Traffic.Route(originAirdrom, desAirdrom);
             targetDateTime = new DateTime(now.Year, now.Month, now.Day, 16, 5, 0);
             route.EstimatedArrivalTime = targetDateTime;
             wp0 = new Waypoint(0, "wp0", 117.32555771988048, 39.37460577003032, 600);
@@ -272,6 +276,12 @@ namespace StrategicFMSDemo
         {
             MSFSControlApp.MainWindow window = new();
             window.Show();
+        }
+
+        private void AlgorithmComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FlightData flightData=FlightData.GetInstance();
+            flightData.AlgorithmSelection = AlgorithmComboBox.SelectedIndex;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using StrategicFMS.Traffic;
+﻿using SuperFMS.Traffic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
-namespace StrategicFMS.AFAS
+namespace SuperFMS.AFAS
 {
     /// <summary>
     /// refer to RTCA DO-361 Interval Management and definition in ARINC advanced FMS， 702A-5 page 97
@@ -38,7 +38,6 @@ namespace StrategicFMS.AFAS
         */
         public bool Update()
         {
-
             return true;
         }
 

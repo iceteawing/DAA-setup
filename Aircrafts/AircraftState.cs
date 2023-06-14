@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StrategicFMS
+namespace SuperFMS
 {
     public class AircraftState //TODO:refer to DFR shared traffic awareness, ADS-B, ARINC 702A page 106
     {
