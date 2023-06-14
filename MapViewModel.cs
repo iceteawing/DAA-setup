@@ -17,7 +17,6 @@ using Esri.ArcGISRuntime.Symbology;
 using Esri.ArcGISRuntime.UI;
 using SuperFMS;
 using SuperFMS.Airspaces;
-using SuperFMS.Airspaces;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

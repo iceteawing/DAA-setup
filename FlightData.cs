@@ -1,23 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Markup;
-using System.Windows.Navigation;
-using System.Net.NetworkInformation;
 using System.Threading;
-using Windows.Devices.Bluetooth.Advertisement;
-using System.Windows;
 using Newtonsoft.Json;
 using System.Diagnostics;
-using StrategicFMSDemo;
-using Esri.ArcGISRuntime.Geometry;
 using SuperFMS;
-using SuperFMS.Traffic;
-using SuperFMS.Aircrafts;
 using SuperFMS.Aircrafts;
 using SuperFMS.Airspaces;
 
