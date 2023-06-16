@@ -12,9 +12,20 @@ namespace SuperFMS.Aircrafts
 {
     public class FlightPlan
     {
+        //The following parameter shall be convert to DataTime at the end
+        private double _earliestArrivalTime;
+        private double _latestArrivalTime;
+        private double _preferedArrivalTime;
+        private double _trueArrivalTime;
+        private double _landingDurationInSeconds;//The time from IAF to the touch down, it depends on the aircraft performance and the STAR
+        private DateTime _estimatedArrivalTime;
+        private TrajectoryIntentData _tid;
         public FlightPlan(StandardTerminalArrivalRoute star) 
         {
             HoldingPoint = new(star.IAF,20,20);
+            //set the Tid according to the SID , Standard Instrument Departure
+            //set the Tid according to the en-route
+            //set the Tid according to the STAR
             Tid = new TrajectoryIntentData();
             Waypoint4D p0 = new Waypoint4D(0, "wp0", star.IAF.Longtitude, star.IAF.Latitude, star.IAF.Altitude,0.0);
             Tid.TrajectoryPoints.Add(p0);
@@ -32,18 +43,21 @@ namespace SuperFMS.Aircrafts
             Waypoint4D p3 = new Waypoint4D(3, "wp3", star.Mapt.Longtitude, star.Mapt.Latitude, star.Mapt.Altitude, 0.0);
             Tid.TrajectoryPoints.Add(p3);
             DateTime now = DateTime.Now;
-            _estimatedArrivalTime =  new DateTime(now.Year, now.Month, now.Day, 16, 5, 0);
+            EstimatedArrivalTime =  new DateTime(now.Year, now.Month, now.Day, 16, 5, 0);
+            EarliestArrivalTime = 80;
+            PreferedArrivalTime = 100;
+            LatestArrivalTime = 120;
+            TrueArrivalTime = 0;
         }
-        private TrajectoryIntentData _tid;
-
+        
         public TrajectoryIntentData Tid { get => _tid; set => _tid = value; }
         private Waypoint4D _holdingPoint;// it is surposed to be the prior waypoint of IAF in this phase
         public Waypoint4D HoldingPoint { get => _holdingPoint; set => _holdingPoint = value; }
         public DateTime EstimatedArrivalTime { get => _estimatedArrivalTime; set => _estimatedArrivalTime = value; }
         public double LandingDurationInSeconds { get => _landingDurationInSeconds; set => _landingDurationInSeconds = value; }
-
-        private DateTime _estimatedArrivalTime;
-
-        private double _landingDurationInSeconds;//The time from IAF to the touch down, it depends on the aircraft performance and the STAR
+        public double EarliestArrivalTime { get => _earliestArrivalTime; set => _earliestArrivalTime = value; }
+        public double LatestArrivalTime { get => _latestArrivalTime; set => _latestArrivalTime = value; }
+        public double PreferedArrivalTime { get => _preferedArrivalTime; set => _preferedArrivalTime = value; }
+        public double TrueArrivalTime { get => _trueArrivalTime; set => _trueArrivalTime = value; }
     }
 }

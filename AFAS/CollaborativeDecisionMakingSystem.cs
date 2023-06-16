@@ -1,4 +1,5 @@
 ﻿using StrategicFMSDemo;
+using SuperFMS.Aircrafts;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,12 +7,42 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace SuperFMS.AFAS
 {
+    public static class EnumerableExtensions
+    {
+        public static IEnumerable<IEnumerable<T>> Permute<T>(this IEnumerable<T> source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            var list = source.ToList();
+            if (!list.Any())
+            {
+                yield return Enumerable.Empty<T>();
+            }
+            else
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var element = list[i];
+                    var remaining = list.Take(i).Concat(list.Skip(i + 1));
+                    foreach (var permutation in remaining.Permute())
+                    {
+                        yield return new[] { element }.Concat(permutation);
+                    }
+                }
+            }
+        }
+    }
     internal class CollaborativeDecisionMakingSystem//TODO : not yet, may be a landing squence calculated in the ATM automation system
     {
         public List<string> LandingSequence = new();
+        public List<Aircraft> AircraftList = new();
         public void LandingScheduling(Dictionary<string,Aircraft> aircrafts, int algorithm)
         {
             switch (algorithm)
@@ -28,13 +59,14 @@ namespace SuperFMS.AFAS
                     break;
                 case 2:
                     Debug.WriteLine("Generated the 4DT within SimplexAlgorithm");
-                    Initialzation(aircrafts);
-                    SimplexAlgorithm();
-                    Generate4DT(1, aircrafts);
+
+                    SimplexAlgorithm(aircrafts);
+                    Generate4DT(2, aircrafts);
                     break;
                 default:
                     break;
             }
+
         }
 
         public void Generate4DT(int separationMethod, Dictionary<string, Aircraft> aircrafts)
@@ -75,9 +107,23 @@ namespace SuperFMS.AFAS
                         index++;
                     }
                     break;
+                case 2:
+                    foreach (string aircraftId in LandingSequence)
+                    {
+                        aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.HoldingPoint.ETA=aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.TrueArrivalTime - aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.LandingDurationInSeconds;
+                    }
+                    break;
                 default:
                     break;
             }
+            FlightData flightData = FlightData.GetInstance();
+            List<string> LandingSequeceInformation = new();
+            foreach (string aircraftId in LandingSequence)
+            {
+                LandingSequeceInformation.Add("ID:"+aircraftId +" ETA:"+ aircrafts[aircraftId].AutoPilot.ActiveFlightPlan.TrueArrivalTime.ToString());
+            }
+            flightData.LandingSequence = LandingSequeceInformation;
+            flightData.LandingSequeceConfirmed = true;
         }
         public void ManualAlgorithm(Dictionary<string, Aircraft> aircrafts)
         {
@@ -90,8 +136,6 @@ namespace SuperFMS.AFAS
                 DateTime dt = pair.Value.AutoPilot.ActiveFlightPlan.EstimatedArrivalTime;
                 LandingSequence.Add(pair.Value.AircraftId);
             }
-            FlightData flightData = FlightData.GetInstance();
-            flightData.LandingSequence = LandingSequence;
         }
 
         public void FirstComeFirstServeSchedulingAlgorithm(Dictionary<string, Aircraft> aircrafts)
@@ -104,12 +148,12 @@ namespace SuperFMS.AFAS
                 pair.Value.Afas.Adas.IsConfirming = true;
                 DateTime dt = pair.Value.AutoPilot.ActiveFlightPlan.EstimatedArrivalTime;
                 LandingSequence.Add(pair.Value.AircraftId);
-            }
-            FlightData flightData = FlightData.GetInstance();
-            flightData.LandingSequence = LandingSequence;      
+            }     
         }
-        public bool[,] SimplexAlgorithm()
+        public void SimplexAlgorithm(Dictionary<string, Aircraft> aircrafts)
         {
+            
+            EnumerateAllSortings(aircrafts);
             //// Define the problem
             //var problem = new LinearProgram
             //{
@@ -144,7 +188,7 @@ namespace SuperFMS.AFAS
             //var solution = solver.Solve(problem);
 
             // Get the sequence from the solution
-            bool[,] sequence = new bool[N, N];
+            //bool[,] sequence = new bool[N, N];
             //for (int i = 0; i < N; i++)
             //{
             //    for (int j = 0; j < N; j++)
@@ -156,58 +200,148 @@ namespace SuperFMS.AFAS
             //    }
             //}
 
-            return sequence;
+
         }
-        public double cost(bool[,] squence)
+        public void EnumerateAllSortings(Dictionary<string, Aircraft> aircrafts)
+        {
+            var keys = aircrafts.Keys.ToArray();
+            var permutations = keys.Permute();
+            double totalCost = 99999;
+            foreach (var permutation in permutations)
+            {
+                // Do something with the permutation
+                //string outputSorts="";
+                // For example:
+                AircraftList.Clear();
+                foreach (var key in permutation)
+                {
+                    var aircraft = aircrafts[key];
+                    AircraftList.Add(aircraft);
+                }
+                Initialzation(AircraftList);
+                CalculateRealArrivalTime();
+                double cost = Cost(aircrafts, 0);
+                if (cost < totalCost)
+                {
+                    totalCost = cost;
+                    LandingSequence.Clear();
+                    int index = 0;
+                    //TODO:record the squece here
+                    foreach (var key in permutation)
+                    {
+                        LandingSequence.Add(aircrafts[key].AircraftId);
+                        aircrafts[key].AutoPilot.ActiveFlightPlan.TrueArrivalTime = _trueLandingTime[index];
+                        index++;
+                    }
+                }
+            }
+            Debug.WriteLine("The end of permutation");
+        }
+        
+        // cost function
+        public double Cost(Dictionary<string, Aircraft> aircrafts, int performanceMetric)
         {
            double cost=0;
+            switch(performanceMetric)
+            {
+                case 0://ETA deviation
+                    for (int i = 0; i < N; i++)
+                    {
+                        cost += Math.Abs(_trueLandingTime[i] - _preferredLandingTime[i]);
+                    }
+                    break;
+                case 1: 
+                    cost= _trueLandingTime[N-1];
+                    break;
+                case 2: 
+                    break;
+                default: 
+                    break;
+            }
 
-           return cost;
+
+            return cost;
+        }
+        public bool Constraints()
+        {
+            bool r=true;
+            for (int i = 0; i < N; i++)
+            {
+                r &= (_trueLandingTime[i] < _latestLandingTime[i]) & (_trueLandingTime[i] > _earliestLandingTime[i]);
+            }
+            return r;
         }
         private int N;
-        private double [] earliestLandingTime;
-        private double [] latestLandingTime;
-        private double [] f_penaltyCost;
-        private double [] g_penaltyCost;
-        private double [] preferredLandingTime;
-        public void Initialzation(Dictionary<string, Aircraft> aircrafts)
+        private double [] _earliestLandingTime;
+        private double [] _latestLandingTime;
+        private double [] _f_penaltyCost;
+        private double [] _g_penaltyCost;
+        private double [] _preferredLandingTime;
+        private double[,] _separationTime;
+        private double[] _trueLandingTime;
+        private bool[,] _squence;
+        //set up the parameters or notation
+        public void Initialzation(List<Aircraft> aircrafts)
         {
-            //N = aircrafts.Count;
-            //earliestLandingTime = new double[N];
-            //for (int i = 0; i < N; i++)
-            //{
-            //    earliestLandingTime[i] = aircrafts[i].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime.Minute;
- 
-            //    latestLandingTime[i] = aircrafts[i].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime.Minute + 30;
-            //    f_penaltyCost[i] = 1.0;
-            //    g_penaltyCost[i] = 0.5;
-            //    preferredLandingTime[i] = aircrafts[i].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime.Minute + 15;
-            //}
-            //double[,] separationTime = new double[N, N];
-            //for (int i = 0; i < N; i++)
-            //{
-            //    for (int j = 0; j < N; j++)
-            //    {
-            //        separationTime[i,j]=60;
-            //    }
-            //}
- 
-            //bool[,] squence = new bool[N, N];
-            //for (int i = 0; i < N; i++)
-            //{
-            //    for (int j = 0; j < N; j++)
-            //    {
-            //        if (aircrafts[i].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime < aircrafts[j].AutoPilot.ActiveFlightPlan.EstimatedArrivalTime)
-            //        {
-            //            squence[i, j] = true;
-            //        }
-            //        else
-            //        {
-            //            squence[i, j] = false;   // TODO: Implement the rest of the Collaborative Decision Making System
-            //        }
-            //    }
-            //}
-            
+            N = aircrafts.Count;
+            _earliestLandingTime = new double[N];
+            _latestLandingTime = new double[N];
+            _f_penaltyCost = new double[N];
+            _g_penaltyCost = new double[N];
+            _preferredLandingTime = new double[N];
+            _separationTime = new double[N, N];
+            _trueLandingTime = new double[N];
+            _squence= new bool[N, N];
+            for (int i = 0; i < N; i++)
+            {
+                Aircraft aircraft = aircrafts[i];
+                _earliestLandingTime[i] = aircraft.AutoPilot.ActiveFlightPlan.EarliestArrivalTime;
+
+                _latestLandingTime[i] = aircraft.AutoPilot.ActiveFlightPlan.LatestArrivalTime;
+                _f_penaltyCost[i] = 1.0;
+                _g_penaltyCost[i] = 0.5;
+                _preferredLandingTime[i] = aircraft.AutoPilot.ActiveFlightPlan.PreferedArrivalTime;
+
+                for (int j = 0; j < N; j++)
+                {
+                    _separationTime[i, j] = aircraft.Performance.TimeBasedLandingSeparation;
+                }
+                //AircraftList.Add(aircraft);
+            }
+
+            for (int i = 0; i < N; i++) //it is assume that the aircrafts have been sorted 
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if (i<=j)
+                    {
+                        _squence[i, j] = true;
+                    }
+                    else
+                    {
+                        _squence[i, j] = false;   // TODO: Implement the rest of the Collaborative Decision Making System
+                    }
+                }
+            }
+        }
+
+        public void CalculateRealArrivalTime()
+        {
+            for (int i = 0; i < N; i++) //it is assume that the aircrafts have been sorted
+            {
+                if(i==0) 
+                {
+                    _trueLandingTime[i] = _preferredLandingTime[i];
+                }
+                else
+                {
+                    _trueLandingTime[i] = _trueLandingTime[i-1]+ _separationTime[i, i-1];
+                    if (_trueLandingTime[i]< _preferredLandingTime[i])
+                    {
+                        _trueLandingTime[i] = _preferredLandingTime[i];
+                    }
+                }
+            }
         }
     }
 }

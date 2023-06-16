@@ -59,5 +59,11 @@ namespace SuperFMS
             var brng = Math.Atan2(y, x) * 180 / Math.PI;
             return brng;
         }
+
+        public static double GetPenaltyCost()
+        {
+            double cost = 0;
+            return cost;
+        }
     }
 }

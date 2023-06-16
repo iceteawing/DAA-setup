@@ -61,6 +61,7 @@ namespace StrategicFMSDemo
             {
                 Ownship ownship = new(acid, type);
                 ownship.SetAircraftPosition(initLon, initLat, initAltitude);
+                ownship.Performance.SetPerformance(type);
                 ownship.AutoPilot.ActiveFlightPlan = fp;
                 aircrafts.Add(acid,ownship);
             }
@@ -130,8 +131,9 @@ namespace StrategicFMSDemo
                 if (instance != null)
                 {
                     bool result = Initialization();
-                    
-                    if(result) 
+                    LandingSequeceConfirmed = false;
+                    PreLandingSequeceConfirmed = false;
+                    if (result) 
                     {
                         _timer = new Timer(UpdateFlightData, null, 0, _period);// create a timer to update the flight data
                     }
@@ -146,7 +148,8 @@ namespace StrategicFMSDemo
             {
                 _timer?.Dispose();
                 ScenarioData = null;
-                _isAFASConfirmingLockTriggerPre = false;
+                LandingSequeceConfirmed = false;
+                PreLandingSequeceConfirmed = false;
             }
         }
         private const int _period = 20;//The time interval between invocations of callback, in milliseconds.
@@ -170,9 +173,10 @@ namespace StrategicFMSDemo
         public static FlightData GetInstance() {
         return instance;
         }
-        public List<string> LandingSequence =new List<string>();
-        private bool _isAFASConfirmingLockTrigger=false;
-        private bool _isAFASConfirmingLockTriggerPre = false;
+        private List<string> _landingSequence = new List<string>();
+        private bool _isAFASConfirmingLockTrigger;
+        public bool PreLandingSequeceConfirmed = false;
+        public bool LandingSequeceConfirmed = false;
         public int AlgorithmSelection = 0;
         private void UpdateFlightData(object state)
         {
@@ -188,18 +192,17 @@ namespace StrategicFMSDemo
                 stopSign &= !pair.Value.AutoPilot.Actived;
                 _isAFASConfirmingLockTrigger |= pair.Value.Afas.Adas.ConfirmLock();
             }
-            if(!_isAFASConfirmingLockTriggerPre && _isAFASConfirmingLockTrigger)
-            {
-                FlightData_EventArgs args = new FlightData_EventArgs();
-                args.isConfirming = true;
-                args.landingSequence = LandingSequence;
-                PutOutinformation(this, args);
-            }
-            _isAFASConfirmingLockTriggerPre = _isAFASConfirmingLockTrigger;
+            //if(LandingSequeceConfirmed&&!PreLandingSequeceConfirmed)
+            //{
+            //    FlightData_EventArgs args = new FlightData_EventArgs();
+            //    args.isConfirming = true;
+            //    args.landingSequence = LandingSequence;
+            //    PutOutinformation(this, args);
+            //    PreLandingSequeceConfirmed = LandingSequeceConfirmed;
+            //}
             if (stopSign)
             {
                 _timer.Dispose();
-                _isAFASConfirmingLockTriggerPre = false;
             }
         }
         public struct UdpState
@@ -212,6 +215,20 @@ namespace StrategicFMSDemo
 
         public ScenarioData ScenarioData { get => _scenarioData; set => _scenarioData = value; }
         public AirspaceStructure Airspace { get => _airspace; set => _airspace = value; }
+        public List<string> LandingSequence 
+        {
+            get => _landingSequence;
+            set
+            {
+                _landingSequence = value;
+                FlightData_EventArgs args = new()
+                {
+                    isConfirming = true,
+                    landingSequence = _landingSequence
+                };
+                PutOutinformation(this, args);
+            }
+        }
 
         public static void ReceiveCallback(IAsyncResult ar)
         {

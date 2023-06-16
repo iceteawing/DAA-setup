@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace SuperFMS.AFAS
 {
-    public class AutonomousDecisionAssistanceSystem//TODO: refer to martin's paper
+    public class DecentralizedDecisionAssistanceSystem//TODO: refer to martin's paper
     {
-        public AutonomousDecisionAssistanceSystem() { IsConfirmed = false; IsConfirming = false; }
+        public DecentralizedDecisionAssistanceSystem() { IsConfirmed = false; IsConfirming = false; }
 
         private bool _isConfirmed;
         private bool _isConfirming;

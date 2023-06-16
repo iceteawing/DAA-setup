@@ -22,12 +22,12 @@ namespace SuperFMS.AFAS
         private TrajectoryIntentData _selfTid;
 
         private AirborneSeparationAssuranceSystem _asas;
-        private AutonomousDecisionAssistanceSystem _adas;
+        private DecentralizedDecisionAssistanceSystem _adas;
         private CollaborativeDecisionMakingSystem _cdms; // a station may needed
         private DetectAndAvoidanceSystem _daas;
 
         public AirborneSeparationAssuranceSystem Asas { get => _asas; set => _asas = value; }
-        public AutonomousDecisionAssistanceSystem Adas { get => _adas; set => _adas = value; }
+        public DecentralizedDecisionAssistanceSystem Adas { get => _adas; set => _adas = value; }
 
         internal CollaborativeDecisionMakingSystem Cdms { get => _cdms; set => _cdms = value; }
         internal DetectAndAvoidanceSystem Daas { get => _daas; set => _daas = value; }
@@ -37,7 +37,7 @@ namespace SuperFMS.AFAS
         {
             AircraftId = acid;
             Asas = new AirborneSeparationAssuranceSystem(AircraftId);
-            Adas = new AutonomousDecisionAssistanceSystem();
+            Adas = new DecentralizedDecisionAssistanceSystem();
             Cdms = new CollaborativeDecisionMakingSystem();
             Daas = new DetectAndAvoidanceSystem();
         }
@@ -64,8 +64,11 @@ namespace SuperFMS.AFAS
             bool triggerEvent = MyUtilityFunctions.VerifyDistanceSmallThan(state.Latitude, state.Longitude, active_waypoint.Latitude, active_waypoint.Longtitude, MyConstants.SchedulingPointMargin);
             if (Adas.IsConfirming == false && triggerEvent)
             {
-                
-                Adas.IsConfirming = true;
+                foreach (KeyValuePair<string, Aircraft> pair in flightData.aircrafts)
+                {
+
+                    pair.Value.Afas.Adas.IsConfirming = true;
+                }
                 //Adas.SequenceOperations(flightData.aircrafts);
                 Cdms.LandingScheduling(flightData.aircrafts, flightData.AlgorithmSelection);
 
