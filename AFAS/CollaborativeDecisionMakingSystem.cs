@@ -45,28 +45,33 @@ namespace SuperFMS.AFAS
         public List<Aircraft> AircraftList = new();
         public void LandingScheduling(Dictionary<string,Aircraft> aircrafts, int algorithm)
         {
+            int separationMethod=0;
             switch (algorithm)
             {
                 case 0:
                     Debug.WriteLine("Generated the 4DT within FirstComeFirstServeSchedulingAlgorithm");
-                    FirstComeFirstServeSchedulingAlgorithm(aircrafts);
-                    Generate4DT(0, aircrafts);
+                    LandingSequence=FirstComeFirstServeSchedulingAlgorithm(aircrafts);
+                    separationMethod = 0;
+
                     break;
                 case 1:
                     Debug.WriteLine("Generated the 4DT within ManualAlgorithm");
-                    ManualAlgorithm(aircrafts);
-                    Generate4DT(1, aircrafts);
+                    LandingSequence = ManualAlgorithm(aircrafts);
+                    separationMethod = 1;
+
                     break;
                 case 2:
                     Debug.WriteLine("Generated the 4DT within SimplexAlgorithm");
-
-                    SimplexAlgorithm(aircrafts);
-                    Generate4DT(2, aircrafts);
+                    //SimplexAlgorithm(aircrafts);
+                    LandingSequence = EnumerateAllSortings(aircrafts);
+                    separationMethod = 2;
+                    
                     break;
                 default:
+                    Debug.WriteLine("Error in algorithm");
                     break;
             }
-
+            Generate4DT(separationMethod, aircrafts);
         }
 
         public void Generate4DT(int separationMethod, Dictionary<string, Aircraft> aircrafts)
@@ -125,8 +130,9 @@ namespace SuperFMS.AFAS
             flightData.LandingSequence = LandingSequeceInformation;
             flightData.LandingSequeceConfirmed = true;
         }
-        public void ManualAlgorithm(Dictionary<string, Aircraft> aircrafts)
+        public List<string> ManualAlgorithm(Dictionary<string, Aircraft> aircrafts)
         {
+            List<string> landingSequence = new List<string>();
             // 使用LINQ根据CruiseSpeed对飞机列表进行排序
             var sortedAircrafts = aircrafts.OrderByDescending(p => p.Value.Performance.CruiseSpeed);
             foreach (KeyValuePair<string, Aircraft> pair in sortedAircrafts)
@@ -134,12 +140,14 @@ namespace SuperFMS.AFAS
 
                 pair.Value.Afas.Adas.IsConfirming = true;
                 DateTime dt = pair.Value.AutoPilot.ActiveFlightPlan.EstimatedArrivalTime;
-                LandingSequence.Add(pair.Value.AircraftId);
+                landingSequence.Add(pair.Value.AircraftId);
             }
+            return landingSequence;
         }
 
-        public void FirstComeFirstServeSchedulingAlgorithm(Dictionary<string, Aircraft> aircrafts)
+        public List<string> FirstComeFirstServeSchedulingAlgorithm(Dictionary<string, Aircraft> aircrafts)
         {
+            List<string> landingSequence = new List<string>();
             // 使用LINQ根据EstimatedArrivalTime对飞机列表进行排序
             var sortedAircrafts = aircrafts.OrderBy(p => p.Value.AutoPilot.ActiveFlightPlan.HoldingPoint.ETA);
             foreach (KeyValuePair<string, Aircraft> pair  in sortedAircrafts)
@@ -147,8 +155,9 @@ namespace SuperFMS.AFAS
 
                 pair.Value.Afas.Adas.IsConfirming = true;
                 DateTime dt = pair.Value.AutoPilot.ActiveFlightPlan.EstimatedArrivalTime;
-                LandingSequence.Add(pair.Value.AircraftId);
-            }     
+                landingSequence.Add(pair.Value.AircraftId);
+            }
+            return landingSequence;
         }
         public void SimplexAlgorithm(Dictionary<string, Aircraft> aircrafts)
         {
@@ -199,11 +208,10 @@ namespace SuperFMS.AFAS
             //        }
             //    }
             //}
-
-
         }
-        public void EnumerateAllSortings(Dictionary<string, Aircraft> aircrafts)
+        public List<string> EnumerateAllSortings(Dictionary<string, Aircraft> aircrafts)
         {
+            List<string> landingSequence = new List<string>();
             var keys = aircrafts.Keys.ToArray();
             var permutations = keys.Permute();
             double totalCost = 99999;
@@ -219,23 +227,24 @@ namespace SuperFMS.AFAS
                     AircraftList.Add(aircraft);
                 }
                 Initialzation(AircraftList);
-                CalculateRealArrivalTime();
+                
                 double cost = Cost(aircrafts, 0);
-                if (cost < totalCost)
+                if (cost < totalCost && Constraints())
                 {
                     totalCost = cost;
-                    LandingSequence.Clear();
+                    landingSequence.Clear();
                     int index = 0;
                     //TODO:record the squece here
                     foreach (var key in permutation)
                     {
-                        LandingSequence.Add(aircrafts[key].AircraftId);
+                        landingSequence.Add(aircrafts[key].AircraftId);
                         aircrafts[key].AutoPilot.ActiveFlightPlan.TrueArrivalTime = _trueLandingTime[index];
                         index++;
                     }
                 }
             }
             Debug.WriteLine("The end of permutation");
+            return landingSequence;
         }
         
         // cost function
@@ -245,15 +254,26 @@ namespace SuperFMS.AFAS
             switch(performanceMetric)
             {
                 case 0://ETA deviation
+                    CalculateRealArrivalTime(0);
                     for (int i = 0; i < N; i++)
                     {
-                        cost += Math.Abs(_trueLandingTime[i] - _preferredLandingTime[i]);
+                        cost += Math.Abs((_trueLandingTime[i] - _preferredLandingTime[i]) * _f_penaltyCost[i]);
                     }
                     break;
-                case 1: 
-                    cost= _trueLandingTime[N-1];
+                case 1: // the latest landing time
+                    CalculateRealArrivalTime(1);
+                    cost = _trueLandingTime[N-1];
                     break;
-                case 2: 
+                case 2: //total holding time
+                    CalculateRealArrivalTime(2);
+                    for (int i = 0; i < N; i++)
+                    {
+                        if (_trueLandingTime[i] > _preferredLandingTime[i])
+                        cost += _trueLandingTime[i] - _preferredLandingTime[i];
+                    }
+                    break;
+                case 3://total delay time of feeder route
+                    CalculateRealArrivalTime(3);
                     break;
                 default: 
                     break;
@@ -325,23 +345,65 @@ namespace SuperFMS.AFAS
             }
         }
 
-        public void CalculateRealArrivalTime()
+        public void CalculateRealArrivalTime(int performanceMetric)
         {
-            for (int i = 0; i < N; i++) //it is assume that the aircrafts have been sorted
+            switch (performanceMetric)
             {
-                if(i==0) 
-                {
-                    _trueLandingTime[i] = _preferredLandingTime[i];
-                }
-                else
-                {
-                    _trueLandingTime[i] = _trueLandingTime[i-1]+ _separationTime[i, i-1];
-                    if (_trueLandingTime[i]< _preferredLandingTime[i])
+                case 0://ETA deviation
+                    for (int i = 0; i < N; i++) //it is assume that the aircrafts have been sorted
                     {
-                        _trueLandingTime[i] = _preferredLandingTime[i];
+                        if (i == 0)
+                        {
+                            _trueLandingTime[i] = _preferredLandingTime[i];
+                        }
+                        else
+                        {
+                            _trueLandingTime[i] = _trueLandingTime[i - 1] + _separationTime[i, i - 1];
+                            if (_trueLandingTime[i] < _preferredLandingTime[i])
+                            {
+                                _trueLandingTime[i] = _preferredLandingTime[i];
+                            }
+                        }
                     }
-                }
+                    break;
+                case 1: // the latest landing time
+                    for (int i = 0; i < N; i++) //it is assume that the aircrafts have been sorted
+                    {
+                        if (i == 0)
+                        {
+                            _trueLandingTime[i] = _preferredLandingTime[i];
+                        }
+                        else
+                        {
+                            _trueLandingTime[i] = _trueLandingTime[i - 1] + _separationTime[i, i - 1];
+                        }
+                    }
+                    break;
+                case 2: //total holding time
+                    for (int i = 0; i < N; i++) //it is assume that the aircrafts have been sorted
+                    {
+                        if (i == 0)
+                        {
+                            _trueLandingTime[i] = _preferredLandingTime[i];
+                        }
+                        else
+                        {
+                            _trueLandingTime[i] = _trueLandingTime[i - 1] + _separationTime[i, i - 1];
+                            if (_trueLandingTime[i] < _earliestLandingTime[i])
+                            {
+                                _trueLandingTime[i]= _earliestLandingTime[i];
+                            }
+                        }
+                    }
+                    break;
+                case 3://total delay time of feeder route
+
+                    break;
+                default:
+                    break;
             }
+
+
         }
     }
 }

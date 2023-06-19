@@ -47,6 +47,7 @@ namespace SuperFMS
         private double _bearing;
         private double _groundSpeed;
         private double _verticalSpeed;
+        private double _holdingTime;
 
         public double CruiseSpeed { get => _cruiseSpeed; set => _cruiseSpeed = value; }
         public double CruiseAltitude { get => _cruiseAltitude; set => _cruiseAltitude = value; }
@@ -89,6 +90,7 @@ namespace SuperFMS
             Afas = new AutonomousFlightAssistSystem(AircraftId);
             Performance = new AircraftPerformance();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
+            HoldingTime = 0;
         }
 
         private void ProcessInformation(object sender, AutoPilot.MyEventArgs e)
@@ -106,6 +108,7 @@ namespace SuperFMS
             Afas = new AutonomousFlightAssistSystem(AircraftId);
             Performance = new AircraftPerformance();
             AutoPilot.PutOutinformation += new AutoPilot.Autopilot_CallBack(this.ProcessInformation);
+            HoldingTime = 0;
         }
 
         public string Type { get => _type; set => _type = value; }
@@ -123,6 +126,7 @@ namespace SuperFMS
         public string AircraftId { get => _aircraftId; set => _aircraftId = value; }
         public AircraftPerformance Performance { get => _performance; set => _performance = value; }
         public AutonomousFlightAssistSystem Afas { get => _afas; set => _afas = value; }
+        public double HoldingTime { get => _holdingTime; set => _holdingTime = value; }
 
         private double _tick = 0;//seconds
         /// <summary>
@@ -153,6 +157,10 @@ namespace SuperFMS
                     double holdingAltitude = AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Altitude;
                     double holdingSpeed = Performance.CruiseSpeed;
                     int flyPattern=AutoPilot.FlyInHoldingPattern(State, holdingCenterLongitude, holdingCenterLatitude, holdingSpeed, holdingAltitude, radius);   
+                    if(flyPattern==1)
+                    {
+                        HoldingTime += period / 1000;
+                    }
                 }
                 else
                 {

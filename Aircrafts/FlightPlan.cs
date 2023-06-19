@@ -27,26 +27,26 @@ namespace SuperFMS.Aircrafts
             //set the Tid according to the en-route
             //set the Tid according to the STAR
             Tid = new TrajectoryIntentData();
-            Waypoint4D p0 = new Waypoint4D(0, "wp0", star.IAF.Longtitude, star.IAF.Latitude, star.IAF.Altitude,0.0);
+            Waypoint4D p0 = new(0, "wp0", star.IAF.Longtitude, star.IAF.Latitude, star.IAF.Altitude,0.0);
             Tid.TrajectoryPoints.Add(p0);
             if(star.IF != null)
             {
-                Waypoint4D p1 = new Waypoint4D(1, "wp1", star.IF.Longtitude, star.IF.Latitude, star.IF.Altitude, 0.0);
+                Waypoint4D p1 = new(1, "wp1", star.IF.Longtitude, star.IF.Latitude, star.IF.Altitude, 0.0);
                 Tid.TrajectoryPoints.Add(p1);
             }
             if(star.FAF != null)
             {
-                Waypoint4D p2 = new Waypoint4D(2, "wp2", star.FAF.Longtitude, star.FAF.Latitude, star.FAF.Altitude, 0.0);
+                Waypoint4D p2 = new(2, "wp2", star.FAF.Longtitude, star.FAF.Latitude, star.FAF.Altitude, 0.0);
                 Tid.TrajectoryPoints.Add(p2);
             }
 
-            Waypoint4D p3 = new Waypoint4D(3, "wp3", star.Mapt.Longtitude, star.Mapt.Latitude, star.Mapt.Altitude, 0.0);
+            Waypoint4D p3 = new(3, "wp3", star.Mapt.Longtitude, star.Mapt.Latitude, star.Mapt.Altitude, 0.0);
             Tid.TrajectoryPoints.Add(p3);
             DateTime now = DateTime.Now;
             EstimatedArrivalTime =  new DateTime(now.Year, now.Month, now.Day, 16, 5, 0);
             EarliestArrivalTime = 80;
             PreferedArrivalTime = 100;
-            LatestArrivalTime = 120;
+            LatestArrivalTime = 250;
             TrueArrivalTime = 0;
         }
         
