@@ -266,7 +266,7 @@ namespace SuperFMS.AFAS
                     break;
                 case 2: //total holding time
                     CalculateRealArrivalTime(2);
-                    for (int i = 0; i < N; i++)
+                    for (int i = 0; i < N; i++) // TODO: the logic here is not correct
                     {
                         if (_trueLandingTime[i] > _preferredLandingTime[i])
                         cost += _trueLandingTime[i] - _preferredLandingTime[i];
@@ -278,8 +278,6 @@ namespace SuperFMS.AFAS
                 default: 
                     break;
             }
-
-
             return cost;
         }
         public bool Constraints()
@@ -328,7 +326,6 @@ namespace SuperFMS.AFAS
                 }
                 //AircraftList.Add(aircraft);
             }
-
             for (int i = 0; i < N; i++) //it is assume that the aircrafts have been sorted 
             {
                 for (int j = 0; j < N; j++)
@@ -402,8 +399,6 @@ namespace SuperFMS.AFAS
                 default:
                     break;
             }
-
-
         }
     }
 }

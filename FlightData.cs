@@ -147,9 +147,11 @@ namespace StrategicFMSDemo
             else
             {
                 _timer?.Dispose();
+                ScenarioData.CalculateNumericalResults(aircrafts);
                 ScenarioData = null;
                 LandingSequeceConfirmed = false;
                 PreLandingSequeceConfirmed = false;
+
             }
         }
         private const int _period = 20;//The time interval between invocations of callback, in milliseconds.
@@ -280,7 +282,7 @@ namespace StrategicFMSDemo
         public class FlightData_EventArgs : System.EventArgs
         {
             public bool isConfirming;
-            public List<string> landingSequence = new List<string>();
+            public List<string> landingSequence = new();
         }
     }
 
@@ -301,8 +303,9 @@ namespace StrategicFMSDemo
         public double Density { get; set; } //range from 0 to 100
         public double Capacity { get; set; } //air vehicles within 1 km*km or one airline
         public double Throughput { get; set; } // aircrafts landed per hour?
+        public double TotalETADeviation { get; set; } //unit is second
+        public double TotalHoldingTime { get; set; } //unit is second
 
-        public double HoldingTime { get; set; } //unit is second
         public IList<Airdrome> Airdromes { get; set; }
         public double ScenarioDuration
         {
@@ -319,6 +322,19 @@ namespace StrategicFMSDemo
         {
             ScenarioID = scenarioID;
             ScenarioDuration = 0;
+        }
+
+        public void CalculateNumericalResults(Dictionary<string, Aircraft> aircrafts)
+        {
+            TotalETADeviation = 0;
+            TotalHoldingTime = 0;
+            foreach (KeyValuePair<string, Aircraft> pair in aircrafts)
+            {
+                TotalETADeviation +=Math.Abs(pair.Value.ArrivalTime-pair.Value.AutoPilot.ActiveFlightPlan.PreferedArrivalTime);
+                TotalHoldingTime += pair.Value.HoldingTime;
+            }
+
+            Debug.WriteLine("TotalETADeviation:" + TotalETADeviation + "TotalHoldingTime:" + TotalHoldingTime);
         }
     }
 }

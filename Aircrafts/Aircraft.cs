@@ -48,6 +48,7 @@ namespace SuperFMS
         private double _groundSpeed;
         private double _verticalSpeed;
         private double _holdingTime;
+        private double _arrivalTime;
 
         public double CruiseSpeed { get => _cruiseSpeed; set => _cruiseSpeed = value; }
         public double CruiseAltitude { get => _cruiseAltitude; set => _cruiseAltitude = value; }
@@ -95,6 +96,7 @@ namespace SuperFMS
 
         private void ProcessInformation(object sender, AutoPilot.MyEventArgs e)
         {
+            this.ArrivalTime = _tick;
             Debug.WriteLine(e.acid + " reach the destination on time:" + _tick.ToString()+ "seconds!");
         }
 
@@ -127,6 +129,7 @@ namespace SuperFMS
         public AircraftPerformance Performance { get => _performance; set => _performance = value; }
         public AutonomousFlightAssistSystem Afas { get => _afas; set => _afas = value; }
         public double HoldingTime { get => _holdingTime; set => _holdingTime = value; }
+        public double ArrivalTime { get => _arrivalTime; set => _arrivalTime = value; }
 
         private double _tick = 0;//seconds
         /// <summary>
