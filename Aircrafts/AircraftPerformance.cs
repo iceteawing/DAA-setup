@@ -8,7 +8,6 @@ namespace SuperFMS.Aircrafts
 {
     public class AircraftPerformance
     {
-
         public AircraftPerformance() 
         {
             CruiseSpeed = 120;

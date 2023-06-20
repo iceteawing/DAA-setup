@@ -49,6 +49,14 @@ namespace SuperFMS.Aircrafts
             LatestArrivalTime = 250;
             TrueArrivalTime = 0;
         }
+
+        public void SetArrivalTime(double holdingPointETA, double earliestArrivalTime, double preferedArrivalTime, double latestArrivalTime)
+        {
+            HoldingPoint.ETA = holdingPointETA;
+            EarliestArrivalTime = earliestArrivalTime;
+            PreferedArrivalTime = preferedArrivalTime;
+            LatestArrivalTime = latestArrivalTime;
+        }
         
         public TrajectoryIntentData Tid { get => _tid; set => _tid = value; }
         private Waypoint4D _holdingPoint;// it is surposed to be the prior waypoint of IAF in this phase

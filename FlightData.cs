@@ -71,6 +71,7 @@ namespace StrategicFMSDemo
                 aircraft.SetAircraftPosition(initLon, initLat, initAltitude);
                 aircraft.Performance.SetPerformance(type);
                 fp.LandingDurationInSeconds = 30 / aircraft.Performance.CruiseSpeed * 3600/MyConstants.MultipleParameter;
+                
                 aircraft.AutoPilot.ActiveFlightPlan = fp;
                 aircraft.AutoPilot.Actived = true;
                 aircrafts.Add(acid,aircraft);
@@ -95,32 +96,38 @@ namespace StrategicFMSDemo
             FlightPlan fp2 = new FlightPlan(airspace.Airport.Stars[0]);
             fp2.HoldingPoint.ETA = 10;
             fp2.HoldingPoint.HoldingTime = 20;
-            CreateAircraft("001", "Cessna208", fp2, 117.04595554073023, 39.23010140637297, 1500.0);
+            fp2.SetArrivalTime(42, 44, 87, 170);
+            CreateAircraft("001", "Cessna208", fp2, 116.8277, 39.1682, 1500.0);
 
             FlightPlan fp3 = new FlightPlan(airspace.Airport.Stars[0]);
             fp3.HoldingPoint.ETA = 20;
             fp3.HoldingPoint.HoldingTime = 20;
-            CreateAircraft("002", "Cessna172", fp3, 117.04595554073023, 39.23010140637297, 1500.0);
+            fp3.SetArrivalTime(51, 55, 111, 220);
+            CreateAircraft("002", "Cessna172", fp3, 116.8601, 39.1804, 1500.0);
 
             FlightPlan fp4 = new FlightPlan(airspace.Airport.Stars[2]);
             fp4.HoldingPoint.ETA = 30;
             fp4.HoldingPoint.HoldingTime = 20;
-            CreateAircraft("003", "Volocity", fp4, 117.0333869301425, 39.22087741005525, 1500.0);
+            fp4.SetArrivalTime(87, 90,187,360);
+            CreateAircraft("003", "Volocity", fp4, 116.8925, 39.1889, 900.0);
 
             FlightPlan fp5 = new FlightPlan(airspace.Airport.Stars[1]);
             fp5.HoldingPoint.ETA = 40;
             fp5.HoldingPoint.HoldingTime = 20;
-            CreateAircraft("004", "Cessna208", fp5, 117.35299659032735, 39.38856696361833, 1500.0);
+            fp5.SetArrivalTime(48, 65, 130, 260);
+            CreateAircraft("004", "Cessna208", fp5, 117.6422, 39.5317, 1500.0);
 
             FlightPlan fp6 = new FlightPlan(airspace.Airport.Stars[1]);
             fp6.HoldingPoint.ETA = 50;
             fp6.HoldingPoint.HoldingTime = 20;
-            CreateAircraft("005", "Cessna172", fp6, 117.35299659032735, 39.38856696361833, 1500.0);
+            fp6.SetArrivalTime(62, 65, 122, 240);
+            CreateAircraft("005", "Cessna172", fp6, 117.6263, 39.5208, 1500.0);
 
             FlightPlan fp7 = new FlightPlan(airspace.Airport.Stars[3]);
             fp7.HoldingPoint.ETA = 60;
             fp7.HoldingPoint.HoldingTime = 20;
-            CreateAircraft("006", "Volocity", fp7, 117.34863470475673, 39.38951966826886, 1500.0);
+            fp7.SetArrivalTime(109, 100, 209, 400);
+            CreateAircraft("006", "Volocity", fp7, 117.5970, 39.5054, 900.0);
             ScenarioData.Status = true;
             return true;
         }
