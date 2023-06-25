@@ -24,10 +24,11 @@ namespace SuperFMS.Aircrafts
         private bool _swvnavvs;//Switch whether to use a given vertical speed or not
         private double _vnavvs;//Vertical speed used by VNAV, m/s
 
-        private Traffic.Route _route;
         private FlightPlan _activeFlightPlan;
         private int _activeWaypointIndex;
         private double _distanceToActiveWaypoint;
+        private bool _holding = false;
+        private double _holdingTick=0;
 
         private const double _multipleParameter = MyConstants.MultipleParameter;
         public AutoPilot(Traffic.Route route)
@@ -156,9 +157,7 @@ namespace SuperFMS.Aircrafts
                         desiredVerticalSpeed = -maxVerticalSpeed;
                     }
                 }
-
                 //var vs = (state.Altitude - desiredAltitude) / (Dist2vs / 1000 * 60);
-
                 if (desiredVerticalSpeed > 0)
                 {
                     desiredVerticalSpeed = Math.Min(desiredVerticalSpeed, 2000);
@@ -177,14 +176,14 @@ namespace SuperFMS.Aircrafts
             DesiredAltitude = desiredAltitude;
             DesiredVerticalSpeed = desiredVerticalSpeed;
         }
-        public int FlyInHoldingPattern(AircraftState state, double holdingCenterLongitude,double holdingCenterLatitude, double holdingSpeed, double holdingAltitude, double holdingRadius)
+        //mode: 0 for VCA, 1 for others
+        public int FlyInHoldingPattern(int mode,AircraftState state, double holdingCenterLongitude,double holdingCenterLatitude, double holdingSpeed, double holdingAltitude, double holdingRadius)
         {
             int flyPattern = 0;
             if (state == null)
             {
                 return 0;
             }
-
             // Set desired altitude and speed
             DesiredAltitude = holdingAltitude;
             DesiredGroundSpeed = holdingSpeed * _multipleParameter;
@@ -202,7 +201,7 @@ namespace SuperFMS.Aircrafts
                 // Set the desired track to maintain the holding pattern
                 DesiredTrack = bearingToHoldingPoint - 90;
 
-                flyPattern=1;
+                flyPattern = 1;
             }
             else
             {
@@ -210,7 +209,6 @@ namespace SuperFMS.Aircrafts
                 DesiredTrack = MyUtilityFunctions.CalculateBearing(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
                 flyPattern = 2;
             }
-
             // Set the desired vertical speed to maintain the holding altitude
             double altitudeDifference = state.Altitude - holdingAltitude;
             if (altitudeDifference < 1 && altitudeDifference > -1)
@@ -227,7 +225,81 @@ namespace SuperFMS.Aircrafts
             }
             return flyPattern;
         }
+        //classic holding pattern, 30 seconds per way
+        public int FlyInHoldingPattern(int mode,double runwayHeading, AircraftState state, double holdingCenterLongitude, double holdingCenterLatitude, double holdingSpeed, double holdingAltitude, double holdingRadius)
+        {
+            int flyPattern = 0;
+            if (state == null)
+            {
+                return 0;
+            }
+            // Set desired altitude and speed
+            DesiredAltitude = holdingAltitude;
+            DesiredGroundSpeed = holdingSpeed * _multipleParameter;
+            DesiredTrueAirSpeed = holdingSpeed * _multipleParameter;
 
+            // Calculate the distance from the holding point
+            double distanceToHoldingPoint = MyUtilityFunctions.CalculateDistance(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
+
+            // Check if the aircraft is within the holding radius
+            if (distanceToHoldingPoint <= holdingRadius && _holding == false)
+            {
+                _holding = true;
+                _holdingTick = 0;
+            }
+            else if (_holding == false)
+            {
+                // Fly towards the holding point
+                DesiredTrack = MyUtilityFunctions.CalculateBearing(state.Latitude, state.Longitude, holdingCenterLatitude, holdingCenterLongitude);
+                flyPattern = 2;
+            }
+            if (_holding)
+            {
+                double period = 0.02 * _multipleParameter;
+                _holdingTick+= period;//TODO: is fixed here temp
+                // Set the desired track to maintain the holding pattern
+                if(_holdingTick<=30)
+                {
+                    DesiredTrack = runwayHeading;
+                }
+                else if( _holdingTick <=60)
+                {
+                    DesiredTrack += 180.0 / (30/period);
+                }
+                else if (_holdingTick <= 90)
+                {
+                    DesiredTrack = runwayHeading+180;
+                    if(DesiredTrack>360)
+                    {
+                        DesiredTrack -= 360;
+                    }
+                }
+                else if (_holdingTick <= 120)
+                {
+                    DesiredTrack += 180.0 / (30 / period);
+                }
+                if(_holdingTick>120)
+                {
+                    _holdingTick = 0;
+                }
+                flyPattern = 1;
+            }
+            // Set the desired vertical speed to maintain the holding altitude
+            double altitudeDifference = state.Altitude - holdingAltitude;
+            if (altitudeDifference < 1 && altitudeDifference > -1)
+            {
+                DesiredVerticalSpeed = 0;
+            }
+            else if (altitudeDifference < 0)
+            {
+                DesiredVerticalSpeed = 20; // Climb at 20 m/s
+            }
+            else
+            {
+                DesiredVerticalSpeed = -20; // Descend at 20 m/s
+            }
+            return flyPattern;
+        }
         public delegate void Autopilot_CallBack(object sender, MyEventArgs e);
         public event Autopilot_CallBack PutOutinformation;
         public class MyEventArgs : System.EventArgs

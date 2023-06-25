@@ -159,7 +159,17 @@ namespace SuperFMS
                     double holdingCenterLatitude = AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Latitude;
                     double holdingAltitude = AutoPilot.ActiveFlightPlan.Tid.TrajectoryPoints[AutoPilot.ActiveWaypointIndex].Altitude;
                     double holdingSpeed = Performance.CruiseSpeed;
-                    int flyPattern=AutoPilot.FlyInHoldingPattern(State, holdingCenterLongitude, holdingCenterLatitude, holdingSpeed, holdingAltitude, radius);   
+                    double holdingHeading = AutoPilot.ActiveFlightPlan.RunwayHeading;
+                    int flyPattern;
+                    if (Type== "Volocity")// the holding time is 1 min/circle
+                    {
+                        flyPattern = AutoPilot.FlyInHoldingPattern(0, State, holdingCenterLongitude, holdingCenterLatitude, holdingSpeed, holdingAltitude, radius/2);
+                    }
+                    else// the holding time is 2 min/circle
+                    {
+                        flyPattern = AutoPilot.FlyInHoldingPattern(1, holdingHeading, State, holdingCenterLongitude, holdingCenterLatitude, holdingSpeed, holdingAltitude, radius);
+                    }
+                    
                     if(flyPattern==1)
                     {
                         HoldingTime += period / 1000;

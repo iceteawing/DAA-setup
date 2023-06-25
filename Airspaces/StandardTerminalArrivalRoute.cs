@@ -13,17 +13,18 @@ namespace SuperFMS.Airspaces
         public Waypoint IF;
         public Waypoint FAF;
         public Waypoint Mapt;
-
+        public double RunwayHeading;
         public StandardTerminalArrivalRoute()
         {
         }
 
-        public StandardTerminalArrivalRoute(Waypoint iAF, Waypoint iF, Waypoint fAF, Waypoint mapt)
+        public StandardTerminalArrivalRoute(Waypoint iAF, Waypoint iF, Waypoint fAF, Waypoint mapt, double runwayHeading)
         {
             IAF = iAF;
             IF = iF;
             FAF = fAF;
             Mapt = mapt;
+            RunwayHeading = runwayHeading;
         }
         public StandardTerminalArrivalRoute(Waypoint iAF,  Waypoint mapt)
         {

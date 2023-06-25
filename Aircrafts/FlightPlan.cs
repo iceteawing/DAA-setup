@@ -20,9 +20,12 @@ namespace SuperFMS.Aircrafts
         private double _landingDurationInSeconds;//The time from IAF to the touch down, it depends on the aircraft performance and the STAR
         private DateTime _estimatedArrivalTime;
         private TrajectoryIntentData _tid;
+        private double _runwayHeading;
         public FlightPlan(StandardTerminalArrivalRoute star) 
         {
             HoldingPoint = new(star.IAF,20,20);
+            //RunwayHeading = star.RunwayHeading;
+            RunwayHeading = 340;
             //set the Tid according to the SID , Standard Instrument Departure
             //set the Tid according to the en-route
             //set the Tid according to the STAR
@@ -67,5 +70,6 @@ namespace SuperFMS.Aircrafts
         public double LatestArrivalTime { get => _latestArrivalTime; set => _latestArrivalTime = value; }
         public double PreferedArrivalTime { get => _preferedArrivalTime; set => _preferedArrivalTime = value; }
         public double TrueArrivalTime { get => _trueArrivalTime; set => _trueArrivalTime = value; }
+        public double RunwayHeading { get => _runwayHeading; set => _runwayHeading = value; }
     }
 }

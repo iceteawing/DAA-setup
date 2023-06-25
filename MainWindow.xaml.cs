@@ -107,7 +107,7 @@ namespace StrategicFMSDemo
             //MapPoint mapCenterPoint = new MapPoint(_flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, SpatialReferences.Wgs84);
             //MainMapView.SetViewpoint(new Viewpoint(mapCenterPoint, 2000));
             //MessageBox.Show(string.Format("{0},{1},{2}", _flightData.Ownship.State.Longitude, _flightData.Ownship.State.Latitude, _flightData.Ownship.State.Altitude));
-            createAirspaceStructrue();
+            CreateAirspaceStructrue();
             //createRoute();
             //AircraftPerformanceDictionary apd= new AircraftPerformanceDictionary();
             //AircraftPerformance ap= new AircraftPerformance();//https://contentzone.eurocontrol.int/aircraftperformance/details.aspx?ICAO=C208&
@@ -169,15 +169,15 @@ namespace StrategicFMSDemo
             route.AddWaypoint(wp3);
             route.SerializeToJson("route2.json");
         }
-        private void createAirspaceStructrue()
+        private void CreateAirspaceStructrue()
         {
             Waypoint p0 = new Waypoint(Waypoint.Type.IAF, 117.12976889083656, 39.262667330863536, 1200);
             Waypoint p1 = new Waypoint(Waypoint.Type.IAF, 117.3320, 39.3679, 1200);
             Waypoint p2 = new Waypoint(Waypoint.Type.IF, 117.22762759279414, 39.3111315533505, 1200);
             Waypoint p3 = new Waypoint(Waypoint.Type.FAF, 117.28257863691368, 39.22176648931558, 527);
             Waypoint p4 = new Waypoint(Waypoint.Type.MAPt, 117.33825437858884, 39.13730579607521, 3);
-            StandardTerminalArrivalRoute star1 = new(p0, p2, p3, p4);
-            StandardTerminalArrivalRoute star2 = new(p1, p2, p3, p4);
+            StandardTerminalArrivalRoute star1 = new(p0, p2, p3, p4,340);
+            StandardTerminalArrivalRoute star2 = new(p1, p2, p3, p4, 340);
             Waypoint p5 = new Waypoint(Waypoint.Type.IAF, 117.12976889083656, 39.262667330863536, 600);
             Waypoint p6 = new Waypoint(Waypoint.Type.IAF, 117.3320, 39.3679, 600);
             StandardTerminalArrivalRoute star3 = new(p5, p4);
